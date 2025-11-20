@@ -8,11 +8,11 @@ const redirectUri = process.env.NEXT_PUBLIC_COGNITO_REDIRECT_URI!;
 
 export default function Home() {
   const handleLogin = () => {
-    const url = new URL(`https://${domain}/oauth2/authorize`);
-    url.searchParams.set('client_id', clientId);
-    url.searchParams.set('response_type', 'code');
-    url.searchParams.set('scope', 'email openid phone');
-    url.searchParams.set('redirect_uri', redirectUri);
+    const url = new URL(`https://${domain}/oauth2/authorize`)
+    url.searchParams.set('client_id', clientId)
+    url.searchParams.set('response_type', 'code')
+    url.searchParams.set('scope', 'email openid phone')
+    url.searchParams.set('redirect_uri', redirectUri)
 
     window.location.href = url.toString();
   };
