@@ -1,16 +1,29 @@
-import * as cdk from 'aws-cdk-lib/core';
+import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
-// import * as sqs from 'aws-cdk-lib/aws-sqs';
+import * as lambda from 'aws-cdk-lib/aws-lambda';
+import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
+import * as apigateway from 'aws-cdk-lib/aws-apigateway';
+import * as path from 'path';
 
 export class SoftEngeGroupProjectStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    // The code that defines your stack goes here
+    const nodeLambda = new NodejsFunction(this, 'NodeLambda', {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      entry: path.join(__dirname, '../lambda/test_handler.ts'),
+      handler: 'test_handler',
+      bundling: {
+        forceDockerBundling: false,
+      }
+    });
 
-    // example resource
-    // const queue = new sqs.Queue(this, 'SoftEngeGroupProjectQueue', {
-    //   visibilityTimeout: cdk.Duration.seconds(300)
-    // });
+    const api = new apigateway.LambdaRestApi(this, 'ApiEndpoint', {
+      handler: nodeLambda,
+    });
+
+    new cdk.CfnOutput(this, 'ApiUrl', {
+      value: api.url,
+    });
   }
 }
