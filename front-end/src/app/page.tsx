@@ -20,6 +20,7 @@ export default function Home() {
   return (
     <div className={styles.page}>
       <button onClick={() => handleLogin()}>Login with Cognito</button>
+        <h3>test</h3>
     </div>
   );
 }
