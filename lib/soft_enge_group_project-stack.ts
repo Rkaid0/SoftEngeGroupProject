@@ -2,14 +2,25 @@ import { AuthorizationType, CognitoUserPoolsAuthorizer, LambdaIntegration, RestA
 import { UserPool, UserPoolClient } from 'aws-cdk-lib/aws-cognito';
 import { Code, Runtime, Function } from 'aws-cdk-lib/aws-lambda';
 import * as cdk from 'aws-cdk-lib/core';
+import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
-// import * as sqs from 'aws-cdk-lib/aws-sqs';
+import * as lambda from 'aws-cdk-lib/aws-lambda';
+import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
+import * as apigateway from 'aws-cdk-lib/aws-apigateway';
+import * as path from 'path';
 
 export class SoftEngeGroupProjectStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    // The code that defines your stack goes here
+    const nodeLambda = new NodejsFunction(this, 'NodeLambda', {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      entry: path.join(__dirname, '../lambda/test_handler.ts'),
+      handler: 'test_handler',
+      bundling: {
+        forceDockerBundling: false,
+      }
+    });
 
     // Define the Cognito User Pool
     const userPool = new UserPool(
@@ -68,7 +79,7 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
     });
 
     // Define the API Gateway
-    const api = new RestApi(this, 'MyApi', {
+    const api = new RestApi(this, 'ApiEndpoint', {
       restApiName: 'My Service',
       description: 'This service serves as an example.',
     });

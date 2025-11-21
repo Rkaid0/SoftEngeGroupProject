@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import * as cdk from 'aws-cdk-lib/core';
+import * as cdk from 'aws-cdk-lib';
 import { SoftEngeGroupProjectStack } from '../lib/soft_enge_group_project-stack';
 
 const app = new cdk.App();
@@ -14,7 +14,7 @@ new SoftEngeGroupProjectStack(app, 'SoftEngeGroupProjectStack', {
 
   /* Uncomment the next line if you know exactly what Account and Region you
    * want to deploy the stack to. */
-  // env: { account: '123456789012', region: 'us-east-1' },
+  env: { account: '827050348979', region: 'us-east-1' },
 
   /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
 });
