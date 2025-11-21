@@ -1,6 +1,7 @@
 'use client'
 import Image from "next/image";
 import styles from "./page.module.css";
+import { useRouter } from "next/navigation"
 
 const domain = process.env.NEXT_PUBLIC_COGNITO_DOMAIN!;
 const clientId = process.env.NEXT_PUBLIC_COGNITO_CLIENT_ID!;
@@ -16,11 +17,16 @@ export default function Home() {
 
     window.location.href = url.toString();
   };
+  const router = useRouter();
 
   return (
     <div className={styles.page}>
       <button onClick={() => handleLogin()}>Login with Cognito</button>
         <h3>test</h3>
+
+      <button onClick={() => router.push("/userDashboard")}>
+        Go to User Dashboard
+      </button>
     </div>
-  );
+  )
 }
