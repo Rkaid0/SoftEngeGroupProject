@@ -5,7 +5,7 @@ import { cookies } from 'next/headers';
 const USER_COOKIE = 'cognito_user';
 
 export async function setUserCookie(user: any) {
-  const cookieStore = await cookies();   // ⬅️ FIX: await the promise
+  const cookieStore = await cookies();
 
   cookieStore.set({
     name: USER_COOKIE,
