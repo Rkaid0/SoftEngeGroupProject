@@ -1,28 +1,28 @@
-import { NextResponse } from 'next/server';
-import { generators } from 'openid-client';
-import { getCognitoClient } from '../../lib/cognitoClient';
+import { NextResponse } from "next/server";
+import { Issuer } from "openid-client";
 
 export async function GET() {
-  try{
-    const client = await getCognitoClient();
+  // Discover Cognito config
+  const issuer = await Issuer.discover(
+    "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_40SpM0Fc9"
+  );
 
-    const nonce = generators.nonce();
-    const state = generators.state();
+  const client = new issuer.Client({
+    client_id: "1jlbe809q10rf8v7849be20o6l", // <-- paste real ID here
+    token_endpoint_auth_method: "none",
+  });
 
-    const redirectUri = process.env.COGNITO_REDIRECT_URI;
+  // Generate a secure random state value
+  const state = crypto.randomUUID();
 
-    const authUrl = client.authorizationUrl({
-      scope: 'email openid profile',
-      state,
-      nonce,
-      redirect_uri: redirectUri,
-    });
+  // Build Hosted UI login URL
+  const url = client.authorizationUrl({
+    redirect_uri: "http://localhost:3000/api/callback", // <-- your callback URL
+    scope: "openid email profile",
+    state, // <----- REQUIRED
+  });
 
-    const res = NextResponse.redirect(authUrl);
+  console.log("Login redirect with state:", state);
 
-    return res;
-  }
-  catch(err){
-    console.error("Login error:", err);
-  }
+  return NextResponse.redirect(url);
 }
