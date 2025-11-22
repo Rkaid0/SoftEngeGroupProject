@@ -9,7 +9,7 @@ export default function UserDashboard() {
       <h1>User Dashboard</h1>
       <button onClick={() => router.push("/reviewActivity")}>Review Activity</button>
       <button onClick={() => router.push("/reviewHistory")}>Review History</button>
-      <button onClick={() => router.push("/storeGUI")}>Store GUI</button>
+      <button onClick={() => router.push("/userStoreGUI")}>Store GUI</button>
     </div>
   )
 }

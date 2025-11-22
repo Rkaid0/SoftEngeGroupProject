@@ -27,6 +27,10 @@ export default function Home() {
       <button onClick={() => router.push("/userDashboard")}>
         Go to User Dashboard
       </button>
+
+      <button onClick={() => router.push("/adminDashboard")}>
+        Go to Admin Dashboard
+      </button>
     </div>
   )
 }
