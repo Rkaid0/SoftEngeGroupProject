@@ -9,7 +9,6 @@ export async function getCognitoClient(): Promise<Client> {
 
   cachedClient = new issuer.Client({
     client_id: process.env.COGNITO_CLIENT_ID!,
-    client_secret: process.env.COGNITO_CLIENT_SECRET,
     redirect_uris: [process.env.COGNITO_REDIRECT_URI!],
     response_types: ['code'],
   });
