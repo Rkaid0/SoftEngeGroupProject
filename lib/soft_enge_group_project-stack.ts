@@ -27,11 +27,10 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
       this,
       'UserPool',
       {
-        userPoolName: 'my-user-pool',
+        userPoolName: 'soft-enge-user-pool',
         selfSignUpEnabled: true,
         signInAliases: {
-          email: true,
-          username: true
+          email: true
         },
         autoVerify: {
           email: true

@@ -14,7 +14,7 @@ export default function Home() {
     url.searchParams.set('scope', 'email openid phone');
     url.searchParams.set('redirect_uri', redirectUri);
 
-    window.location.href = url.toString();
+    //window.location.href = url.toString();
   };
 
   return (
