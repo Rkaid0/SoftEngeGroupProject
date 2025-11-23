@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Issuer } from "openid-client";
+import jwt from "jsonwebtoken"; // npm install jsonwebtoken
 
 export async function GET(req: NextRequest) {
   console.log("Callback route hit!");
@@ -28,7 +29,16 @@ export async function GET(req: NextRequest) {
 
   console.log("Tokens received:", tokenSet);
 
-  const response = NextResponse.redirect("http://localhost:3000");
+  const idToken = tokenSet.id_token;
+  let email: string | null = null;
+  if (idToken) {
+    // decode token payload only
+    const decoded: any = jwt.decode(idToken);
+    email = decoded?.email || null;
+    console.log("Decoded email:", email);
+  }
+
+  const response = NextResponse.next();
 
   if (tokenSet.access_token) {
     response.cookies.set("cognito_access_token", tokenSet.access_token, {
@@ -44,5 +54,9 @@ export async function GET(req: NextRequest) {
     });
   }
 
-  return response;
+  if (email === "johnsshops3733@gmail.com") {
+    return NextResponse.redirect("http://localhost:3000/adminDashboard");
+  } else {
+    return NextResponse.redirect("http://localhost:3000/userDashboard");
+  }
 }

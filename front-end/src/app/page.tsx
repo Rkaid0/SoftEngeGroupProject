@@ -11,16 +11,7 @@ export default function Home() {
 
   return (
     <div className={styles.page}>
-      <button onClick={() => handleLogin()}>Login with Cognito</button>
-        <h3>test</h3>
-
-      <button onClick={() => router.push("/userDashboard")}>
-        Go to User Dashboard
-      </button>
-
-      <button onClick={() => router.push("/adminDashboard")}>
-        Go to Admin Dashboard
-      </button>
+      <button onClick={() => handleLogin()}>Login to Johns Shops</button>
     </div>
   )
 }
