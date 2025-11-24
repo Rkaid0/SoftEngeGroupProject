@@ -19,7 +19,7 @@ export default function UserDashboard() {
   }, [])
   return (
     <div>
-      <h1>User Dashboard</h1>
+      <h1>Dashboard</h1>
       {email && <p>Signed in as: <strong>{email}</strong></p>}
       <button onClick={() => router.push("/reviewActivity")}>Review Activity</button>
       <button onClick={() => router.push("/reviewHistory")}>Review History</button>
