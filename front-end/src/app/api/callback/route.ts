@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Issuer } from "openid-client";
-import jwt from "jsonwebtoken"; // npm install jsonwebtoken
+import jwt from "jsonwebtoken";
 
 export async function GET(req: NextRequest) {
   console.log("Callback route hit!");
@@ -13,33 +13,39 @@ export async function GET(req: NextRequest) {
   );
 
   const client = new issuer.Client({
-    client_id: "1jlbe809q10rf8v7849be20o6l", // same as login route
+    client_id: "1jlbe809q10rf8v7849be20o6l",
     token_endpoint_auth_method: "none",
   });
 
-  // This extracts ?code=... & ?state=...
   const params = client.callbackParams(url);
   console.log("Parsed callback params:", params);
 
   const tokenSet = await client.callback(
     "http://localhost:3000/api/callback",
     params,
-    { state: params.state } // OPTIONAL: validates state
+    { state: params.state }
   );
 
   console.log("Tokens received:", tokenSet);
 
   const idToken = tokenSet.id_token;
   let email: string | null = null;
+
   if (idToken) {
-    // decode token payload only
     const decoded: any = jwt.decode(idToken);
     email = decoded?.email || null;
     console.log("Decoded email:", email);
   }
 
-  const response = NextResponse.next();
+  // ❗ Return a redirect response object
+  const redirectUrl =
+    email === "johnsshops3733@gmail.com"
+      ? "http://localhost:3000/adminDashboard"
+      : "http://localhost:3000/userDashboard";
 
+  const response = NextResponse.redirect(redirectUrl);
+
+  // Add cookies to THIS response
   if (tokenSet.access_token) {
     response.cookies.set("cognito_access_token", tokenSet.access_token, {
       httpOnly: true,
@@ -54,9 +60,5 @@ export async function GET(req: NextRequest) {
     });
   }
 
-  if (email === "johnsshops3733@gmail.com") {
-    return NextResponse.redirect("http://localhost:3000/adminDashboard");
-  } else {
-    return NextResponse.redirect("http://localhost:3000/userDashboard");
-  }
+  return response;
 }
