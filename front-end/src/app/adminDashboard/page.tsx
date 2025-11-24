@@ -25,8 +25,8 @@ export default function AdminDashboard() {
 
   return (
     <div>
-      <h1>Admin Dashboard</h1>
-      {email && <p>Admin signed in as: <strong>{email}</strong></p>}
+      <h1>Dashboard</h1>
+      {email && <p>Signed in as: <strong>{email}</strong></p>}
       <button onClick={() => router.push("/adminStoreGUI")}>Store GUI</button>
       <button onClick={() => router.push("/api/logout")}>Log Out</button>
     </div>
