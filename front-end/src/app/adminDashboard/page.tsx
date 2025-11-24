@@ -8,7 +8,7 @@ export default function AdminDashboard() {
     <div>
       <h1>Admin Dashboard</h1>
       <button onClick={() => router.push("/adminStoreGUI")}>Store GUI</button>
-      
+      <button onClick={() => router.push("/api/logout")}>Log Out</button>
     </div>
   )
 }
