@@ -19,7 +19,7 @@ export default function UserStoreGUI() {
       <h1>Stores</h1>
       {email && <p>Signed in as: <strong>{email}</strong></p>}
       <button onClick={() => window.location.href = `${S3_URL}/createStore`}>Create Store</button>
-      <button onClick={() => window.location.href = `${S3_URL}/create_store_chain`}>Create Store Chain</button>
+      <button onClick={() => window.location.href = `${S3_URL}/create_store_chain`}>Create Store Chain</button> <h3>USER SHOULD NOT BE ALLOWED TO CREATE STORE CHAIN THATS AN ADMIN ONLY USE CASE</h3>
       <button onClick={() => window.location.href = `${S3_URL}/userDashboard`}>Dashboard</button>
     </div>
   )
