@@ -12,9 +12,8 @@ export default function UserDashboard() {
   const [receipts, setReceipts] = useState<
     { id: number; name: string; store: string; items: { id: number; name: string; price: number; category: string }[] }[]>([])
   const [currentItems, setCurrentItems] = useState<
-    { id: number; name: string; price: number; category: string }[]>([]);
+    { id: number; name: string; price: number; category: string }[]>([])
 
-  
   useEffect(() => {
     const userEmail = requireAuth()
     if (userEmail) setEmail(userEmail)
@@ -33,7 +32,7 @@ export default function UserDashboard() {
     setName("")
     setStore("")
     setCurrentItems([])
-  };
+  }
   const handleAddItem = () => {
     if (!itemName.trim() || itemPrice === "" || !itemCategory.trim()) return
 
@@ -50,32 +49,28 @@ export default function UserDashboard() {
     setItemPrice("")
     setItemCategory("")
   }
-
-
+  const handleDeleteReceipt = (id: number) => {
+    setReceipts(prev => prev.filter(r => r.id !== id))
+  }
   return (
     <div>
       <h1>Dashboard</h1>
-
       {email && (
         <p>Signed in as: <strong>{email}</strong></p>
       )}
-
       <button onClick={() => window.location.href = `${S3_URL}/reviewActivity`}>Review Activity</button>
       <button onClick={() => window.location.href = `${S3_URL}/reviewHistory`}>Review History</button>
       <button onClick={() => window.location.href = `${S3_URL}/userStoreGUI`}>Store GUI</button>
       <button onClick={() => LOGOUT}>Log Out</button>
       <hr />
-
       <h2>Create Receipt</h2>
       <input type="text" placeholder="Name" value={name} onChange={e => setName(e.target.value)}/>
       <input type="text" placeholder="Store" value={store} onChange={e => setStore(e.target.value)}/>
-      
       <h3>Add Items</h3>
       <input type="text" placeholder="Item Name" value={itemName} onChange={e => setItemName(e.target.value)}/>
       <input type="number" placeholder="Item Price" value={itemPrice} onChange={e => setItemPrice(e.target.value === "" ? "" : Number(e.target.value))}/>
       <input type="text" placeholder="Category" value={itemCategory} onChange={e => setItemCategory(e.target.value)}/>
       <button onClick={handleAddItem}>Add Item</button>
-
       <h4>Items in This Receipt</h4>
       {currentItems.length === 0 && <p>No items added yet.</p>}
       {currentItems.map(item => (
@@ -85,18 +80,17 @@ export default function UserDashboard() {
           <p>Category: {item.category}</p>
         </div>
       ))}
-
       <button onClick={handleCreateReceipt}>Create Receipt</button>
       <h3>Receipts</h3>
       {receipts.map(receipt => (
         <div key={receipt.id}
              style={{ border: "2px solid #333", padding: "10px", marginTop: "12px" }}>
-
-          <h4>{receipt.name} — {receipt.store}</h4>
-
+          <h4>{receipt.name} — {receipt.store}
+            <button onClick={() => handleDeleteReceipt(receipt.id)}>Delete</button>
+          </h4>
           {receipt.items.map(item => (
             <div key={item.id}
-                 style={{ paddingLeft: "15px", marginBottom: "5px" }}>
+                 >
               <p>
                 <strong>{item.name}</strong> — ${item.price.toFixed(2)}
                 <br />
