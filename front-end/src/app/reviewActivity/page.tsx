@@ -1,22 +1,18 @@
 'use client'
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-import { getUserFromCookie } from "@/utils/getUserFromCookie"
+import { requireAuth, S3_URL } from "@/utils/auth"
 
 export default function ReviewActivity() {
   const router = useRouter()
   const [email, setEmail] = useState<string | null>(null)
 
   useEffect(() => {
-    const user = getUserFromCookie()
-
-    if (!user) {
-      router.push("/login")
-      return
-    }
-
-    setEmail(user.email)
-  }, [])
+      const userEmail = requireAuth();
+      if (userEmail) setEmail(userEmail);
+      else {window.location.href = `${S3_URL}`;
+        return;}
+    }, []);
 
   return (
     <div>

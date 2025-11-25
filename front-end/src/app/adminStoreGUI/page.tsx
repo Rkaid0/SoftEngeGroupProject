@@ -16,7 +16,7 @@ export default function UserStoreGUI() {
 
     // Not admin → send to user dashboard
     if (userEmail !== "johnsshops3733@gmail.com") {
-      window.location.href = `${S3_URL}/userDashboard/index.html`;
+      window.location.href = `${S3_URL}/userDashboard/`;
       return;
     }
 

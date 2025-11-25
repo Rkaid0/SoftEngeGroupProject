@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from "react";
-import { requireAuth, LOGOUT_URL, S3_URL, LOGOUT } from "@/utils/auth";
+import { requireAuth, S3_URL, LOGOUT } from "@/utils/auth";
 
 export default function UserDashboard() {
   const [email, setEmail] = useState<string | null>(null);

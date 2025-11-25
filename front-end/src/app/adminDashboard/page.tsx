@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from "react";
-import { requireAuth, LOGOUT_URL, S3_URL } from "@/utils/auth";
+import { LOGOUT, requireAuth, S3_URL } from "@/utils/auth";
 
 const ADMIN_EMAIL = "johnsshops3733@gmail.com";
 
@@ -9,9 +9,9 @@ export default function AdminDashboard() {
   const [email, setEmail] = useState<string | null>(null);
 
   useEffect(() => {
-    const userEmail = requireAuth();   // redirect to Cognito if not logged in
+    const userEmail = requireAuth();
 
-    if (!userEmail) return; // requireAuth() already redirected
+    if (!userEmail) window.location.href = `${S3_URL}`;
 
     if (userEmail !== ADMIN_EMAIL) {
       // Not an admin → send to user dashboard
@@ -32,7 +32,7 @@ export default function AdminDashboard() {
         Store GUI
       </button>
 
-      <button onClick={() => window.location.href = LOGOUT_URL}>
+      <button onClick={LOGOUT}>
         Log Out
       </button>
     </div>

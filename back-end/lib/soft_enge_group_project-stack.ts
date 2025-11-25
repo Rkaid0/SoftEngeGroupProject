@@ -62,6 +62,13 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
       handler: "handler",
     });
 
+    //  CALLBACK LAMBDA (/api/callback)
+    const logoutLambda = new NodejsFunction(this, "LogoutLambda", {
+      runtime: Runtime.NODEJS_20_X,
+      entry: path.join(__dirname, "../lambda/logout.ts"),
+      handler: "handler",
+    });
+
     // 1. Import existing VPC where RDS lives
     const vpc = ec2.Vpc.fromLookup(this, "ExistingVpc", {
       vpcId: "vpc-0f904a9de1410f955",
@@ -131,10 +138,17 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
     //  /api/callback ENDPOINT (OAuth callback – NO authorization)
     const apiResource = api.root.addResource("api");
     const callbackResource = apiResource.addResource("callback");
+    const logoutResource = apiResource.addResource("logout");
 
     callbackResource.addMethod(
       "GET",
       new LambdaIntegration(callbackLambda),
+      { authorizationType: AuthorizationType.NONE }
+    );
+
+    logoutResource.addMethod(
+      "GET",
+      new LambdaIntegration(logoutLambda),
       { authorizationType: AuthorizationType.NONE }
     );
 
