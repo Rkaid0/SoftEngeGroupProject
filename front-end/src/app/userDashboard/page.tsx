@@ -1,30 +1,41 @@
-'use client'
-import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
-import { getUserFromCookie } from "@/utils/getUserFromCookie"
+'use client';
+import { useEffect, useState } from "react";
+import { requireAuth, LOGOUT_URL, S3_URL } from "@/utils/auth";
 
 export default function UserDashboard() {
-  const router = useRouter()
-  const [email, setEmail] = useState<string | null>(null)
+  const [email, setEmail] = useState<string | null>(null);
 
   useEffect(() => {
-    const user = getUserFromCookie()
+  const url = new URL(window.location.href);
+  const id = url.searchParams.get("id");
 
-    if (!user) {
-      router.push("/login")
-      return
-    }
+  if (id) {
+    localStorage.setItem("id_token", id);
+  }
 
-    setEmail(user.email)
-  }, [])
+  const token = localStorage.getItem("id_token");
+  if (!token) {
+    router.push("/login");
+    return;
+  }
+
+  const decoded = JSON.parse(atob(token.split(".")[1]));
+  setEmail(decoded.email);
+}, []);
+
+
   return (
     <div>
       <h1>Dashboard</h1>
-      {email && <p>Signed in as: <strong>{email}</strong></p>}
-      <button onClick={() => router.push("/reviewActivity")}>Review Activity</button>
-      <button onClick={() => router.push("/reviewHistory")}>Review History</button>
-      <button onClick={() => router.push("/userStoreGUI")}>Store GUI</button>
-      <button onClick={() => router.push("/api/logout")}>Log Out</button>
+
+      {email && (
+        <p>Signed in as: <strong>{email}</strong></p>
+      )}
+
+      <button onClick={() => window.location.href = `${S3_URL}/reviewActivity`}>Review Activity</button>
+      <button onClick={() => window.location.href = `${S3_URL}/reviewHistory`}>Review History</button>
+      <button onClick={() => window.location.href = `${S3_URL}/userStoreGUI`}>Store GUI</button>
+      <button onClick={() => window.location.href = LOGOUT_URL}>Log Out</button>
     </div>
-  )
+  );
 }
