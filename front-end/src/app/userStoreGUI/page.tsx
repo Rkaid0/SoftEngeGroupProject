@@ -1,23 +1,18 @@
 'use client'
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-import { getUserFromCookie } from "@/utils/getUserFromCookie"
-import { requireAuth, LOGOUT_URL, S3_URL, LOGOUT } from "@/utils/auth";
+import { requireAuth, S3_URL, LOGOUT } from "@/utils/auth";
 
 export default function UserStoreGUI() {
   const router = useRouter()
   const [email, setEmail] = useState<string | null>(null)
 
   useEffect(() => {
-    const user = getUserFromCookie()
-
-    if (!user) {
-      router.push("/login")
-      return
-    }
-
-    setEmail(user.email)
-  }, [])
+    const userEmail = requireAuth();
+    if (userEmail) setEmail(userEmail);
+    else {window.location.href = `${S3_URL}`;
+      return;}
+  }, []);
 
   return (
     <div>

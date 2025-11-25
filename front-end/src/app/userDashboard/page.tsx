@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from "react";
-import { requireAuth, LOGOUT_URL, S3_URL, LOGOUT } from "@/utils/auth";
+import { requireAuth, S3_URL, LOGOUT } from "@/utils/auth";
 
 export default function UserDashboard() {
   const [email, setEmail] = useState<string | null>(null);
@@ -15,8 +15,10 @@ export default function UserDashboard() {
     { id: number; name: string; price: number; category: string }[]>([])
 
   useEffect(() => {
-    const userEmail = requireAuth()
-    if (userEmail) setEmail(userEmail)
+    const userEmail = requireAuth();
+    if (userEmail) setEmail(userEmail);
+    else {window.location.href = `${S3_URL}`;
+      return;}
   }, []);
   const handleCreateReceipt = () => {
     if (name.trim() === "" || store.trim() === "") return
@@ -100,6 +102,7 @@ export default function UserDashboard() {
           ))}
         </div>
       ))}
+      <button onClick={LOGOUT}>Log Out</button>
     </div>
   );
 }
