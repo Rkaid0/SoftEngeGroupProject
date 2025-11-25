@@ -1,17 +1,28 @@
 'use client';
+import { CLIENT_ID } from "@/utils/auth";
 import styles from "./page.module.css";
-import { useRouter } from "next/navigation"
 
 export default function Home() {
   const handleLogin = () => {
-    // Let the backend handle state, scopes, URL encoding, etc.
-    window.location.href = "/api/login";
+    const clientId = CLIENT_ID;
+    const domain = "shopapp.auth.us-east-1.amazoncognito.com";
+    const redirectUri = encodeURIComponent(
+      "https://gic7c5dyqj.execute-api.us-east-1.amazonaws.com/prod/api/callback"
+    );
+
+    const loginUrl =
+      `https://${domain}/login` +
+      `?client_id=${clientId}` +
+      `&response_type=code` +
+      `&scope=openid+email+profile` +
+      `&redirect_uri=${redirectUri}`;
+
+    window.location.href = loginUrl;
   };
-  const router = useRouter();
 
   return (
     <div className={styles.page}>
-      <button onClick={() => handleLogin()}>Login to Johns Shops</button>
+      <button onClick={handleLogin}>Login to Johns Shops</button>
     </div>
-  )
+  );
 }

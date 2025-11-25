@@ -1,34 +1,40 @@
-'use client'
-import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
-import { getUserFromCookie } from "@/utils/getUserFromCookie"
+'use client';
+
+import { useEffect, useState } from "react";
+import { requireAuth, LOGOUT_URL, S3_URL } from "@/utils/auth";
+
+const ADMIN_EMAIL = "johnsshops3733@gmail.com";
 
 export default function AdminDashboard() {
-  const router = useRouter()
-  const [email, setEmail] = useState<string | null>(null)
+  const [email, setEmail] = useState<string | null>(null);
 
   useEffect(() => {
-    const user = getUserFromCookie()
+    const userEmail = requireAuth();   // redirect to Cognito if not logged in
 
-    if (!user) {
-      router.push("/login")
-      return
+    if (!userEmail) return; // requireAuth() already redirected
+
+    if (userEmail !== ADMIN_EMAIL) {
+      // Not an admin → send to user dashboard
+      window.location.href = `${S3_URL}/userDashboard`;
+      return;
     }
 
-    if (user.email !== "johnsshops3733@gmail.com") {
-      router.push("/userDashboard")
-      return
-    }
-
-    setEmail(user.email)
-  }, [])
+    setEmail(userEmail);
+  }, []);
 
   return (
     <div>
       <h1>Dashboard</h1>
       {email && <p>Signed in as: <strong>{email}</strong></p>}
-      <button onClick={() => router.push("/adminStoreGUI")}>Store GUI</button>
-      <button onClick={() => router.push("/api/logout")}>Log Out</button>
+
+      {/* Buttons (HTML unchanged) */}
+      <button onClick={() => window.location.href = `${S3_URL}/adminStoreGUI`}>
+        Store GUI
+      </button>
+
+      <button onClick={() => window.location.href = LOGOUT_URL}>
+        Log Out
+      </button>
     </div>
-  )
+  );
 }

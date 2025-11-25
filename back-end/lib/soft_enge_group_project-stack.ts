@@ -4,41 +4,26 @@ import { Code, Runtime, Function } from 'aws-cdk-lib/aws-lambda';
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
+import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import * as apigateway from 'aws-cdk-lib/aws-apigateway';
 import * as path from 'path';
+import { BlockPublicAccess, Bucket } from "aws-cdk-lib/aws-s3";
+import { BucketDeployment, Source } from "aws-cdk-lib/aws-s3-deployment";
+import { RemovalPolicy } from "aws-cdk-lib";
 
 export class SoftEngeGroupProjectStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
-
-    const nodeLambda = new NodejsFunction(this, 'NodeLambda', {
-      runtime: lambda.Runtime.NODEJS_18_X,
-      entry: path.join(__dirname, '../lambda/test_handler.ts'),
-      handler: 'test_handler',
-      bundling: {
-        forceDockerBundling: false,
-      }
-    });
-
-    // Define the Cognito User Pool
-    const userPool = new UserPool(
+    
+    //  COGNITO USER POOL
+    const userPool = UserPool.fromUserPoolId(
       this,
-      'UserPool',
-      {
-        userPoolName: 'soft-enge-user-pool',
-        selfSignUpEnabled: true,
-        signInAliases: {
-          email: true
-        },
-        autoVerify: {
-          email: true
-        },
-        removalPolicy: cdk.RemovalPolicy.DESTROY
-      }
-    )
+      "ImportedUserPool",
+      "us-east-1_40SpM0Fc9"
+    );
 
-    // Define the Cognito User Pool Client
+    //  COGNITO USER POOL CLIENT
     const userPoolClient = new UserPoolClient(
       this,
       'UserPoolClient',
@@ -51,30 +36,75 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
       }
     )
 
-    // Output the User Pool Client ID
-    new cdk.CfnOutput(
-      this,
-      'UserPoolClientID',
-      {
-        value: userPoolClient.userPoolClientId
-      }
-    )
+    // LAMBDA FUNCTIONS
 
-    // Define the Lambda function
-    const myFunction = new Function(this, 'MyFunction', {
+    //  NORMAL LAMBDA FUNCTION (Cognito-protected "hello" endpoint)
+    const myFunction = new NodejsFunction(this, "HelloLambda", {
       runtime: Runtime.NODEJS_20_X,
-      handler: 'index.handler',
-      code: Code.fromInline(`
-        exports.handler = async function(event) {
-          console.log('request:', JSON.stringify(event, undefined, 2));
-          return {
-            statusCode: 200,
-            headers: { 'Content-Type': 'text/plain' },
-            body: \`Hello, \${event.requestContext.authorizer.claims['email']}!\`,
-          };
-        };
-      `),
+      entry: path.join(__dirname, "../lambda/hello.ts"),
+      handler: "handler",
     });
+
+    //  LAMBDA (TEST HANDLER)
+    const nodeLambda = new NodejsFunction(this, 'NodeLambda', {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      entry: path.join(__dirname, '../lambda/test_handler.ts'),
+      handler: 'test_handler',
+      bundling: {
+        forceDockerBundling: false,
+      }
+    });
+
+    //  CALLBACK LAMBDA (/api/callback)
+    const callbackLambda = new NodejsFunction(this, "CallbackLambda", {
+      runtime: Runtime.NODEJS_20_X,
+      entry: path.join(__dirname, "../lambda/callback.ts"),
+      handler: "handler",
+    });
+
+    // 1. Import existing VPC where RDS lives
+    const vpc = ec2.Vpc.fromLookup(this, "ExistingVpc", {
+      vpcId: "vpc-0f904a9de1410f955",
+    });
+
+    // 2. Import the RDS security group
+    const rdsSG = ec2.SecurityGroup.fromSecurityGroupId(
+      this,
+      "RdsSG",
+      "sg-05ec573547ce1cd4a"
+    );
+
+    // 3. Create a security group for Lambda
+    const lambdaSG = new ec2.SecurityGroup(this, "LambdaSG", {
+      vpc,
+      allowAllOutbound: true,
+    });
+
+    // 4. Allow Lambda → RDS (MySQL on port 3306)
+    rdsSG.addIngressRule(
+      lambdaSG,
+      ec2.Port.tcp(3306),
+      "Allow Lambda to access RDS MySQL"
+    );
+
+    const createStoreChainFunction = new NodejsFunction(this, 'CreateStoreChain', {
+      runtime: lambda.Runtime.NODEJS_20_X,
+      entry: path.join(__dirname, '../lambda/create_store_chain.ts'),
+      handler: 'createStoreChain',
+      bundling: {
+        externalModules: [],
+        nodeModules: ["mysql2"],
+      },
+      vpc,
+      securityGroups: [lambdaSG], 
+      vpcSubnets: {
+        subnetType: ec2.SubnetType.PUBLIC
+      },
+      allowPublicSubnet: true
+    });
+
+    // db password
+    createStoreChainFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!);
 
     // Define the API Gateway
     const api = new RestApi(this, 'ApiEndpoint', {
@@ -82,15 +112,72 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
       description: 'This service serves as an example.',
     });
 
-    // Create a Cognito authorizer
+    //  COGNITO AUTHORIZER (used for /hello)
     const authorizer = new CognitoUserPoolsAuthorizer(this, 'MyAuthorizer', {
       cognitoUserPools: [userPool],
     });
 
-    // Create an endpoint
+    //  /hello ENDPOINT (Cognito protected)
     const lambdaIntegration = new LambdaIntegration(myFunction);
+    const createStoreChainIntegration = new LambdaIntegration(createStoreChainFunction);
     const resource = api.root.addResource('hello');
+    const createStoreChainResource = api.root.addResource('createStoreChain');
+    
     resource.addMethod('GET', lambdaIntegration, {
+      authorizer,
+      authorizationType: AuthorizationType.COGNITO,
+    });
+
+    //  /api/callback ENDPOINT (OAuth callback – NO authorization)
+    const apiResource = api.root.addResource("api");
+    const callbackResource = apiResource.addResource("callback");
+
+    callbackResource.addMethod(
+      "GET",
+      new LambdaIntegration(callbackLambda),
+      { authorizationType: AuthorizationType.NONE }
+    );
+
+    //  S3 STATIC WEBSITE BUCKET
+    const websiteBucket = new Bucket(this, "StaticWebsiteBucket", {
+      bucketName: "soft-enge-static-website-bucket",
+      websiteIndexDocument: "index.html",
+      websiteErrorDocument: "404.html",
+      publicReadAccess: true,
+      blockPublicAccess: new BlockPublicAccess({
+        blockPublicAcls: false,
+        ignorePublicAcls: false,
+        blockPublicPolicy: false,
+        restrictPublicBuckets: false,
+      }),
+      removalPolicy: RemovalPolicy.DESTROY,
+      autoDeleteObjects: true,
+    });
+
+    //Deploy static website to S3 
+    new BucketDeployment(this, "DeployWebsite", {
+      sources: [Source.asset("../front-end/out")],  // adjust if needed
+      destinationBucket: websiteBucket,
+    });
+
+    //OUTPUTS
+    new cdk.CfnOutput(this, "WebsiteURL", {
+      value: websiteBucket.bucketWebsiteUrl,
+    });
+
+    new cdk.CfnOutput(this, "CallbackUrl", {
+      value: `${api.url}api/callback`,
+    });
+
+    new cdk.CfnOutput(
+      this,
+      'UserPoolClientID',
+      {
+        value: userPoolClient.userPoolClientId
+      }
+    )
+    
+    createStoreChainResource.addMethod('POST', createStoreChainIntegration, {
       authorizer,
       authorizationType: AuthorizationType.COGNITO,
     });
