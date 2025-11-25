@@ -26,40 +26,34 @@ export function decodeJwt(token: string) {
 }
 
 // -----------------------------------------------------------
-// Read email from the "cognito_id_token" cookie
-// Returns null if not logged in
-// -----------------------------------------------------------
-export function getUserEmailFromCookie(): string | null {
-  const cookies = document.cookie.split(";").map(c => c.trim());
-  const idTokenCookie = cookies.find(c => c.startsWith("cognito_id_token="));
-
-  if (!idTokenCookie) return null;
-
-  const token = idTokenCookie.replace("cognito_id_token=", "");
-  const decoded = decodeJwt(token);
-
-  return decoded?.email ?? null;
-}
-
-// -----------------------------------------------------------
 // Redirect user to Cognito Hosted UI login if not authenticated
 // Returns the email if logged in
 // -----------------------------------------------------------
 export function requireAuth() {
-  // 1. Try reading token from URL
   const url = new URL(window.location.href);
-  const tokenFromUrl = url.searchParams.get("id");
 
-  if (tokenFromUrl) {
-    localStorage.setItem("id_token", tokenFromUrl);
-    return decodeEmail(tokenFromUrl);
+  // Check for tokens in URL
+  const idToken = url.searchParams.get("id");
+  const accessToken = url.searchParams.get("access");
+
+  if (idToken) {
+    localStorage.setItem("id_token", idToken);
+  }
+  if (accessToken) {
+    localStorage.setItem("access_token", accessToken);
   }
 
-  // 2. Fallback to token stored previously
+  // Remove query params from URL after storing
+  if (idToken || accessToken) {
+    window.history.replaceState({}, "", window.location.pathname);
+  }
+
+  // Fallback to stored token
   const token = localStorage.getItem("id_token");
   if (!token) return null;
 
-  return decodeEmail(token);
+  const payload = JSON.parse(atob(token.split(".")[1]));
+  return payload.email || null;
 }
 
 function decodeEmail(token: string) {

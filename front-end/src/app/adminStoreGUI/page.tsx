@@ -10,7 +10,7 @@ export default function UserStoreGUI() {
 
     // Not logged in → send to login page (static file)
     if (!userEmail) {
-      window.location.href = `${S3_URL}/login.html`;
+      window.location.href = `${S3_URL}`;
       return;
     }
 

@@ -8,6 +8,8 @@ export default function UserDashboard() {
   useEffect(() => {
     const userEmail = requireAuth();
     if (userEmail) setEmail(userEmail);
+    else {window.location.href = `${S3_URL}`;
+      return;}
   }, []);
 
   return (
@@ -21,7 +23,7 @@ export default function UserDashboard() {
       <button onClick={() => window.location.href = `${S3_URL}/reviewActivity`}>Review Activity</button>
       <button onClick={() => window.location.href = `${S3_URL}/reviewHistory`}>Review History</button>
       <button onClick={() => window.location.href = `${S3_URL}/userStoreGUI`}>Store GUI</button>
-      <button onClick={() => LOGOUT}>Log Out</button>
+      <button onClick={LOGOUT}>Log Out</button>
     </div>
   );
 }
