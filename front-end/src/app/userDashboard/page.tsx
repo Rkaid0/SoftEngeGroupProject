@@ -1,15 +1,27 @@
-'use client'
-import { useRouter } from "next/navigation"
+'use client';
+import { useEffect, useState } from "react";
+import { requireAuth, LOGOUT_URL, S3_URL, LOGOUT } from "@/utils/auth";
 
 export default function UserDashboard() {
-  const router = useRouter()
+  const [email, setEmail] = useState<string | null>(null);
+
+  useEffect(() => {
+    const userEmail = requireAuth();
+    if (userEmail) setEmail(userEmail);
+  }, []);
 
   return (
     <div>
-      <h1>User Dashboard</h1>
-      <button onClick={() => router.push("/reviewActivity")}>Review Activity</button>
-      <button onClick={() => router.push("/reviewHistory")}>Review History</button>
-      <button onClick={() => router.push("/userStoreGUI")}>Store GUI</button>
+      <h1>Dashboard</h1>
+
+      {email && (
+        <p>Signed in as: <strong>{email}</strong></p>
+      )}
+
+      <button onClick={() => window.location.href = `${S3_URL}/reviewActivity`}>Review Activity</button>
+      <button onClick={() => window.location.href = `${S3_URL}/reviewHistory`}>Review History</button>
+      <button onClick={() => window.location.href = `${S3_URL}/userStoreGUI`}>Store GUI</button>
+      <button onClick={() => LOGOUT}>Log Out</button>
     </div>
-  )
+  );
 }

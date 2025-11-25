@@ -1,36 +1,28 @@
-'use client'
-import Image from "next/image";
+'use client';
+import { CLIENT_ID } from "@/utils/auth";
 import styles from "./page.module.css";
-import { useRouter } from "next/navigation"
-
-const domain = process.env.NEXT_PUBLIC_COGNITO_DOMAIN!;
-const clientId = process.env.NEXT_PUBLIC_COGNITO_CLIENT_ID!;
-const redirectUri = process.env.NEXT_PUBLIC_COGNITO_REDIRECT_URI!;
 
 export default function Home() {
   const handleLogin = () => {
-    const url = new URL(`https://${domain}/oauth2/authorize`);
-    url.searchParams.set('client_id', clientId);
-    url.searchParams.set('response_type', 'code');
-    url.searchParams.set('scope', 'email openid phone');
-    url.searchParams.set('redirect_uri', redirectUri);
+    const clientId = CLIENT_ID;
+    const domain = "shopapp.auth.us-east-1.amazoncognito.com";
+    const redirectUri = encodeURIComponent(
+      "https://gic7c5dyqj.execute-api.us-east-1.amazonaws.com/prod/api/callback"
+    );
 
-    window.location.href = url.toString();
+    const loginUrl =
+      `https://${domain}/login` +
+      `?client_id=${clientId}` +
+      `&response_type=code` +
+      `&scope=openid+email+profile` +
+      `&redirect_uri=${redirectUri}`;
+
+    window.location.href = loginUrl;
   };
-  const router = useRouter();
 
   return (
     <div className={styles.page}>
-      <button onClick={() => handleLogin()}>Login with Cognito</button>
-        <h3>test</h3>
-
-      <button onClick={() => router.push("/userDashboard")}>
-        Go to User Dashboard
-      </button>
-
-      <button onClick={() => router.push("/adminDashboard")}>
-        Go to Admin Dashboard
-      </button>
+      <button onClick={handleLogin}>Login to Johns Shops</button>
     </div>
-  )
+  );
 }
