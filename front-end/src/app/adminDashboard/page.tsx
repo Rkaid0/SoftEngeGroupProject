@@ -27,7 +27,6 @@ export default function AdminDashboard() {
       <h1>Dashboard</h1>
       {email && <p>Signed in as: <strong>{email}</strong></p>}
 
-      {/* Buttons (HTML unchanged) */}
       <button onClick={() => window.location.href = `${S3_URL}/adminStoreGUI`}>
         Store GUI
       </button>
