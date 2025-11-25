@@ -1,6 +1,6 @@
 // --- Cognito / API / S3 CONFIG ---
 export const COGNITO_DOMAIN = "https://shopapp.auth.us-east-1.amazoncognito.com";
-export const CLIENT_ID = "fsft16o7kkjtpl7a08ubo94ih";
+export const CLIENT_ID = "2quljq2c45e8jk4k90ee14irv8";
 export const REDIRECT_URI = "https://gic7c5dyqj.execute-api.us-east-1.amazonaws.com/prod/api/callback";
 export const S3_URL = "http://soft-enge-static-website-bucket.s3-website-us-east-1.amazonaws.com";
 
@@ -45,11 +45,36 @@ export function getUserEmailFromCookie(): string | null {
 // Redirect user to Cognito Hosted UI login if not authenticated
 // Returns the email if logged in
 // -----------------------------------------------------------
-export function requireAuth(): string | null {
-  const email = getUserEmailFromCookie();
-  if (!email) {
-    window.location.href = LOGIN_URL;
+export function requireAuth() {
+  // 1. Try reading token from URL
+  const url = new URL(window.location.href);
+  const tokenFromUrl = url.searchParams.get("id");
+
+  if (tokenFromUrl) {
+    localStorage.setItem("id_token", tokenFromUrl);
+    return decodeEmail(tokenFromUrl);
+  }
+
+  // 2. Fallback to token stored previously
+  const token = localStorage.getItem("id_token");
+  if (!token) return null;
+
+  return decodeEmail(token);
+}
+
+function decodeEmail(token: string) {
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    return payload.email || null;
+  } catch {
     return null;
   }
-  return email;
+}
+
+export function LOGOUT() {
+  localStorage.removeItem("id_token");
+
+  window.location.href =
+    `${COGNITO_DOMAIN}/logout?client_id=${CLIENT_ID}` +
+    `&logout_uri=${S3_URL}`;
 }

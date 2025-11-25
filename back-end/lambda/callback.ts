@@ -3,7 +3,7 @@ const https = require("https");
 
 // ---------- CONFIG ----------
 const COGNITO_DOMAIN = "https://shopapp.auth.us-east-1.amazoncognito.com";
-const CLIENT_ID = "fsft16o7kkjtpl7a08ubo94ih";
+const CLIENT_ID = "2quljq2c45e8jk4k90ee14irv8";
 
 const REDIRECT_URI =
   "https://gic7c5dyqj.execute-api.us-east-1.amazonaws.com/prod/api/callback";
@@ -80,10 +80,13 @@ exports.handler = async (event) => {
 
   const redirectUrl =
     email === "johnsshops3733@gmail.com"
-      ? `${S3_WEBSITE_URL}/adminDashboard`
-      : `${S3_WEBSITE_URL}/userDashboard`;
+      ? `${S3_WEBSITE_URL}/adminDashboard?id=${tokenResponse.id_token}`
+      : `${S3_WEBSITE_URL}/userDashboard?id=${tokenResponse.id_token}`;
 
-  // --- Cookies ---
+  // --- Cookies --- 
+  //Had to stop using this b/c cookies are not stored across domains
+  //As seen above, the token is now passed via URL
+  /*
   const cookies = [];
 
   if (tokenResponse.access_token) {
@@ -97,13 +100,12 @@ exports.handler = async (event) => {
       `cognito_id_token=${tokenResponse.id_token}; Path=/; Secure; SameSite=Lax`
     );
   }
-
+  */
   // --- Redirect to S3 site ---
   return {
     statusCode: 302,
     headers: {
       Location: redirectUrl,
-      "Set-Cookie": cookies.join(", "),   // ← FIXED HERE
     },
   };
 };
