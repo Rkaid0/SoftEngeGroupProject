@@ -4,6 +4,7 @@ import { Code, Runtime, Function } from 'aws-cdk-lib/aws-lambda';
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
+import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import * as apigateway from 'aws-cdk-lib/aws-apigateway';
 import * as path from 'path';
@@ -61,7 +62,51 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
       handler: "handler",
     });
 
-    //  API GATEWAY SETUP
+    // 1. Import existing VPC where RDS lives
+    const vpc = ec2.Vpc.fromLookup(this, "ExistingVpc", {
+      vpcId: "vpc-0f904a9de1410f955",
+    });
+
+    // 2. Import the RDS security group
+    const rdsSG = ec2.SecurityGroup.fromSecurityGroupId(
+      this,
+      "RdsSG",
+      "sg-05ec573547ce1cd4a"
+    );
+
+    // 3. Create a security group for Lambda
+    const lambdaSG = new ec2.SecurityGroup(this, "LambdaSG", {
+      vpc,
+      allowAllOutbound: true,
+    });
+
+    // 4. Allow Lambda → RDS (MySQL on port 3306)
+    rdsSG.addIngressRule(
+      lambdaSG,
+      ec2.Port.tcp(3306),
+      "Allow Lambda to access RDS MySQL"
+    );
+
+    const createStoreChainFunction = new NodejsFunction(this, 'CreateStoreChain', {
+      runtime: lambda.Runtime.NODEJS_20_X,
+      entry: path.join(__dirname, '../lambda/create_store_chain.ts'),
+      handler: 'createStoreChain',
+      bundling: {
+        externalModules: [],
+        nodeModules: ["mysql2"],
+      },
+      vpc,
+      securityGroups: [lambdaSG], 
+      vpcSubnets: {
+        subnetType: ec2.SubnetType.PUBLIC
+      },
+      allowPublicSubnet: true
+    });
+
+    // db password
+    createStoreChainFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!);
+
+    // Define the API Gateway
     const api = new RestApi(this, 'ApiEndpoint', {
       restApiName: 'My Service',
       description: 'This service serves as an example.',
@@ -74,7 +119,10 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
 
     //  /hello ENDPOINT (Cognito protected)
     const lambdaIntegration = new LambdaIntegration(myFunction);
+    const createStoreChainIntegration = new LambdaIntegration(createStoreChainFunction);
     const resource = api.root.addResource('hello');
+    const createStoreChainResource = api.root.addResource('createStoreChain');
+    
     resource.addMethod('GET', lambdaIntegration, {
       authorizer,
       authorizationType: AuthorizationType.COGNITO,
@@ -128,5 +176,10 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
         value: userPoolClient.userPoolClientId
       }
     )
+    
+    createStoreChainResource.addMethod('POST', createStoreChainIntegration, {
+      authorizer,
+      authorizationType: AuthorizationType.COGNITO,
+    });
   }
 }
