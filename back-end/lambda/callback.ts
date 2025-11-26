@@ -43,8 +43,6 @@ exports.handler = async (event) => {
   console.log("Callback invoked:", JSON.stringify(event));
 
   // --- Build request URL ---
-  const host = event.headers?.Host || event.headers?.host;
-  const path = event.path;
   const queryParams = event.queryStringParameters || {};
   const code = queryParams.code;
 
@@ -67,7 +65,7 @@ exports.handler = async (event) => {
 
   console.log("Token response:", tokenResponse);
 
-  if (!tokenResponse.id_token) {
+  if (!tokenResponse.id_token || !tokenResponse.access_token) {
     console.error("Token exchange failed:", tokenResponse);
     return { statusCode: 500, body: "Token exchange failed" };
   }
@@ -78,29 +76,12 @@ exports.handler = async (event) => {
 
   console.log("User email:", email);
 
+  // --- Redirect to correct S3 folder including BOTH tokens ---
   const redirectUrl =
     email === "johnsshops3733@gmail.com"
-      ? `${S3_WEBSITE_URL}/adminDashboard?id=${tokenResponse.id_token}`
-      : `${S3_WEBSITE_URL}/userDashboard?id=${tokenResponse.id_token}`;
+      ? `${S3_WEBSITE_URL}/adminDashboard/?id=${tokenResponse.id_token}&access=${tokenResponse.access_token}`
+      : `${S3_WEBSITE_URL}/userDashboard/?id=${tokenResponse.id_token}&access=${tokenResponse.access_token}`;
 
-  // --- Cookies --- 
-  //Had to stop using this b/c cookies are not stored across domains
-  //As seen above, the token is now passed via URL
-  /*
-  const cookies = [];
-
-  if (tokenResponse.access_token) {
-    cookies.push(
-      `cognito_access_token=${tokenResponse.access_token}; HttpOnly; Path=/; Secure; SameSite=Lax`
-    );
-  }
-
-  if (tokenResponse.id_token) {
-    cookies.push(
-      `cognito_id_token=${tokenResponse.id_token}; Path=/; Secure; SameSite=Lax`
-    );
-  }
-  */
   // --- Redirect to S3 site ---
   return {
     statusCode: 302,

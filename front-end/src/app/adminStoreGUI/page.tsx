@@ -10,13 +10,13 @@ export default function UserStoreGUI() {
 
     // Not logged in → send to login page (static file)
     if (!userEmail) {
-      window.location.href = `${S3_URL}/login.html`;
+      window.location.href = `${S3_URL}`;
       return;
     }
 
     // Not admin → send to user dashboard
     if (userEmail !== "johnsshops3733@gmail.com") {
-      window.location.href = `${S3_URL}/userDashboard/index.html`;
+      window.location.href = `${S3_URL}/userDashboard/`;
       return;
     }
 
