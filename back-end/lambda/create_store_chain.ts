@@ -1,5 +1,5 @@
 import mysql from "mysql2/promise";
-import { getConnection } from "./helpers/getDBConnection"; //getDbConnection.ts
+import { getConnection } from "./helpers/getDbConnection"; // filename is getDbConnection.ts
 
 let AddChainDB = async (connection: mysql.Connection, name: string): Promise<mysql.ResultSetHeader> => {
   const [rows] = await connection.execute<mysql.ResultSetHeader>(
