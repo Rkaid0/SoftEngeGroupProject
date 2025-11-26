@@ -20,6 +20,7 @@ export default function UserDashboard() {
     else {window.location.href = `${S3_URL}`;
       return;}
   }, []);
+
   const handleCreateReceipt = () => {
     if (name.trim() === "" || store.trim() === "") return
 
@@ -35,6 +36,7 @@ export default function UserDashboard() {
     setStore("")
     setCurrentItems([])
   }
+
   const handleAddItem = () => {
     if (!itemName.trim() || itemPrice === "" || !itemCategory.trim()) return
 
@@ -51,9 +53,11 @@ export default function UserDashboard() {
     setItemPrice("")
     setItemCategory("")
   }
+
   const handleDeleteReceipt = (id: number) => {
     setReceipts(prev => prev.filter(r => r.id !== id))
   }
+  
   return (
     <div>
       <h1>Dashboard</h1>
