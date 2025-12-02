@@ -110,8 +110,25 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
       allowPublicSubnet: true
     });
 
+    const addStoreFunction = new NodejsFunction(this, 'AddStore', {
+      runtime: lambda.Runtime.NODEJS_20_X,
+      entry: path.join(__dirname, '../lambda/add_store.ts'),
+      handler: 'addStore',
+      bundling: {
+        externalModules: [],
+        nodeModules: ["mysql2"],
+      },
+      vpc,
+      securityGroups: [lambdaSG], 
+      vpcSubnets: {
+        subnetType: ec2.SubnetType.PUBLIC
+      },
+      allowPublicSubnet: true
+    });
+
     // db password
     createStoreChainFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!);
+    addStoreFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!);
 
     // Define the API Gateway
     const api = new RestApi(this, 'ApiEndpoint', {
@@ -127,8 +144,10 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
     //  /hello ENDPOINT (Cognito protected)
     const lambdaIntegration = new LambdaIntegration(myFunction);
     const createStoreChainIntegration = new LambdaIntegration(createStoreChainFunction);
+    const addStoreIntegration = new LambdaIntegration(addStoreFunction);
     const resource = api.root.addResource('hello');
     const createStoreChainResource = api.root.addResource('createStoreChain');
+    const addStoreResource = api.root.addResource('addStore');
     
     resource.addMethod('GET', lambdaIntegration, {
       authorizer,
@@ -192,6 +211,11 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
     )
     
     createStoreChainResource.addMethod('POST', createStoreChainIntegration, {
+      authorizer,
+      authorizationType: AuthorizationType.COGNITO,
+    });
+
+    addStoreResource.addMethod('POST', addStoreIntegration, {
       authorizer,
       authorizationType: AuthorizationType.COGNITO,
     });
