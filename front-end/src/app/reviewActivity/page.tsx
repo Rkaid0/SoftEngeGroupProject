@@ -1,7 +1,7 @@
 'use client'
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-import { requireAuth, S3_URL } from "@/utils/auth"
+import { detectLocal, requireAuth, S3_URL } from "@/utils/auth"
 
 export default function ReviewActivity() {
   const router = useRouter()
@@ -10,7 +10,7 @@ export default function ReviewActivity() {
   useEffect(() => {
       const userEmail = requireAuth();
       if (userEmail) setEmail(userEmail);
-      else {window.location.href = `${S3_URL}`;
+      else if (detectLocal() == false) {window.location.href = `${S3_URL}`;
         return;}
     }, []);
 
