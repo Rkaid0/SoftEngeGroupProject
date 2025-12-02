@@ -93,7 +93,7 @@ export default function UserDashboard() {
       <button onClick={() => window.location.href = `${S3_URL}/reviewActivity`}>Review Activity</button>
       <button onClick={() => window.location.href = `${S3_URL}/reviewHistory`}>Review History</button>
       <button onClick={() => window.location.href = `${S3_URL}/userStoreGUI`}>Store GUI</button>
-      <button onClick={() => LOGOUT}>Log Out</button>
+      <button onClick={LOGOUT}>Log Out</button>
       <hr />
       <h2>Create Receipt</h2>
       <input type="text" placeholder="Name" value={name} onChange={e => setName(e.target.value)}/>
@@ -146,7 +146,6 @@ export default function UserDashboard() {
           ))}
         </div>
       ))}
-      <button onClick={LOGOUT}>Log Out</button>
     </div>
   );
 }

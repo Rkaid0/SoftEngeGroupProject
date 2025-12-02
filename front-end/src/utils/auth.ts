@@ -1,8 +1,8 @@
 // --- Cognito / API / S3 CONFIG ---
 export const COGNITO_DOMAIN = "https://shopapp.auth.us-east-1.amazoncognito.com";
-export const CLIENT_ID = "2quljq2c45e8jk4k90ee14irv8";
-export const REDIRECT_URI = "https://gic7c5dyqj.execute-api.us-east-1.amazonaws.com/prod/api/callback";
-export const LOGOUT_URI = "https://gic7c5dyqj.execute-api.us-east-1.amazonaws.com/prod/api/logout";
+export const CLIENT_ID = "5ba3klhuempramj1bun5g486s3";
+export const REDIRECT_URI = "https://jwbdksbzpg.execute-api.us-east-1.amazonaws.com/prod/api/callback";
+export const LOGOUT_URI = "https://jwbdksbzpg.execute-api.us-east-1.amazonaws.com/prod/api/logout";
 export const S3_URL = "http://soft-enge-static-website-bucket.s3-website-us-east-1.amazonaws.com";
 
 export const LOGIN_URL =
@@ -61,4 +61,8 @@ export function LOGOUT() {
   const logoutUrl = `${COGNITO_DOMAIN}/logout?client_id=${CLIENT_ID}&response_type=code&logout_uri=${encodeURIComponent(LOGOUT_URI)}`;
 
   window.location.href = logoutUrl;
+}
+
+export function detectLocal(){
+  
 }
