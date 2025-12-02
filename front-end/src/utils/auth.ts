@@ -64,5 +64,8 @@ export function LOGOUT() {
 }
 
 export function detectLocal(){
-  
+  const currentUrl = window.location.href;
+  const targetString: string = 'localhost';
+
+  return currentUrl.includes(targetString);
 }

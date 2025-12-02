@@ -1,9 +1,11 @@
 'use client';
 import { useEffect, useState } from "react";
-import { requireAuth, S3_URL, LOGOUT } from "@/utils/auth";
+import { requireAuth, S3_URL, LOGOUT, detectLocal } from "@/utils/auth";
+import { useRouter } from "next/navigation";
 
 export default function UserDashboard() {
   const [email, setEmail] = useState<string | null>(null);
+  const router = useRouter();
   const [name, setName] = useState("")
   const [store, setStore] = useState("")
   const [itemName, setItemName] = useState("")
@@ -21,7 +23,7 @@ export default function UserDashboard() {
   useEffect(() => {
     const userEmail = requireAuth();
     if (userEmail) setEmail(userEmail);
-    else {window.location.href = `${S3_URL}`;
+    else if (detectLocal() == false) {window.location.href = `${S3_URL}`;
       return;}
   }, []);
 
@@ -90,9 +92,9 @@ export default function UserDashboard() {
       {email && (
         <p>Signed in as: <strong>{email}</strong></p>
       )}
-      <button onClick={() => window.location.href = `${S3_URL}/reviewActivity`}>Review Activity</button>
-      <button onClick={() => window.location.href = `${S3_URL}/reviewHistory`}>Review History</button>
-      <button onClick={() => window.location.href = `${S3_URL}/userStoreGUI`}>Store GUI</button>
+      <button onClick={() => router.push("/reviewActivity")}>Review Activity</button>
+      <button onClick={() => router.push("/reviewHistory")}>Review History</button>
+      <button onClick={() => router.push("/userStoreGUI")}>Store GUI</button>
       <button onClick={LOGOUT}>Log Out</button>
       <hr />
       <h2>Create Receipt</h2>

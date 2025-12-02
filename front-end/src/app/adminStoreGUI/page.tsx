@@ -1,12 +1,18 @@
 'use client';
 import { useEffect, useState } from "react";
-import { requireAuth, LOGOUT, S3_URL } from "@/utils/auth";
+import { requireAuth, LOGOUT, S3_URL, detectLocal } from "@/utils/auth";
+import { useRouter } from "next/navigation";
 
 export default function UserStoreGUI() {
   const [email, setEmail] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const userEmail = requireAuth();
+
+    if(detectLocal() == true){
+      return;
+    }
 
     // Not logged in → send to login page (static file)
     if (!userEmail) {
@@ -31,7 +37,7 @@ export default function UserStoreGUI() {
         <p>Admin signed in as: <strong>{email}</strong></p>
       )}
 
-      <button onClick={() => window.location.href = `${S3_URL}/adminDashboard/index.html`}>
+      <button onClick={() => router.push("/adminDashboard")}>
         Back to Dashboard
       </button>
 
