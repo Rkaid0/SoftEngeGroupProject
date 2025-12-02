@@ -3,10 +3,10 @@ const https = require("https");
 
 // ---------- CONFIG ----------
 const COGNITO_DOMAIN = "https://shopapp.auth.us-east-1.amazoncognito.com";
-const CLIENT_ID = "2quljq2c45e8jk4k90ee14irv8";
+const CLIENT_ID = "5ba3klhuempramj1bun5g486s3";
 
 const REDIRECT_URI =
-  "https://gic7c5dyqj.execute-api.us-east-1.amazonaws.com/prod/api/callback";
+  "https://jwbdksbzpg.execute-api.us-east-1.amazonaws.com/prod/api/callback";
 
 const S3_WEBSITE_URL =
   "http://soft-enge-static-website-bucket.s3-website-us-east-1.amazonaws.com";

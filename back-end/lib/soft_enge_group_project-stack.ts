@@ -169,8 +169,9 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
     });
 
     //Deploy static website to S3 
+    const websitePath = path.resolve(__dirname, "../site/out");
     new BucketDeployment(this, "DeployWebsite", {
-      sources: [Source.asset("../front-end/out")],  // adjust if needed
+      sources: [Source.asset(websitePath)],
       destinationBucket: websiteBucket,
     });
 
