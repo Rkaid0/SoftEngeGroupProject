@@ -62,3 +62,7 @@ export function LOGOUT() {
 
   window.location.href = logoutUrl;
 }
+
+export function detectLocal(){
+  
+}
