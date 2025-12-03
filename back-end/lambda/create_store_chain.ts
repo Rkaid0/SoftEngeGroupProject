@@ -46,7 +46,11 @@ export const createStoreChain = async function(event: any) {
   } catch (error: any) {
     return {
       statusCode: 500,
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*", // or your domain
+        "Access-Control-Allow-Credentials": true
+       },
       body: JSON.stringify({
         error: "Server error",
         details: error.message || error,
