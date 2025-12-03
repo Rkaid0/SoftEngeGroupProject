@@ -11,6 +11,13 @@ let AddChainDB = async (connection: mysql.Connection, name: string, url: string,
 };
 
 export const createStoreChain = async function(event: any) {
+  const corsHeaders = {
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers": "*",
+    "Access-Control-Allow-Methods": "*"
+  }
+
   try {
     const body = JSON.parse(event.body || "{}");
 
@@ -20,7 +27,7 @@ export const createStoreChain = async function(event: any) {
     if (!name || !url) {
       return {
         statusCode: 400,
-        headers: { "Content-Type": "application/json" },
+        headers: corsHeaders,
         body: JSON.stringify({ error: "Missing required fields" }),
       };
     }
@@ -36,7 +43,7 @@ export const createStoreChain = async function(event: any) {
 
     return {
       statusCode: 200,
-      headers: { "Content-Type": "application/json" },
+      headers: corsHeaders,
       body: JSON.stringify({
         storeChainID,
         name,
@@ -48,7 +55,7 @@ export const createStoreChain = async function(event: any) {
   } catch (error: any) {
     return {
       statusCode: 500,
-      headers: { "Content-Type": "application/json" },
+      headers: corsHeaders,
       body: JSON.stringify({
         error: "Server error",
         details: error.message || error,
