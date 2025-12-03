@@ -117,18 +117,7 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
     const api = new RestApi(this, 'ApiEndpoint', {
       restApiName: 'My Service',
       description: 'This service serves as an example.',
-      defaultCorsPreflightOptions: {
-        allowOrigins: apigateway.Cors.ALL_ORIGINS,
-        allowMethods: apigateway.Cors.ALL_METHODS,
-        allowHeaders: [
-          "Content-Type",
-          "Authorization",
-          "X-Amz-Date",
-          "X-Api-Key",
-          "X-Amz-Security-Token"
-        ],
-        allowCredentials: true,  // needed because you use Cognito (lol)
-      },
+      
     });
 
     //  COGNITO AUTHORIZER (used for /hello)
