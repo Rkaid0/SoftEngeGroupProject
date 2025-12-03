@@ -96,7 +96,7 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
 
     const createStoreChainFunction = new NodejsFunction(this, 'CreateStoreChain', {
       runtime: lambda.Runtime.NODEJS_20_X,
-      entry: path.join(__dirname, '../lambda/create_store_chain.ts'),
+      entry: path.join(__dirname, '../lambda/createStoreChain.ts'),
       handler: 'createStoreChain',
       bundling: {
         externalModules: [],
