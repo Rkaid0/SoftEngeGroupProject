@@ -22,7 +22,7 @@ export default function UserStoreGUI() {
     try {await fetch(
             "https://jwbdksbzpg.execute-api.us-east-1.amazonaws.com/prod/createStoreChain",{
               method: "POST", 
-              headers: {"Content-Type": "application/json" }, 
+              headers: {"Content-Type": "application/json", "Authorization": `Bearer ${localStorage.getItem("id_token")}` }, 
               body: JSON.stringify({name: chainName, url: chainURL})
             }
         )
