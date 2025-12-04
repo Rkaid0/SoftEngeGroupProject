@@ -19,11 +19,10 @@ export const createStoreChain = async function(event: any) {
   }
 
   try {
-    const body = JSON.parse(event.body || "{}");
-
-    const name = body.name;
-    const url = body.url
-
+    console.log(JSON.stringify(event));
+    const payload = JSON.parse(event.body || "{}");
+    const name = payload.body.name;
+    const url = payload.body.url;
     if (!name || !url) {
       return {
         statusCode: 400,

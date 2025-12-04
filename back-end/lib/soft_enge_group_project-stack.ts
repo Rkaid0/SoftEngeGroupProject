@@ -8,9 +8,6 @@ import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import * as apigateway from 'aws-cdk-lib/aws-apigateway';
 import * as path from 'path';
-import { BlockPublicAccess, Bucket } from "aws-cdk-lib/aws-s3";
-import { BucketDeployment, Source } from "aws-cdk-lib/aws-s3-deployment";
-import { RemovalPolicy } from "aws-cdk-lib";
 
 export class SoftEngeGroupProjectStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -40,14 +37,14 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
 
     //  NORMAL LAMBDA FUNCTION (Cognito-protected "hello" endpoint)
     const myFunction = new NodejsFunction(this, "HelloLambda", {
-      runtime: Runtime.NODEJS_20_X,
+      runtime: Runtime.NODEJS_22_X,
       entry: path.join(__dirname, "../lambda/hello.ts"),
       handler: "handler",
     });
 
     //  LAMBDA (TEST HANDLER)
     const nodeLambda = new NodejsFunction(this, 'NodeLambda', {
-      runtime: lambda.Runtime.NODEJS_18_X,
+      runtime: lambda.Runtime.NODEJS_22_X,
       entry: path.join(__dirname, '../lambda/test_handler.ts'),
       handler: 'test_handler',
       bundling: {
@@ -57,14 +54,14 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
 
     //  CALLBACK LAMBDA (/api/callback)
     const callbackLambda = new NodejsFunction(this, "CallbackLambda", {
-      runtime: Runtime.NODEJS_20_X,
+      runtime: Runtime.NODEJS_22_X,
       entry: path.join(__dirname, "../lambda/callback.ts"),
       handler: "handler",
     });
 
-    //  CALLBACK LAMBDA (/api/callback)
+    //  LOGOUT LAMBDA (/api/logout)
     const logoutLambda = new NodejsFunction(this, "LogoutLambda", {
-      runtime: Runtime.NODEJS_20_X,
+      runtime: Runtime.NODEJS_22_X,
       entry: path.join(__dirname, "../lambda/logout.ts"),
       handler: "handler",
     });
@@ -95,7 +92,7 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
     );
 
     const createStoreChainFunction = new NodejsFunction(this, 'CreateStoreChain', {
-      runtime: lambda.Runtime.NODEJS_20_X,
+      runtime: lambda.Runtime.NODEJS_22_X,
       entry: path.join(__dirname, '../lambda/createStoreChain.ts'),
       handler: 'createStoreChain',
       bundling: {
@@ -117,7 +114,6 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
     const api = new RestApi(this, 'ApiEndpoint', {
       restApiName: 'My Service',
       description: 'This service serves as an example.',
-      
     });
 
     //  COGNITO AUTHORIZER (used for /hello)
@@ -153,34 +149,6 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
       { authorizationType: AuthorizationType.NONE }
     );
 
-    //  S3 STATIC WEBSITE BUCKET
-    const websiteBucket = new Bucket(this, "StaticWebsiteBucket", {
-      bucketName: "soft-enge-static-website-bucket",
-      websiteIndexDocument: "index.html",
-      websiteErrorDocument: "404.html",
-      publicReadAccess: true,
-      blockPublicAccess: new BlockPublicAccess({
-        blockPublicAcls: false,
-        ignorePublicAcls: false,
-        blockPublicPolicy: false,
-        restrictPublicBuckets: false,
-      }),
-      removalPolicy: RemovalPolicy.DESTROY,
-      autoDeleteObjects: true,
-    });
-
-    //Deploy static website to S3 
-    const websitePath = path.resolve(__dirname, "../site/out");
-    new BucketDeployment(this, "DeployWebsite", {
-      sources: [Source.asset(websitePath)],
-      destinationBucket: websiteBucket,
-    });
-
-    //OUTPUTS
-    new cdk.CfnOutput(this, "WebsiteURL", {
-      value: websiteBucket.bucketWebsiteUrl,
-    });
-
     new cdk.CfnOutput(this, "CallbackUrl", {
       value: `${api.url}api/callback`,
     });
@@ -196,6 +164,20 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
     createStoreChainResource.addMethod('POST', createStoreChainIntegration, {
       authorizer,
       authorizationType: AuthorizationType.COGNITO,
+    });
+
+    //Add CORS to Each Resource (and the root)
+    resource.addCorsPreflight({
+      allowOrigins: apigateway.Cors.ALL_ORIGINS,
+      allowMethods: ['GET'],
+      allowHeaders: apigateway.Cors.DEFAULT_HEADERS,
+    });
+
+    createStoreChainResource.addCorsPreflight({
+      allowOrigins: apigateway.Cors.ALL_ORIGINS,
+      allowMethods: ['POST'],
+      allowHeaders: apigateway.Cors.DEFAULT_HEADERS,
+      allowCredentials: true,
     });
   }
 }

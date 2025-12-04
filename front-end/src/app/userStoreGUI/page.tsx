@@ -23,7 +23,11 @@ export default function UserStoreGUI() {
             "https://jwbdksbzpg.execute-api.us-east-1.amazonaws.com/prod/createStoreChain",{
               method: "POST", 
               headers: {"Content-Type": "application/json", "Authorization": `Bearer ${localStorage.getItem("id_token")}` }, 
-              body: JSON.stringify({name: chainName, url: chainURL})
+              body: JSON.stringify({
+                body: {
+                  name: chainName,
+                  url: chainURL }
+              })
             }
         )
       setChainName("")
