@@ -117,6 +117,7 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
     const api = new RestApi(this, 'ApiEndpoint', {
       restApiName: 'My Service',
       description: 'This service serves as an example.',
+      
     });
 
     //  COGNITO AUTHORIZER (used for /hello)
