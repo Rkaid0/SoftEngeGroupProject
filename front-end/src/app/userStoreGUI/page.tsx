@@ -8,6 +8,7 @@ export default function UserStoreGUI() {
   const [email, setEmail] = useState<string | null>(null)
   const [chainName, setChainName] = useState("")
   const [chainURL, setChainURL] = useState("")
+  const [chains, setChains] = useState<any[]>([])
 
   useEffect(() => {
     const userEmail = requireAuth();
@@ -16,6 +17,7 @@ export default function UserStoreGUI() {
       window.location.href = `${S3_URL}`;
       return;
     }
+    fetchChains()
   }, []);
 
   const createStoreChain = async() => {
@@ -31,8 +33,24 @@ export default function UserStoreGUI() {
         )
       setChainName("")
       setChainURL("")
+      await fetchChains()
     }
     catch (err) {console.error("Error creating store chain:", err)}
+  }
+
+  const fetchChains = async () => {
+    try {
+      const res = await fetch(
+        "https://jwbdksbzpg.execute-api.us-east-1.amazonaws.com/prod/getStoreChains",
+        {
+          headers: {"Authorization": `Bearer ${localStorage.getItem("id_token")}`}
+        }
+      )
+      const data = await res.json()
+      setChains(data)
+    } catch (err) {
+      console.error("Error loading store chains:", err)
+    }
   }
 
   return (
