@@ -190,7 +190,7 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
       authorizationType: AuthorizationType.COGNITO,
     });
 
-    //Add CORS to Each Resource (and the root)
+    //Add CORS to Each Resource
     resource.addCorsPreflight({
       allowOrigins: apigateway.Cors.ALL_ORIGINS,
       allowMethods: ['GET'],
