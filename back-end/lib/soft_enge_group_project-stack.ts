@@ -110,7 +110,7 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
     const getStoreChainsFunction = new NodejsFunction(this, 'GetStoreChains', {
       runtime: lambda.Runtime.NODEJS_22_X,
       entry: path.join(__dirname, '../lambda/getStoreChains.ts'),
-      handler: 'getStoreChains',
+      handler: 'handler',
       bundling: {
         externalModules: [],
         nodeModules: ["mysql2"],

@@ -5,7 +5,7 @@ export const getStoreChains = async () => {
   const connection = await getConnection();
 
   const [rows] = await connection.execute(
-    "SELECT id, name, url FROM storeChain"
+    "SELECT idstoreChain, name, url FROM storeChain"
   );
 
   await connection.end();
