@@ -107,8 +107,25 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
       allowPublicSubnet: true
     });
 
+    const getStoreChainsFunction = new NodejsFunction(this, 'GetStoreChains', {
+      runtime: lambda.Runtime.NODEJS_22_X,
+      entry: path.join(__dirname, '../lambda/getStoreChains.ts'),
+      handler: 'getStoreChains',
+      bundling: {
+        externalModules: [],
+        nodeModules: ["mysql2"],
+      },
+      vpc,
+      securityGroups: [lambdaSG],
+      vpcSubnets: { subnetType: ec2.SubnetType.PUBLIC },
+      allowPublicSubnet: true,
+    });
+
+
+
     // db password
     createStoreChainFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!);
+    getStoreChainsFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!)
 
     // Define the API Gateway
     const api = new RestApi(this, 'ApiEndpoint', {
@@ -124,8 +141,11 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
     //  /hello ENDPOINT (Cognito protected)
     const lambdaIntegration = new LambdaIntegration(myFunction);
     const createStoreChainIntegration = new LambdaIntegration(createStoreChainFunction);
+    const getStoreChainsIntegration = new LambdaIntegration(getStoreChainsFunction);
     const resource = api.root.addResource('hello');
     const createStoreChainResource = api.root.addResource('createStoreChain');
+    const getStoreChainsResource = api.root.addResource('getStoreChains');
+
     
     resource.addMethod('GET', lambdaIntegration, {
       authorizer,
@@ -165,6 +185,10 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
       authorizer,
       authorizationType: AuthorizationType.COGNITO,
     });
+    getStoreChainsResource.addMethod('GET', getStoreChainsIntegration, {
+      authorizer,
+      authorizationType: AuthorizationType.COGNITO,
+    });
 
     //Add CORS to Each Resource (and the root)
     resource.addCorsPreflight({
@@ -176,6 +200,12 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
     createStoreChainResource.addCorsPreflight({
       allowOrigins: apigateway.Cors.ALL_ORIGINS,
       allowMethods: ['POST'],
+      allowHeaders: apigateway.Cors.DEFAULT_HEADERS,
+      allowCredentials: true,
+    });
+    getStoreChainsResource.addCorsPreflight({
+      allowOrigins: apigateway.Cors.ALL_ORIGINS,
+      allowMethods: ['GET'],
       allowHeaders: apigateway.Cors.DEFAULT_HEADERS,
       allowCredentials: true,
     });
