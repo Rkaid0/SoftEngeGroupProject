@@ -24,11 +24,10 @@ export default function UserStoreGUI() {
               method: "POST", 
               headers: {"Content-Type": "application/json", "Authorization": `Bearer ${localStorage.getItem("id_token")}` }, 
               body: JSON.stringify({
-                body: {
                   name: chainName,
-                  url: chainURL }
+                  url: chainURL
               })
-            }
+            } 
         )
       setChainName("")
       setChainURL("")
