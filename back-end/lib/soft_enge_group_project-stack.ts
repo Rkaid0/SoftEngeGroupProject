@@ -125,6 +125,22 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
       allowPublicSubnet: true
     });
 
+    const createStoreFunction = new NodejsFunction(this, 'createStore', {
+      runtime: lambda.Runtime.NODEJS_22_X,
+      entry: path.join(__dirname, '../lambda/createStore.ts'),
+      handler: 'createStore',
+      bundling: {
+        externalModules: [],
+        nodeModules: ["mysql2"],
+      },
+      vpc,
+      securityGroups: [lambdaSG], 
+      vpcSubnets: {
+        subnetType: ec2.SubnetType.PUBLIC
+      },
+      allowPublicSubnet: true
+    })
+
     const getStoreChainsFunction = new NodejsFunction(this, 'GetStoreChains', {
       runtime: lambda.Runtime.NODEJS_22_X,
       entry: path.join(__dirname, '../lambda/getStoreChains.ts'),
@@ -182,6 +198,7 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
 
     createStoreChainFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!);
     removeStoreChainFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!)
+    createStoreFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!)
     getStoreChainsFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!)
     createReceiptFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!);
     addUserToDBFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!);
@@ -204,6 +221,7 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
     const lambdaIntegration = new LambdaIntegration(myFunction);
     const createStoreChainIntegration = new LambdaIntegration(createStoreChainFunction);
     const removeStoreChainIntegration = new LambdaIntegration(removeStoreChainFunction);
+    const createStoreIntegration = new LambdaIntegration(createStoreFunction)
     const getStoreChainsIntegration = new LambdaIntegration(getStoreChainsFunction);
     const createReceiptIntegration = new LambdaIntegration(createReceiptFunction);
 
@@ -211,6 +229,7 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
     const resource = api.root.addResource('hello');
     const createStoreChainResource = api.root.addResource('createStoreChain');
     const removeStoreChainResource = api.root.addResource('removeStoreChain');
+    const createStoreResource = api.root.addResource('createStore')
     const getStoreChainsResource = api.root.addResource('getStoreChains');
     const createReceiptResource = api.root.addResource('createReceipt');
 
@@ -243,6 +262,10 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
       authorizer,
       authorizationType: AuthorizationType.COGNITO,
     });
+    createStoreResource.addMethod('POST', createStoreIntegration, {
+      authorizer,
+      authorizationType: AuthorizationType.COGNITO,
+    })
     getStoreChainsResource.addMethod('GET', getStoreChainsIntegration, {
       authorizer,
       authorizationType: AuthorizationType.COGNITO,
@@ -270,6 +293,12 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
       allowHeaders: apigateway.Cors.DEFAULT_HEADERS,
       allowCredentials: true,
     });
+    createStoreResource.addCorsPreflight({
+      allowOrigins: apigateway.Cors.ALL_ORIGINS,
+      allowMethods: ['POST'],
+      allowHeaders: apigateway.Cors.DEFAULT_HEADERS,
+      allowCredentials: true,
+    })
     getStoreChainsResource.addCorsPreflight({
       allowOrigins: apigateway.Cors.ALL_ORIGINS,
       allowMethods: ['GET'],
