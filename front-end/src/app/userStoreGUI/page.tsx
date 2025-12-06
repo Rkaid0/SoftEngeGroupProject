@@ -93,11 +93,11 @@ export default function UserStoreGUI() {
       <input type="text" value = {chainURL} onChange = {e => setChainURL(e.target.value) } placeholder = "Chain URL" />
       <button onClick = {createStoreChain}>Create Store Chain</button>
       
-      <h2 style={{ marginTop: "20px" }}>Create Store</h2>
+      <h2>Create Store</h2>
       <input type="text" value={storeChainName} onChange={e => setStoreChainName(e.target.value)} placeholder="Store Chain Name" />
       <input type="text" value={storeAddress} onChange={e => setStoreAddress(e.target.value)} placeholder="Store Address" />
       <button onClick={createStore}>Create Store</button>
-      <h2 style={{ marginTop: "20px" }}>Existing Store Chains</h2>
+      <h2>Existing Store Chains</h2>
       <ul>
         {chains.map((chain) => (
           <li key={chain.idstoreChain}>
