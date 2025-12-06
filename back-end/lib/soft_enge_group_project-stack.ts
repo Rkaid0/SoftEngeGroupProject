@@ -33,24 +33,7 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
       }
     )
 
-    // LAMBDA FUNCTIONS
-
-    //  NORMAL LAMBDA FUNCTION (Cognito-protected "hello" endpoint)
-    const myFunction = new NodejsFunction(this, "HelloLambda", {
-      runtime: Runtime.NODEJS_22_X,
-      entry: path.join(__dirname, "../lambda/hello.ts"),
-      handler: "handler",
-    });
-
-    //  LAMBDA (TEST HANDLER)
-    const nodeLambda = new NodejsFunction(this, 'NodeLambda', {
-      runtime: lambda.Runtime.NODEJS_22_X,
-      entry: path.join(__dirname, '../lambda/test_handler.ts'),
-      handler: 'test_handler',
-      bundling: {
-        forceDockerBundling: false,
-      }
-    });
+    // COGNITO LAMBDA FUNCTIONS ------------------------------------------------
 
     //  CALLBACK LAMBDA (/api/callback)
     const callbackLambda = new NodejsFunction(this, "CallbackLambda", {
@@ -65,6 +48,8 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
       entry: path.join(__dirname, "../lambda/logout.ts"),
       handler: "handler",
     });
+
+    // end of COGNITO LAMBDA ----------------------------------------------------
 
     // 1. Import existing VPC where RDS lives
     const vpc = ec2.Vpc.fromLookup(this, "ExistingVpc", {
@@ -90,6 +75,23 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
       ec2.Port.tcp(3306),
       "Allow Lambda to access RDS MySQL"
     );
+
+    //LAMBDA FUNCTIONS -------------------------------------------------------
+
+    const myFunction = new NodejsFunction(this, "HelloLambda", {
+      runtime: Runtime.NODEJS_22_X,
+      entry: path.join(__dirname, "../lambda/hello.ts"),
+      handler: "handler",
+    });
+
+    const nodeLambda = new NodejsFunction(this, 'NodeLambda', {
+      runtime: lambda.Runtime.NODEJS_22_X,
+      entry: path.join(__dirname, '../lambda/test_handler.ts'),
+      handler: 'test_handler',
+      bundling: {
+        forceDockerBundling: false,
+      }
+    });
 
     const createStoreChainFunction = new NodejsFunction(this, 'CreateStoreChain', {
       runtime: lambda.Runtime.NODEJS_22_X,
@@ -137,69 +139,102 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
       allowPublicSubnet: true,
     });
 
+    const createReceiptFunction = new NodejsFunction(this, 'CreateReceipt', {
+      runtime: lambda.Runtime.NODEJS_22_X,
+      entry: path.join(__dirname, '../lambda/createReceipt.ts'),
+      handler: 'createReceipt',
+      bundling: {
+        externalModules: [],
+        nodeModules: ["mysql2"],
+      },
+      vpc,
+      securityGroups: [lambdaSG], 
+      vpcSubnets: {
+        subnetType: ec2.SubnetType.PUBLIC
+      },
+      allowPublicSubnet: true
+    });
 
+    const addUserToDBFunction = new NodejsFunction(this, 'AddUserToDB', {
+      runtime: lambda.Runtime.NODEJS_22_X,
+      entry: path.join(__dirname, '../lambda/addUserToDB.ts'),
+      handler: 'handler',
+      bundling: {
+        externalModules: [],
+        nodeModules: ["mysql2"],
+      },
+      vpc,
+      securityGroups: [lambdaSG], 
+      vpcSubnets: {
+        subnetType: ec2.SubnetType.PUBLIC
+      },
+      allowPublicSubnet: true
+    });
+    addUserToDBFunction.grantInvoke(callbackLambda);
+    callbackLambda.addEnvironment(
+      "ADD_USER_FUNCTION_NAME",
+      addUserToDBFunction.functionName
+    );
 
-    // db password
+    // end of LAMBDA FUNCTIONS ---------------------------------------------------------------
+
+    //ADD DATABASE PASSWORD TO DB LAMBDA FUNCTIONS ----------------------------------
+
     createStoreChainFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!);
     removeStoreChainFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!)
     getStoreChainsFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!)
+    createReceiptFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!);
+    addUserToDBFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!);
 
+    //--------------------------------------------------------------------------
+
+    //API GATEWAY --------------------------------------------------------------------
     // Define the API Gateway
     const api = new RestApi(this, 'ApiEndpoint', {
       restApiName: 'My Service',
       description: 'This service serves as an example.',
     });
 
-    //  COGNITO AUTHORIZER (used for /hello)
+    //  COGNITO AUTHORIZER
     const authorizer = new CognitoUserPoolsAuthorizer(this, 'MyAuthorizer', {
       cognitoUserPools: [userPool],
     });
 
-    //  /hello ENDPOINT (Cognito protected)
+    //Integrate lambda for all lambda functions
     const lambdaIntegration = new LambdaIntegration(myFunction);
     const createStoreChainIntegration = new LambdaIntegration(createStoreChainFunction);
     const removeStoreChainIntegration = new LambdaIntegration(removeStoreChainFunction);
     const getStoreChainsIntegration = new LambdaIntegration(getStoreChainsFunction);
+    const createReceiptIntegration = new LambdaIntegration(createReceiptFunction);
+
+    //Add resource for each lambda function
     const resource = api.root.addResource('hello');
     const createStoreChainResource = api.root.addResource('createStoreChain');
     const removeStoreChainResource = api.root.addResource('removeStoreChain');
     const getStoreChainsResource = api.root.addResource('getStoreChains');
+    const createReceiptResource = api.root.addResource('createReceipt');
 
-    
-    resource.addMethod('GET', lambdaIntegration, {
-      authorizer,
-      authorizationType: AuthorizationType.COGNITO,
-    });
-
-    //  /api/callback ENDPOINT (OAuth callback – NO authorization)
+    // COGNITO LAMBDA RESOURCES  /api/ ENDPOINT (OAuth callback – NO authorization)
     const apiResource = api.root.addResource("api");
     const callbackResource = apiResource.addResource("callback");
     const logoutResource = apiResource.addResource("logout");
-
     callbackResource.addMethod(
       "GET",
       new LambdaIntegration(callbackLambda),
       { authorizationType: AuthorizationType.NONE }
     );
-
     logoutResource.addMethod(
       "GET",
       new LambdaIntegration(logoutLambda),
       { authorizationType: AuthorizationType.NONE }
     );
-
-    new cdk.CfnOutput(this, "CallbackUrl", {
-      value: `${api.url}api/callback`,
-    });
-
-    new cdk.CfnOutput(
-      this,
-      'UserPoolClientID',
-      {
-        value: userPoolClient.userPoolClientId
-      }
-    )
+    //end of COGNITO LAMBDA RESOURCES -------------------------------------------
     
+    //Lambda resources
+    resource.addMethod('GET', lambdaIntegration, {
+      authorizer,
+      authorizationType: AuthorizationType.COGNITO,
+    });
     createStoreChainResource.addMethod('POST', createStoreChainIntegration, {
       authorizer,
       authorizationType: AuthorizationType.COGNITO,
@@ -212,6 +247,10 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
       authorizer,
       authorizationType: AuthorizationType.COGNITO,
     });
+    createReceiptResource.addMethod('POST', createReceiptIntegration, {
+      authorizer,
+      authorizationType: AuthorizationType.COGNITO,
+    });
 
     //Add CORS to Each Resource
     resource.addCorsPreflight({
@@ -219,7 +258,6 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
       allowMethods: ['GET'],
       allowHeaders: apigateway.Cors.DEFAULT_HEADERS,
     });
-
     createStoreChainResource.addCorsPreflight({
       allowOrigins: apigateway.Cors.ALL_ORIGINS,
       allowMethods: ['POST'],
@@ -238,5 +276,20 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
       allowHeaders: apigateway.Cors.DEFAULT_HEADERS,
       allowCredentials: true,
     });
+    createReceiptResource.addCorsPreflight({
+      allowOrigins: apigateway.Cors.ALL_ORIGINS,
+      allowMethods: ['POST'],
+      allowHeaders: apigateway.Cors.DEFAULT_HEADERS,
+      allowCredentials: true,
+    });
+
+    //Helpful outputs after cdk deploy
+    new cdk.CfnOutput(
+      this,
+      'UserPoolClientID',
+      {
+        value: userPoolClient.userPoolClientId
+      }
+    )
   }
 }
