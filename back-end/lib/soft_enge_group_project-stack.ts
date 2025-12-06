@@ -109,6 +109,22 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
       allowPublicSubnet: true
     });
 
+    const removeStoreChainFunction = new NodejsFunction(this, 'RemoveStoreChain', {
+      runtime: lambda.Runtime.NODEJS_22_X,
+      entry: path.join(__dirname, '../lambda/removeStoreChain.ts'),
+      handler: 'removeStoreChain',
+      bundling: {
+        externalModules: [],
+        nodeModules: ["mysql2"],
+      },
+      vpc,
+      securityGroups: [lambdaSG], 
+      vpcSubnets: {
+        subnetType: ec2.SubnetType.PUBLIC
+      },
+      allowPublicSubnet: true
+    });
+
     const getStoreChainsFunction = new NodejsFunction(this, 'GetStoreChains', {
       runtime: lambda.Runtime.NODEJS_22_X,
       entry: path.join(__dirname, '../lambda/getStoreChains.ts'),
@@ -165,7 +181,8 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
     //ADD DATABASE PASSWORD TO DB LAMBDA FUNCTIONS ----------------------------------
 
     createStoreChainFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!);
-    getStoreChainsFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!);
+    removeStoreChainFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!)
+    getStoreChainsFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!)
     createReceiptFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!);
     addUserToDBFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!);
 
@@ -186,12 +203,14 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
     //Integrate lambda for all lambda functions
     const lambdaIntegration = new LambdaIntegration(myFunction);
     const createStoreChainIntegration = new LambdaIntegration(createStoreChainFunction);
+    const removeStoreChainIntegration = new LambdaIntegration(removeStoreChainFunction);
     const getStoreChainsIntegration = new LambdaIntegration(getStoreChainsFunction);
     const createReceiptIntegration = new LambdaIntegration(createReceiptFunction);
 
     //Add resource for each lambda function
     const resource = api.root.addResource('hello');
     const createStoreChainResource = api.root.addResource('createStoreChain');
+    const removeStoreChainResource = api.root.addResource('removeStoreChain');
     const getStoreChainsResource = api.root.addResource('getStoreChains');
     const createReceiptResource = api.root.addResource('createReceipt');
 
@@ -220,6 +239,10 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
       authorizer,
       authorizationType: AuthorizationType.COGNITO,
     });
+    removeStoreChainResource.addMethod('POST', removeStoreChainIntegration, {
+      authorizer,
+      authorizationType: AuthorizationType.COGNITO,
+    });
     getStoreChainsResource.addMethod('GET', getStoreChainsIntegration, {
       authorizer,
       authorizationType: AuthorizationType.COGNITO,
@@ -236,6 +259,12 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
       allowHeaders: apigateway.Cors.DEFAULT_HEADERS,
     });
     createStoreChainResource.addCorsPreflight({
+      allowOrigins: apigateway.Cors.ALL_ORIGINS,
+      allowMethods: ['POST'],
+      allowHeaders: apigateway.Cors.DEFAULT_HEADERS,
+      allowCredentials: true,
+    });
+    removeStoreChainResource.addCorsPreflight({
       allowOrigins: apigateway.Cors.ALL_ORIGINS,
       allowMethods: ['POST'],
       allowHeaders: apigateway.Cors.DEFAULT_HEADERS,
