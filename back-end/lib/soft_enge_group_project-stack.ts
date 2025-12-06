@@ -107,6 +107,22 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
       allowPublicSubnet: true
     });
 
+    const removeStoreChainFunction = new NodejsFunction(this, 'RemoveStoreChain', {
+      runtime: lambda.Runtime.NODEJS_22_X,
+      entry: path.join(__dirname, '../lambda/removeStoreChain.ts'),
+      handler: 'removeStoreChain',
+      bundling: {
+        externalModules: [],
+        nodeModules: ["mysql2"],
+      },
+      vpc,
+      securityGroups: [lambdaSG], 
+      vpcSubnets: {
+        subnetType: ec2.SubnetType.PUBLIC
+      },
+      allowPublicSubnet: true
+    });
+
     const getStoreChainsFunction = new NodejsFunction(this, 'GetStoreChains', {
       runtime: lambda.Runtime.NODEJS_22_X,
       entry: path.join(__dirname, '../lambda/getStoreChains.ts'),
@@ -125,6 +141,7 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
 
     // db password
     createStoreChainFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!);
+    removeStoreChainFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!)
     getStoreChainsFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!)
 
     // Define the API Gateway
@@ -141,9 +158,11 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
     //  /hello ENDPOINT (Cognito protected)
     const lambdaIntegration = new LambdaIntegration(myFunction);
     const createStoreChainIntegration = new LambdaIntegration(createStoreChainFunction);
+    const removeStoreChainIntegration = new LambdaIntegration(removeStoreChainFunction);
     const getStoreChainsIntegration = new LambdaIntegration(getStoreChainsFunction);
     const resource = api.root.addResource('hello');
     const createStoreChainResource = api.root.addResource('createStoreChain');
+    const removeStoreChainResource = api.root.addResource('removeStoreChain');
     const getStoreChainsResource = api.root.addResource('getStoreChains');
 
     
@@ -185,6 +204,10 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
       authorizer,
       authorizationType: AuthorizationType.COGNITO,
     });
+    removeStoreChainResource.addMethod('POST', removeStoreChainIntegration, {
+      authorizer,
+      authorizationType: AuthorizationType.COGNITO,
+    });
     getStoreChainsResource.addMethod('GET', getStoreChainsIntegration, {
       authorizer,
       authorizationType: AuthorizationType.COGNITO,
@@ -198,6 +221,12 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
     });
 
     createStoreChainResource.addCorsPreflight({
+      allowOrigins: apigateway.Cors.ALL_ORIGINS,
+      allowMethods: ['POST'],
+      allowHeaders: apigateway.Cors.DEFAULT_HEADERS,
+      allowCredentials: true,
+    });
+    removeStoreChainResource.addCorsPreflight({
       allowOrigins: apigateway.Cors.ALL_ORIGINS,
       allowMethods: ['POST'],
       allowHeaders: apigateway.Cors.DEFAULT_HEADERS,
