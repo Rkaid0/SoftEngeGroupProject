@@ -17,27 +17,28 @@ const readFileAsDataURL = (file: File): Promise<string> =>
   });
 
 const jsonPrompt = `
-You are a strict JSON API that extracts structured data from store receipts.
+You are a strict JSON API that extracts structured data from grocery store receipts.
+For the category item enter a general category like milk, water, apples, bread.
+For the item name enter the specific item like Hood 1% Milk.
 
 Return ONLY valid JSON, with this exact shape:
 
 {
   "receipt": {
-    "merchant_name": string | null,
+    "merchant_name": string,
     "merchant_address": string | null,
     "purchase_date": string | null,
-    "total": number | null,
+    "total": number,
     "items": Array<{
       "name": string,
       "category": string,
-      "quantity": number | null,
-      "unit_price": number | null
+      "quantity": number,
+      "unit_price": number
     }>
   }
 }
 
 Rules:
-- If you can't find a field, set it to null.
 - Monetary values are numbers only (no currency symbols).
 - Do NOT include any extra fields.
 - Do NOT add any explanation text outside the JSON.
@@ -47,9 +48,7 @@ export default function AnalyzeReceipt() {
   const [parsedReceipt, setParsedReceipt] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleUploadReceipt = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleUploadReceipt = async ( event: React.ChangeEvent<HTMLInputElement> ) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -100,29 +99,25 @@ export default function AnalyzeReceipt() {
   };
 
   return (
-    <div style={{ maxWidth: 640, padding: 16 }}>
-      <h2>Upload store receipt</h2>
+    <div>
+        <h2>Upload store receipt</h2>
 
-      <input type="file" accept="image/*" onChange={handleUploadReceipt} />
+        <input type="file" accept="image/*" onChange={handleUploadReceipt} />
 
-      {isLoading && <p>Analyzing receipt…</p>}
+        <p>Is Loading: {isLoading ? "True" : "False"}</p>
 
-      {parsedReceipt && (
-        <>
-          <h3>Parsed receipt JSON</h3>
-          <pre
+        <h3>Parsed receipt JSON</h3>
+        <pre
             style={{
-              background: "#111",
-              color: "#0f0",
-              padding: 12,
-              borderRadius: 8,
-              overflowX: "auto",
+                background: "#111",
+                color: "#0f0",
+                padding: 12,
+                borderRadius: 8,
+                overflowX: "auto",
             }}
-          >
+            >
             {JSON.stringify(parsedReceipt, null, 2)}
-          </pre>
-        </>
-      )}
+        </pre>
     </div>
   );
 };
