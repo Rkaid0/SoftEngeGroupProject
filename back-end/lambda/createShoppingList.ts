@@ -8,7 +8,7 @@ let AddShoppingListDB = async (
 ): Promise<mysql.ResultSetHeader> => {
 
   const [rows] = await connection.execute<mysql.ResultSetHeader>(
-    "INSERT INTO ShoppingList (userID) VALUES (?)",
+    "INSERT INTO shoppingList (userID) VALUES (?)",
     [userID]
   );
 
