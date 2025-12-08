@@ -29,29 +29,46 @@ export function decodeJwt(token: string) {
 export function requireAuth() {
   const url = new URL(window.location.href);
 
-  // Check for tokens in URL
+  // ------ Read incoming URL params ------
   const idToken = url.searchParams.get("id");
   const accessToken = url.searchParams.get("access");
+  const userID = url.searchParams.get("userID");
 
+  // ------ Store tokens if present ------
   if (idToken) {
     localStorage.setItem("id_token", idToken);
+  }
+  else{
+    console.log("ERROR: Did not get id_token.");
   }
   if (accessToken) {
     localStorage.setItem("access_token", accessToken);
   }
+  else{
+    console.log("ERROR: Did not get access_token.");
+  }
+  if (userID) {
+    localStorage.setItem("user_id", userID);
+  }
+  else{
+    console.log("ERROR: Did not get user_id.");
+  }
 
-  // Remove query params from URL after storing
-  if (idToken || accessToken) {
+  // ------ Clean up URL ------
+  if (idToken || accessToken || userID) {
     window.history.replaceState({}, "", window.location.pathname);
   }
 
-  // Fallback to stored token
+  // ------ Fallback to stored token ------
   const token = localStorage.getItem("id_token");
   if (!token) return null;
 
   const payload = JSON.parse(atob(token.split(".")[1]));
-  return payload.email || null;
+  const email = payload.email || null;
+
+  return email || null;
 }
+
 
 export function LOGOUT() {
   //remove tokens
@@ -64,5 +81,8 @@ export function LOGOUT() {
 }
 
 export function detectLocal(){
-  
+  const currentUrl = window.location.href;
+  const targetString: string = 'localhost';
+
+  return currentUrl.includes(targetString);
 }

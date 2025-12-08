@@ -1,6 +1,10 @@
 const jwt = require("jsonwebtoken");
 const https = require("https");
 
+const { LambdaClient, InvokeCommand } = require("@aws-sdk/client-lambda");
+const lambdaClient = new LambdaClient({ region: "us-east-1" });
+const functionName = process.env.ADD_USER_FUNCTION_NAME;
+
 // ---------- CONFIG ----------
 const COGNITO_DOMAIN = "https://shopapp.auth.us-east-1.amazoncognito.com";
 const CLIENT_ID = "5ba3klhuempramj1bun5g486s3";
@@ -12,7 +16,7 @@ const S3_WEBSITE_URL =
   "http://soft-enge-static-website-bucket.s3-website-us-east-1.amazonaws.com";
 
 // Helper: POST x-www-form-urlencoded
-function postForm(url, form) {
+function postForm(url : any, form : any) {
   return new Promise((resolve, reject) => {
     const data = new URLSearchParams(form).toString();
     const u = new URL(url);
@@ -27,9 +31,9 @@ function postForm(url, form) {
       },
     };
 
-    const req = https.request(options, (res) => {
+    const req = https.request(options, (res : any) => {
       let body = "";
-      res.on("data", (chunk) => (body += chunk));
+      res.on("data", (chunk : any) => (body += chunk));
       res.on("end", () => resolve(JSON.parse(body)));
     });
 
@@ -39,7 +43,7 @@ function postForm(url, form) {
   });
 }
 
-exports.handler = async (event) => {
+exports.handler = async (event : any) => {
   console.log("Callback invoked:", JSON.stringify(event));
 
   // --- Build request URL ---
@@ -56,7 +60,7 @@ exports.handler = async (event) => {
   // --- Exchange code for tokens ---
   const tokenEndpoint = `${COGNITO_DOMAIN}/oauth2/token`;
 
-  const tokenResponse = await postForm(tokenEndpoint, {
+  const tokenResponse : any = await postForm(tokenEndpoint, {
     grant_type: "authorization_code",
     client_id: CLIENT_ID,
     code,
@@ -76,11 +80,31 @@ exports.handler = async (event) => {
 
   console.log("User email:", email);
 
-  // --- Redirect to correct S3 folder including BOTH tokens ---
-  const redirectUrl =
+  // --- Invoke user creation Lambda (async) ---
+  const response = await lambdaClient.send(
+    new InvokeCommand({
+      FunctionName: functionName,
+      InvocationType: "RequestResponse",
+      Payload: Buffer.from(
+        JSON.stringify({ email })
+      ),
+    })
+  );
+
+  // Parse returned payload
+  let userID = null;
+  if (response.Payload) {
+    const decoded = JSON.parse(new TextDecoder().decode(response.Payload));
+    userID = decoded.userID;
+    console.log("Received userID from Lambda:", userID);
+  }
+
+  const baseRedirect =
     email === "johnsshops3733@gmail.com"
-      ? `${S3_WEBSITE_URL}/adminDashboard/?id=${tokenResponse.id_token}&access=${tokenResponse.access_token}`
-      : `${S3_WEBSITE_URL}/userDashboard/?id=${tokenResponse.id_token}&access=${tokenResponse.access_token}`;
+      ? `${S3_WEBSITE_URL}/adminDashboard/`
+      : `${S3_WEBSITE_URL}/userDashboard/`;
+
+  const redirectUrl = `${baseRedirect}?userID=${userID}&id=${tokenResponse.id_token}&access=${tokenResponse.access_token}`;
 
   // --- Redirect to S3 site ---
   return {
