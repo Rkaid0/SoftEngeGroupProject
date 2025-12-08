@@ -142,7 +142,7 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
     const addItemToReceiptFunction = new NodejsFunction(this, 'AddItemToReceipt', {
       runtime: lambda.Runtime.NODEJS_22_X,
       entry: path.join(__dirname, '../lambda/addItemToReceipt.ts'),
-      handler: 'addItemToReceipt',
+      handler: 'handler',
       bundling: {
         externalModules: [],
         nodeModules: ["mysql2"],
