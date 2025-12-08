@@ -184,7 +184,6 @@ export default function UserDashboard() {
           key={receipt.id}
           style={{ border: "2px solid #333", padding: "10px", marginTop: "12px" }}
         >
-          {/* Removed receipt.name – only store displayed */}
           <h4>
             {receipt.store}
             <button onClick={() => handleDeleteReceipt(receipt.id)}>Delete</button>
