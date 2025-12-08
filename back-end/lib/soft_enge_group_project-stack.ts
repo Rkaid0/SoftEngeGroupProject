@@ -256,6 +256,22 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
       addUserToDBFunction.functionName
     );
 
+    const createShoppingList = new NodejsFunction(this, 'CreatShoppingList', {
+      runtime: lambda.Runtime.NODEJS_22_X,
+      entry: path.join(__dirname, '../lambda/createShoppingList.ts'),
+      handler: 'createShoppingList',
+      bundling: {
+        externalModules: [],
+        nodeModules: ["mysql2"],
+      },
+      vpc,
+      securityGroups: [lambdaSG], 
+      vpcSubnets: {
+        subnetType: ec2.SubnetType.PUBLIC
+      },
+      allowPublicSubnet: true
+    });
+
     // end of LAMBDA FUNCTIONS ---------------------------------------------------------------
 
     //ADD DATABASE PASSWORD TO DB LAMBDA FUNCTIONS ----------------------------------
@@ -270,7 +286,7 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
     addItemToReceiptFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!);
     getStoresFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!);
     getReceiptsFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!);
-
+    createShoppingList.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!);
     //--------------------------------------------------------------------------
 
     //API GATEWAY --------------------------------------------------------------------
@@ -296,6 +312,7 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
     const addItemToReceiptIntegration = new LambdaIntegration(addItemToReceiptFunction);
     const getStoresIntegration = new LambdaIntegration(getStoresFunction);
     const getReceiptsIntegration = new LambdaIntegration(getReceiptsFunction);
+    const createShoppingListIntegration = new LambdaIntegration(createShoppingList);
 
     //Add resource for each lambda function
     const resource = api.root.addResource('hello');
@@ -308,6 +325,7 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
     const addItemToReceiptResource = api.root.addResource('addItemToReceipt');
     const getStoresResource = api.root.addResource('getStores');
     const getReceiptsResource = api.root.addResource('getReceipts');
+    const createShoppingListResource = api.root.addResource('createShoppingList');
 
     // COGNITO LAMBDA RESOURCES  /api/ ENDPOINT (OAuth callback – NO authorization)
     const apiResource = api.root.addResource("api");
@@ -363,6 +381,10 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
       authorizationType: AuthorizationType.COGNITO,
     });
     getReceiptsResource.addMethod('POST', getReceiptsIntegration, {
+      authorizer,
+      authorizationType: AuthorizationType.COGNITO,
+    });
+    createShoppingListResource.addMethod('POST', createShoppingListIntegration, {
       authorizer,
       authorizationType: AuthorizationType.COGNITO,
     });
@@ -422,6 +444,12 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
       allowCredentials: true,
     });
     getReceiptsResource.addCorsPreflight({
+      allowOrigins: apigateway.Cors.ALL_ORIGINS,
+      allowMethods: ['POST'],
+      allowHeaders: apigateway.Cors.DEFAULT_HEADERS,
+      allowCredentials: true,
+    });
+    createShoppingListResource.addCorsPreflight({
       allowOrigins: apigateway.Cors.ALL_ORIGINS,
       allowMethods: ['POST'],
       allowHeaders: apigateway.Cors.DEFAULT_HEADERS,

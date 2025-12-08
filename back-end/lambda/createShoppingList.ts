@@ -1,52 +1,72 @@
-
 import mysql from "mysql2/promise";
 import { getConnection } from "./helpers/getDbConnection"; // filename is getDbConnection.ts
 
 
+let AddShoppingListDB = async (
+  connection: mysql.Connection,
+  userID: Number
+): Promise<mysql.ResultSetHeader> => {
 
-export const handler = async (event : any) => {
+  const [rows] = await connection.execute<mysql.ResultSetHeader>(
+    "INSERT INTO ShoppingList (userID) VALUES (?)",
+    [userID]
+  );
+
+  return rows;
+};
+
+export const createShoppingList = async function(event: any) {
+  const corsHeaders = {
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers": "*",
+    "Access-Control-Allow-Methods": "*"
+  };
+
   try {
-    // Parse user input (API Gateway sends body as string)
-    const body = JSON.parse(event.body);
+    console.log(JSON.stringify(event));
 
-    const { userID, name } = body;
+    const payload = JSON.parse(event.body || "{}");
+    const userID = payload.userID;
 
-    if (!userID || !name) {
+    if (!userID) {
       return {
         statusCode: 400,
-        body: JSON.stringify({ error: "userID and name are required" }),
+        headers: corsHeaders,
+        body: JSON.stringify({ error: "Missing required field: userID" }),
       };
     }
 
-    // connect to DB and insert
+    // connect to db
     const connection = await getConnection();
-    try {
-      const [result] = await connection.execute<mysql.ResultSetHeader>(
-        `INSERT INTO shoppingLists (userID, name) VALUES (?, ?)`,
-        [userID, name]
-      );
 
-      const shoppingListID = (result as mysql.ResultSetHeader).insertId;
+    const result: mysql.ResultSetHeader = await AddShoppingListDB(
+      connection,
+      userID
+    );
 
-      return {
-        statusCode: 200,
-        body: JSON.stringify({ shoppingListID, userID, name }),
-      };
-    } finally {
-      // always close DB connection
-      await connection.end();
-    }
+    await connection.end();
 
-    
-
-    // unreachable — response returned from inside try block above
-
-  } catch (err) {
-    console.error("Error creating shopping list:", err);
+    const shoppingListID = result.insertId;
 
     return {
+      statusCode: 200,
+      headers: corsHeaders,
+      body: JSON.stringify({
+        shoppingListID,
+        userID,
+        items: [], // a new shopping list starts empty (optional)
+      }),
+    };
+
+  } catch (error: any) {
+    return {
       statusCode: 500,
-      body: JSON.stringify({ error: "Internal Server Error" }),
+      headers: corsHeaders,
+      body: JSON.stringify({
+        error: "Server error",
+        details: error.message || error,
+      }),
     };
   }
 };
