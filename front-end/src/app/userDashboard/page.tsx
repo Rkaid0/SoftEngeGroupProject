@@ -10,19 +10,21 @@ export default function UserDashboard() {
   // NEW: date field
   const [date, setDate] = useState("");
 
-  // NEW: store list + mapping
-  const storeMap: Record<string, number> = {
-    "Walmart": 1,
-    "Target": 2,
-    "Safeway": 3,
-    "Costco": 4,
-    "Amazon": 5,
-    "Trader Joe's": 6
-  };
+  // Store Chains (loaded from Lambda)
+  const [storeChains, setStoreChains] = useState<
+    { idstoreChain: number; name: string; url: string }[]
+  >([]);
 
-  const [storeList] = useState<string[]>(Object.keys(storeMap));
+  const [selectedStoreChainID, setSelectedStoreChainID] = useState<number | "">("");
+
+  // Stores (loaded dynamically when chain is selected)
+  const [stores, setStores] = useState<
+    { idStores: number; storeAddress: string }[]
+  >([]);
+
   const [selectedStoreID, setSelectedStoreID] = useState<number | "">("");
 
+  // Items for this receipt
   const [itemName, setItemName] = useState("");
   const [itemPrice, setItemPrice] = useState<number | "">("");
   const [itemCategory, setItemCategory] = useState("");
@@ -31,12 +33,13 @@ export default function UserDashboard() {
   const [editPrice, setEditPrice] = useState<number | "">("");
   const [editCategory, setEditCategory] = useState("");
 
-  // items for the receipt
   const [currentItems, setCurrentItems] = useState<
     { id: number; name: string; price: number; category: string }[]
   >([]);
 
-  // DO NOT MODIFY
+  // ------------------------------
+  // DO NOT MODIFY THIS useEffect()
+  // ------------------------------
   useEffect(() => {
     const email = requireAuth();
     if (email) setEmail(email);
@@ -45,9 +48,59 @@ export default function UserDashboard() {
     }
   }, []);
 
-  // -----------------------------
-  // CREATE RECEIPT -> LAMBDA CALL
-  // -----------------------------
+  // Load store chains on mount
+  useEffect(() => {
+    const fetchChains = async () => {
+      try {
+        const res = await fetch(
+          "https://jwbdksbzpg.execute-api.us-east-1.amazonaws.com/prod/getStoreChains",
+          {
+            method: "GET",
+            headers: {"Authorization": `Bearer ${localStorage.getItem("id_token")}`},
+          }
+        );
+        const data = await res.json();
+        setStoreChains(data);
+      } catch (err) {
+        console.error("Error fetching store chains:", err);
+      }
+    };
+
+    fetchChains();
+  }, []);
+
+  // Load stores when a store chain is selected
+  useEffect(() => {
+    if (!selectedStoreChainID) {
+      setStores([]);
+      setSelectedStoreID("");
+      return;
+    }
+
+    const fetchStores = async () => {
+      try {
+        const res = await fetch(
+          "https://jwbdksbzpg.execute-api.us-east-1.amazonaws.com/prod/getStores",
+          {
+            method: "POST",
+            headers: {"Authorization": `Bearer ${localStorage.getItem("id_token")}`},
+            body: JSON.stringify({ storeChainID: selectedStoreChainID }),
+          }
+        );
+
+        const data = await res.json();
+        setStores(data);
+      } catch (err) {
+        console.error("Error fetching stores:", err);
+      }
+    };
+
+    fetchStores();
+  }, [selectedStoreChainID]);
+
+  // ----------------------------------
+  // CREATE RECEIPT + ADD ITEM LAMBDAS
+  // ----------------------------------
   const handleCreateReceipt = async () => {
     if (!selectedStoreID || !date || currentItems.length === 0) {
       alert("Store, date, and at least one item are required.");
@@ -64,8 +117,8 @@ export default function UserDashboard() {
           body: JSON.stringify({
             storeID: selectedStoreID,
             date: date,
-            userID: localStorage.getItem("user_id")
-          })
+            userID: localStorage.getItem("user_id"),
+          }),
         }
       );
 
@@ -77,7 +130,7 @@ export default function UserDashboard() {
         return;
       }
 
-      // 2. Add items to receipt
+      // 2. Add items to this receipt
       for (const item of currentItems) {
         await fetch(
           "https://jwbdksbzpg.execute-api.us-east-1.amazonaws.com/prod/addItemToReceipt",
@@ -88,8 +141,8 @@ export default function UserDashboard() {
               receiptID,
               name: item.name,
               price: item.price,
-              category: item.category
-            })
+              category: item.category,
+            }),
           }
         );
       }
@@ -97,6 +150,8 @@ export default function UserDashboard() {
       alert("Receipt stored successfully!");
 
       // Reset UI
+      setSelectedStoreChainID("");
+      setStores([]);
       setSelectedStoreID("");
       setDate("");
       setCurrentItems([]);
@@ -107,9 +162,9 @@ export default function UserDashboard() {
     }
   };
 
-  // --------------------------------
-  // LOCAL ITEM HANDLING (NO CHANGES)
-  // --------------------------------
+  // -------------------
+  // LOCAL ITEM HANDLING
+  // -------------------
   const handleAddItem = () => {
     if (!itemName.trim() || itemPrice === "" || !itemCategory.trim()) return;
 
@@ -117,10 +172,10 @@ export default function UserDashboard() {
       id: Date.now(),
       name: itemName,
       price: Number(itemPrice),
-      category: itemCategory
+      category: itemCategory,
     };
 
-    setCurrentItems(prev => [...prev, newItem]);
+    setCurrentItems((prev) => [...prev, newItem]);
 
     setItemName("");
     setItemPrice("");
@@ -128,15 +183,10 @@ export default function UserDashboard() {
   };
 
   const handleDeleteItem = (id: number) => {
-    setCurrentItems(prev => prev.filter(item => item.id !== id));
+    setCurrentItems((prev) => prev.filter((i) => i.id !== id));
   };
 
-  const handleEditItem = (item: {
-    id: number;
-    name: string;
-    price: number;
-    category: string;
-  }) => {
+  const handleEditItem = (item: any) => {
     setEditingItemId(item.id);
     setEditName(item.name);
     setEditPrice(item.price);
@@ -146,16 +196,11 @@ export default function UserDashboard() {
   const handleSaveItem = () => {
     if (!editingItemId) return;
 
-    setCurrentItems(prev =>
-      prev.map(item =>
-        item.id === editingItemId
-          ? {
-              ...item,
-              name: editName,
-              price: Number(editPrice),
-              category: editCategory
-            }
-          : item
+    setCurrentItems((prev) =>
+      prev.map((i) =>
+        i.id === editingItemId
+          ? { ...i, name: editName, price: Number(editPrice), category: editCategory }
+          : i
       )
     );
 
@@ -163,23 +208,15 @@ export default function UserDashboard() {
   };
 
   // -------------------
-  // UI
+  // UI RENDER
   // -------------------
   return (
     <div>
       <h1>Dashboard</h1>
-      {email && (
-        <p>
-          Signed in as: <strong>{email}</strong>
-        </p>
-      )}
+      {email && <p>Signed in as: <strong>{email}</strong></p>}
 
-      <button onClick={() => router.push("/reviewActivity")}>
-        Review Activity
-      </button>
-      <button onClick={() => router.push("/reviewHistory")}>
-        Review History
-      </button>
+      <button onClick={() => router.push("/reviewActivity")}>Review Activity</button>
+      <button onClick={() => router.push("/reviewHistory")}>Review History</button>
       <button onClick={() => router.push("/userStoreGUI")}>Store GUI</button>
       <button onClick={LOGOUT}>Log Out</button>
 
@@ -187,25 +224,38 @@ export default function UserDashboard() {
 
       <h2>Create Receipt</h2>
 
-      {/* Store dropdown */}
+      {/* Store Chain Dropdown */}
       <select
-        value={selectedStoreID}
-        onChange={e => setSelectedStoreID(Number(e.target.value))}
+        value={selectedStoreChainID}
+        onChange={(e) => setSelectedStoreChainID(Number(e.target.value))}
       >
-        <option value="">Select Store</option>
-        {storeList.map(storeName => (
-          <option key={storeName} value={storeMap[storeName]}>
-            {storeName}
+        <option value="">Select Store Chain</option>
+        {storeChains.map((chain) => (
+          <option key={chain.idstoreChain} value={chain.idstoreChain}>
+            {chain.name}
           </option>
         ))}
       </select>
 
-      {/* Date input */}
+      {/* Store Dropdown - depends on chain */}
+      <select
+        value={selectedStoreID}
+        onChange={(e) => setSelectedStoreID(Number(e.target.value))}
+        disabled={!stores.length}
+      >
+        <option value="">Select Store</option>
+        {stores.map((store) => (
+          <option key={store.idStores} value={store.idStores}>
+            {store.storeAddress}
+          </option>
+        ))}
+      </select>
+
+      {/* Date */}
       <input
         type="date"
         value={date}
-        onChange={e => setDate(e.target.value)}
-        placeholder="YYYY-MM-DD"
+        onChange={(e) => setDate(e.target.value)}
       />
 
       <h3>Add Items</h3>
@@ -214,14 +264,14 @@ export default function UserDashboard() {
         type="text"
         placeholder="Item Name"
         value={itemName}
-        onChange={e => setItemName(e.target.value)}
+        onChange={(e) => setItemName(e.target.value)}
       />
 
       <input
         type="number"
         placeholder="Item Price"
         value={itemPrice}
-        onChange={e =>
+        onChange={(e) =>
           setItemPrice(e.target.value === "" ? "" : Number(e.target.value))
         }
       />
@@ -230,44 +280,39 @@ export default function UserDashboard() {
         type="text"
         placeholder="Category"
         value={itemCategory}
-        onChange={e => setItemCategory(e.target.value)}
+        onChange={(e) => setItemCategory(e.target.value)}
       />
 
       <button onClick={handleAddItem}>Add Item</button>
 
       <h4>Items in This Receipt</h4>
+
       {currentItems.length === 0 && <p>No items added yet.</p>}
 
-      {/* Item list */}
-      {currentItems.map(item => (
+      {currentItems.map((item) => (
         <div
           key={item.id}
           style={{ border: "1px solid #aaa", padding: "6px", marginTop: "6px" }}
         >
           {editingItemId === item.id ? (
             <>
-              <input
-                value={editName}
-                onChange={e => setEditName(e.target.value)}
-              />
+              <input value={editName} onChange={(e) => setEditName(e.target.value)} />
               <input
                 type="number"
                 value={editPrice}
-                onChange={e =>
+                onChange={(e) =>
                   setEditPrice(e.target.value === "" ? "" : Number(e.target.value))
                 }
               />
               <input
                 value={editCategory}
-                onChange={e => setEditCategory(e.target.value)}
+                onChange={(e) => setEditCategory(e.target.value)}
               />
               <button onClick={handleSaveItem}>Save</button>
             </>
           ) : (
             <>
-              <p>
-                <strong>{item.name}</strong> — ${item.price.toFixed(2)}
-              </p>
+              <p><strong>{item.name}</strong> — ${item.price.toFixed(2)}</p>
               <p>Category: {item.category}</p>
               <button onClick={() => handleEditItem(item)}>Edit</button>
               <button
