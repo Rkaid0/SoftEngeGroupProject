@@ -7,24 +7,20 @@ export default function UserDashboard() {
   const [email, setEmail] = useState<string | null>(null);
   const router = useRouter();
 
-  // NEW: date field
   const [date, setDate] = useState("");
 
-  // Store Chains (loaded from Lambda)
   const [storeChains, setStoreChains] = useState<
-    { idstoreChain: number; name: string; url: string }[]
+    {
+      idstoreChain: number;
+      name: string;
+      url: string;
+      stores: { idStores: number; storeAddress: string }[];
+    }[]
   >([]);
 
   const [selectedStoreChainID, setSelectedStoreChainID] = useState<number | "">("");
-
-  // Stores (loaded dynamically when chain is selected)
-  const [stores, setStores] = useState<
-    { idStores: number; storeAddress: string }[]
-  >([]);
-
   const [selectedStoreID, setSelectedStoreID] = useState<number | "">("");
 
-  // Items for this receipt
   const [itemName, setItemName] = useState("");
   const [itemPrice, setItemPrice] = useState<number | "">("");
   const [itemCategory, setItemCategory] = useState("");
@@ -37,9 +33,8 @@ export default function UserDashboard() {
     { id: number; name: string; price: number; category: string }[]
   >([]);
 
-  // ------------------------------
-  // DO NOT MODIFY THIS useEffect()
-  // ------------------------------
+  const [existingReceipts, setExistingReceipts] = useState<any[]>([]);
+
   useEffect(() => {
     const email = requireAuth();
     if (email) setEmail(email);
@@ -48,7 +43,6 @@ export default function UserDashboard() {
     }
   }, []);
 
-  // Load store chains on mount
   useEffect(() => {
     const fetchChains = async () => {
       try {
@@ -56,7 +50,7 @@ export default function UserDashboard() {
           "https://jwbdksbzpg.execute-api.us-east-1.amazonaws.com/prod/getStoreChains",
           {
             method: "GET",
-            headers: {"Authorization": `Bearer ${localStorage.getItem("id_token")}`},
+            headers: { Authorization: `Bearer ${localStorage.getItem("id_token")}` },
           }
         );
         const data = await res.json();
@@ -69,37 +63,47 @@ export default function UserDashboard() {
     fetchChains();
   }, []);
 
-  // Load stores when a store chain is selected
+  // ------------------------------------------------
+  // FIXED RECEIPTS LOAD — Correct item detection
+  // ------------------------------------------------
   useEffect(() => {
-    if (!selectedStoreChainID) {
-      setStores([]);
-      setSelectedStoreID("");
-      return;
-    }
+    const userID = localStorage.getItem("user_id");
+    if (!userID) return;
 
-    const fetchStores = async () => {
+    const fetchReceipts = async () => {
       try {
         const res = await fetch(
-          "https://jwbdksbzpg.execute-api.us-east-1.amazonaws.com/prod/getStores",
+          "https://jwbdksbzpg.execute-api.us-east-1.amazonaws.com/prod/getReceipts",
           {
             method: "POST",
-            headers: {"Authorization": `Bearer ${localStorage.getItem("id_token")}`},
-            body: JSON.stringify({ storeChainID: selectedStoreChainID }),
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("id_token")}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ userID }),
           }
         );
 
-        const data = await res.json();
-        setStores(data);
+        const rows = await res.json();
+
+        // FIX: Lambda already returns grouped receipts
+        const cleaned = rows.map((r: any) => ({
+          ...r,
+          date: r.date?.split("T")[0] // remove time part
+        }));
+
+        setExistingReceipts(cleaned);
+
       } catch (err) {
-        console.error("Error fetching stores:", err);
+        console.error("Error loading receipts:", err);
       }
     };
 
-    fetchStores();
-  }, [selectedStoreChainID]);
+    fetchReceipts();
+  }, [email]);
 
   // ----------------------------------
-  // CREATE RECEIPT + ADD ITEM LAMBDAS
+  // CREATE RECEIPT + ADD ITEMS
   // ----------------------------------
   const handleCreateReceipt = async () => {
     if (!selectedStoreID || !date || currentItems.length === 0) {
@@ -108,12 +112,14 @@ export default function UserDashboard() {
     }
 
     try {
-      // 1. Create receipt
       const res = await fetch(
         "https://jwbdksbzpg.execute-api.us-east-1.amazonaws.com/prod/createReceipt",
         {
           method: "POST",
-          headers: {"Authorization": `Bearer ${localStorage.getItem("id_token")}`},
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("id_token")}`,
+            "Content-Type": "application/json",
+          },
           body: JSON.stringify({
             storeID: selectedStoreID,
             date: date,
@@ -130,13 +136,15 @@ export default function UserDashboard() {
         return;
       }
 
-      // 2. Add items to this receipt
       for (const item of currentItems) {
         await fetch(
           "https://jwbdksbzpg.execute-api.us-east-1.amazonaws.com/prod/addItemToReceipt",
           {
             method: "POST",
-            headers: {"Authorization": `Bearer ${localStorage.getItem("id_token")}`},
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("id_token")}`,
+              "Content-Type": "application/json",
+            },
             body: JSON.stringify({
               receiptID,
               name: item.name,
@@ -149,13 +157,10 @@ export default function UserDashboard() {
 
       alert("Receipt stored successfully!");
 
-      // Reset UI
       setSelectedStoreChainID("");
-      setStores([]);
       setSelectedStoreID("");
       setDate("");
       setCurrentItems([]);
-
     } catch (err) {
       console.error("Error creating receipt:", err);
       alert("Receipt creation failed.");
@@ -163,7 +168,7 @@ export default function UserDashboard() {
   };
 
   // -------------------
-  // LOCAL ITEM HANDLING
+  // LOCAL ITEMS
   // -------------------
   const handleAddItem = () => {
     if (!itemName.trim() || itemPrice === "" || !itemCategory.trim()) return;
@@ -227,7 +232,10 @@ export default function UserDashboard() {
       {/* Store Chain Dropdown */}
       <select
         value={selectedStoreChainID}
-        onChange={(e) => setSelectedStoreChainID(Number(e.target.value))}
+        onChange={(e) => {
+          setSelectedStoreChainID(Number(e.target.value));
+          setSelectedStoreID("");
+        }}
       >
         <option value="">Select Store Chain</option>
         {storeChains.map((chain) => (
@@ -237,26 +245,28 @@ export default function UserDashboard() {
         ))}
       </select>
 
-      {/* Store Dropdown - depends on chain */}
+      {/* Store Dropdown */}
       <select
         value={selectedStoreID}
         onChange={(e) => setSelectedStoreID(Number(e.target.value))}
-        disabled={!stores.length}
+        disabled={
+          !selectedStoreChainID ||
+          !storeChains.find((c) => c.idstoreChain === selectedStoreChainID)?.stores?.length
+        }
       >
         <option value="">Select Store</option>
-        {stores.map((store) => (
-          <option key={store.idStores} value={store.idStores}>
-            {store.storeAddress}
-          </option>
-        ))}
+        {selectedStoreChainID &&
+          storeChains
+            .find((c) => c.idstoreChain === selectedStoreChainID)
+            ?.stores.map((store) => (
+              <option key={store.idStores} value={store.idStores}>
+                {store.storeAddress}
+              </option>
+            ))}
       </select>
 
       {/* Date */}
-      <input
-        type="date"
-        value={date}
-        onChange={(e) => setDate(e.target.value)}
-      />
+      <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
 
       <h3>Add Items</h3>
 
@@ -312,7 +322,9 @@ export default function UserDashboard() {
             </>
           ) : (
             <>
-              <p><strong>{item.name}</strong> — ${item.price.toFixed(2)}</p>
+              <p>
+                <strong>{item.name}</strong> — ${item.price.toFixed(2)}
+              </p>
               <p>Category: {item.category}</p>
               <button onClick={() => handleEditItem(item)}>Edit</button>
               <button
@@ -327,6 +339,64 @@ export default function UserDashboard() {
       ))}
 
       <button onClick={handleCreateReceipt}>Submit Receipt</button>
+
+      {/* ---------------------------
+          EXISTING RECEIPTS UI
+         --------------------------- */}
+      <hr />
+      <h2>Existing Receipts</h2>
+
+      {existingReceipts.length === 0 && <p>No receipts found.</p>}
+
+        {existingReceipts.map((receipt: any) => (
+          <div
+            key={receipt.receiptID}
+            style={{
+              border: "2px solid #444",
+              padding: "12px",
+              marginTop: "18px",
+              background: "#fafafa",
+              borderRadius: "6px",
+            }}
+          >
+            <h3>
+              Receipt from {receipt.storeAddress}
+              <span style={{ marginLeft: "10px", fontSize: "14px", color: "#666" }}>
+                (Store ID: {receipt.storeID})
+              </span>
+            </h3>
+
+            <p>
+              <strong>Date:</strong> {receipt.date?.split("T")[0]}
+            </p>
+
+            {(!receipt.items || receipt.items.length === 0) ? (
+              <p style={{ fontStyle: "italic" }}>No items in this receipt.</p>
+            ) : (
+              <div style={{ marginTop: "10px" }}>
+                {receipt.items.map((item: any) => (
+                  <div
+                    key={item.itemID}
+                    style={{
+                      border: "1px solid #bbb",
+                      padding: "8px",
+                      marginTop: "8px",
+                      background: "white",
+                      borderRadius: "4px",
+                    }}
+                  >
+                    <p>
+                      <strong>{item.name}</strong> — ${Number(item.price).toFixed(2)}
+                    </p>
+                    <p>
+                      Category: {item.categoryName} (ID {item.categoryID})
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
     </div>
   );
 }
