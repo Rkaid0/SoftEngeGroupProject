@@ -63,14 +63,7 @@ export default function UserDashboard() {
     fetchChains();
   }, []);
 
-  // ------------------------------------------------
-  // FIXED RECEIPTS LOAD — Correct item detection
-  // ------------------------------------------------
-  useEffect(() => {
-    const userID = localStorage.getItem("user_id");
-    if (!userID) return;
-
-    const fetchReceipts = async () => {
+  const fetchReceipts = async (userID : any) => {
       try {
         const res = await fetch(
           "https://jwbdksbzpg.execute-api.us-east-1.amazonaws.com/prod/getReceipts",
@@ -99,7 +92,13 @@ export default function UserDashboard() {
       }
     };
 
-    fetchReceipts();
+  // ------------------------------------------------
+  // FIXED RECEIPTS LOAD — Correct item detection
+  // ------------------------------------------------
+  useEffect(() => {
+    const userID = localStorage.getItem("user_id");
+    if (!userID) return;
+    fetchReceipts(userID);
   }, [email]);
 
   // ----------------------------------
@@ -156,6 +155,7 @@ export default function UserDashboard() {
       }
 
       alert("Receipt stored successfully!");
+      fetchReceipts(localStorage.getItem("user_id"));
 
       setSelectedStoreChainID("");
       setSelectedStoreID("");
