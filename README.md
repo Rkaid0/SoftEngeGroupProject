@@ -17,7 +17,7 @@ Receipt Use Cases for Shopper ----------
 • Edit Item on Receipt ✓
 • Submit Receipt ✓
 • Analyze Receipt Image (AI)
-• Delete Receipt
+• Delete Receipt ✓
 
 Shopping List Use Cases for Shopper ----
 • Create Shopping List

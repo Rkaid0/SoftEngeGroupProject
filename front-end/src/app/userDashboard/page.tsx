@@ -167,6 +167,25 @@ export default function UserDashboard() {
     }
   };
 
+  const handleDeleteReceipt = async (receiptID : any) => {
+    await fetch(
+          "https://jwbdksbzpg.execute-api.us-east-1.amazonaws.com/prod/deleteReceipt",
+      {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("id_token")}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+            receiptID: receiptID,
+            userID: localStorage.getItem("user_id"),
+        }),
+      }
+    );
+
+    fetchReceipts(localStorage.getItem("user_id"));
+  }
+
   // -------------------
   // LOCAL ITEMS
   // -------------------
@@ -364,6 +383,12 @@ export default function UserDashboard() {
               <span style={{ marginLeft: "10px", fontSize: "14px", color: "#666" }}>
                 (Store ID: {receipt.storeID})
               </span>
+              <button 
+              onClick={() => handleDeleteReceipt(receipt.receiptID)}
+              style={{ marginLeft: "8px", background: "red", color: "white" }}
+                >
+                  Delete
+                </button>
             </h3>
 
             <p>
