@@ -29,7 +29,7 @@ export const getReceipts = async (userID: number) => {
 
     WHERE r.userID = ?
 
-    ORDER BY r.receiptID DESC, i.idItem`,
+    ORDER BY r.date DESC, i.idItem`,
     [userID]
   );
 
