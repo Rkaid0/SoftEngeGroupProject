@@ -79,7 +79,6 @@ export default function UserDashboard() {
 
         const rows = await res.json();
 
-        // FIX: Lambda already returns grouped receipts
         const cleaned = rows.map((r: any) => ({
           ...r,
           date: r.date?.split("T")[0] // remove time part
@@ -92,18 +91,14 @@ export default function UserDashboard() {
       }
     };
 
-  // ------------------------------------------------
-  // FIXED RECEIPTS LOAD — Correct item detection
-  // ------------------------------------------------
+  // Load Receipts
   useEffect(() => {
     const userID = localStorage.getItem("user_id");
     if (!userID) return;
     fetchReceipts(userID);
   }, [email]);
 
-  // ----------------------------------
   // CREATE RECEIPT + ADD ITEMS
-  // ----------------------------------
   const handleCreateReceipt = async () => {
     if (!selectedStoreID || !date || currentItems.length === 0) {
       alert("Store, date, and at least one item are required.");
@@ -168,6 +163,8 @@ export default function UserDashboard() {
   };
 
   const handleDeleteReceipt = async (receiptID : any) => {
+    const confirm = window.confirm("Are you sure you want to delete this receipt? This cannot be undone.");
+    if (!confirm) return;
     await fetch(
           "https://jwbdksbzpg.execute-api.us-east-1.amazonaws.com/prod/deleteReceipt",
       {
@@ -186,9 +183,7 @@ export default function UserDashboard() {
     fetchReceipts(localStorage.getItem("user_id"));
   }
 
-  // -------------------
   // LOCAL ITEMS
-  // -------------------
   const handleAddItem = () => {
     if (!itemName.trim() || itemPrice === "" || !itemCategory.trim()) return;
 
@@ -231,9 +226,7 @@ export default function UserDashboard() {
     setEditingItemId(null);
   };
 
-  // -------------------
   // UI RENDER
-  // -------------------
   return (
     <div>
       <h1>Dashboard</h1>
