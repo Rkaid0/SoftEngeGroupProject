@@ -8,6 +8,7 @@ import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import * as apigateway from 'aws-cdk-lib/aws-apigateway';
 import * as path from 'path';
+import { getCategories } from '../lambda/getCategories';
 
 export class SoftEngeGroupProjectStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -251,6 +252,22 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
       allowPublicSubnet: true
     });
 
+    const getCategoriesFunction = new NodejsFunction(this, 'GetCategories', {
+      runtime: lambda.Runtime.NODEJS_22_X,
+      entry: path.join(__dirname, '../lambda/getCategories.ts'),
+      handler: 'handler',
+      bundling: {
+        externalModules: [],
+        nodeModules: ["mysql2"],
+      },
+      vpc,
+      securityGroups: [lambdaSG], 
+      vpcSubnets: {
+        subnetType: ec2.SubnetType.PUBLIC
+      },
+      allowPublicSubnet: true
+    });
+
     const addUserToDBFunction = new NodejsFunction(this, 'AddUserToDB', {
       runtime: lambda.Runtime.NODEJS_22_X,
       entry: path.join(__dirname, '../lambda/addUserToDB.ts'),
@@ -287,6 +304,7 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
     getStoresFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!);
     getReceiptsFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!);
     deleteReceiptFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!);
+    getCategoriesFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!);
 
     //--------------------------------------------------------------------------
 
@@ -314,6 +332,7 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
     const getStoresIntegration = new LambdaIntegration(getStoresFunction);
     const getReceiptsIntegration = new LambdaIntegration(getReceiptsFunction);
     const deleteReceiptIntegration = new LambdaIntegration(deleteReceiptFunction);
+    const getCategoriesIntegration = new LambdaIntegration(getCategoriesFunction);
 
     //Add resource for each lambda function
     const resource = api.root.addResource('hello');
@@ -327,6 +346,7 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
     const getStoresResource = api.root.addResource('getStores');
     const getReceiptsResource = api.root.addResource('getReceipts');
     const deleteReceiptResource = api.root.addResource('deleteReceipt');
+    const getCategoriesResource = api.root.addResource('getCategories');
 
     // COGNITO LAMBDA RESOURCES  /api/ ENDPOINT (OAuth callback – NO authorization)
     const apiResource = api.root.addResource("api");
@@ -386,6 +406,10 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
       authorizationType: AuthorizationType.COGNITO,
     });
     deleteReceiptResource.addMethod('POST', deleteReceiptIntegration, {
+      authorizer,
+      authorizationType: AuthorizationType.COGNITO,
+    });
+    getCategoriesResource.addMethod('GET', getCategoriesIntegration, {
       authorizer,
       authorizationType: AuthorizationType.COGNITO,
     });
@@ -453,6 +477,12 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
     deleteReceiptResource.addCorsPreflight({
       allowOrigins: apigateway.Cors.ALL_ORIGINS,
       allowMethods: ['POST'],
+      allowHeaders: apigateway.Cors.DEFAULT_HEADERS,
+      allowCredentials: true,
+    });
+    getCategoriesResource.addCorsPreflight({
+      allowOrigins: apigateway.Cors.ALL_ORIGINS,
+      allowMethods: ['GET'],
       allowHeaders: apigateway.Cors.DEFAULT_HEADERS,
       allowCredentials: true,
     });
