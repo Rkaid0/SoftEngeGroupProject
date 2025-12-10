@@ -269,7 +269,8 @@ export default function UserDashboard() {
 
       <button onClick={() => router.push("/reviewActivity")}>Review Activity</button>
       <button onClick={() => router.push("/reviewHistory")}>Review History</button>
-      <button onClick={() => router.push("/userStoreGUI")}>Store GUI</button>
+      <button onClick={() => router.push("/userStoreGUI")}>Stores</button>
+      <button onClick={() => router.push("/userShoppingList")}>Shopping List</button>
       <button onClick={LOGOUT}>Log Out</button>
 
       <hr />
