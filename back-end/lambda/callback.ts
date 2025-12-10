@@ -80,31 +80,31 @@ exports.handler = async (event : any) => {
 
   console.log("User email:", email);
 
-  // --- Redirect to correct S3 folder including BOTH tokens ---
-  const redirectUrl =
-    email === "johnsshops3733@gmail.com"
-      ? `${S3_WEBSITE_URL}/adminDashboard/?id=${tokenResponse.id_token}&access=${tokenResponse.access_token}`
-      : `${S3_WEBSITE_URL}/userDashboard/?id=${tokenResponse.id_token}&access=${tokenResponse.access_token}`;
-
-
   // --- Invoke user creation Lambda (async) ---
-  if (email) {
-    try {
-      await lambdaClient.send(
-        new InvokeCommand({
-          FunctionName: functionName,
-          InvocationType: "Event", // <-- async call
-          Payload: Buffer.from(
-            JSON.stringify({ email })
-          ),
-        })
-      );
+  const response = await lambdaClient.send(
+    new InvokeCommand({
+      FunctionName: functionName,
+      InvocationType: "RequestResponse",
+      Payload: Buffer.from(
+        JSON.stringify({ email })
+      ),
+    })
+  );
 
-      console.log("User creation Lambda invoked.");
-    } catch (err) {
-      console.error("Error invoking user creation Lambda:", err);
-    }
+  // Parse returned payload
+  let userID = null;
+  if (response.Payload) {
+    const decoded = JSON.parse(new TextDecoder().decode(response.Payload));
+    userID = decoded.userID;
+    console.log("Received userID from Lambda:", userID);
   }
+
+  const baseRedirect =
+    email === "johnsshops3733@gmail.com"
+      ? `${S3_WEBSITE_URL}/adminDashboard/`
+      : `${S3_WEBSITE_URL}/userDashboard/`;
+
+  const redirectUrl = `${baseRedirect}?userID=${userID}&id=${tokenResponse.id_token}&access=${tokenResponse.access_token}`;
 
   // --- Redirect to S3 site ---
   return {

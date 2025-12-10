@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import { useEffect, useState } from "react";
 import { requireAuth, S3_URL, LOGOUT, detectLocal } from "@/utils/auth";
 import { useRouter } from "next/navigation";
@@ -7,44 +7,212 @@ import AnalyzeReceipt from "../analyzeReceipt/AnalyzeReceipt"
 export default function UserDashboard() {
   const [email, setEmail] = useState<string | null>(null);
   const router = useRouter();
-  const [store, setStore] = useState("");
+
+  const [date, setDate] = useState("");
+
+  const [storeChains, setStoreChains] = useState<
+    {
+      idstoreChain: number;
+      name: string;
+      url: string;
+      stores: { idStores: number; storeAddress: string }[];
+    }[]
+  >([]);
+
+  const [selectedStoreChainID, setSelectedStoreChainID] = useState<number | "">("");
+  const [selectedStoreID, setSelectedStoreID] = useState<number | "">("");
+
   const [itemName, setItemName] = useState("");
   const [itemPrice, setItemPrice] = useState<number | "">("");
-  const [itemCategory, setItemCategory] = useState("");
   const [editingItemId, setEditingItemId] = useState<number | null>(null);
   const [editName, setEditName] = useState("");
   const [editPrice, setEditPrice] = useState<number | "">("");
   const [editCategory, setEditCategory] = useState("");
-  const [receipts, setReceipts] = useState<
-    { id: number; store: string; items: { id: number; name: string; price: number; category: string }[] }[]
-  >([]);
+
   const [currentItems, setCurrentItems] = useState<
     { id: number; name: string; price: number; category: string }[]
   >([]);
 
+  const [existingReceipts, setExistingReceipts] = useState<any[]>([]);
+
+  const [categories, setCategories] = useState<
+    { categoryID: number; name: string }[]
+  >([]);
+
+  const [itemCategory, setItemCategory] = useState<string>("");  // user’s selected OR new input
+  const [isNewCategory, setIsNewCategory] = useState(false);
+
   useEffect(() => {
-    const userEmail = requireAuth();
-    if (userEmail) setEmail(userEmail);
+    const email = requireAuth();
+    if (email) setEmail(email);
     else if (detectLocal() == false) {
       window.location.href = `${S3_URL}`;
-      return;
     }
   }, []);
+  
+  const fetchCategories = async () => {
+      try {
+        const res = await fetch(
+          "https://jwbdksbzpg.execute-api.us-east-1.amazonaws.com/prod/getCategories",
+          {
+            method: "GET",
+            headers: { Authorization: `Bearer ${localStorage.getItem("id_token")}` }
+          }
+        );
 
-  const handleCreateReceipt = () => {
-    if (store.trim() === "") return;
-
-    const newReceipt = {
-      id: Date.now(),
-      store,
-      items: currentItems,
+        const data = await res.json();
+        setCategories(data);
+      } catch (err) {
+        console.error("Error fetching categories:", err);
+      }
     };
 
-    setReceipts(prev => [...prev, newReceipt]);
-    setStore("");
-    setCurrentItems([]);
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  useEffect(() => {
+    const fetchChains = async () => {
+      try {
+        const res = await fetch(
+          "https://jwbdksbzpg.execute-api.us-east-1.amazonaws.com/prod/getStoreChains",
+          {
+            method: "GET",
+            headers: { Authorization: `Bearer ${localStorage.getItem("id_token")}` },
+          }
+        );
+        const data = await res.json();
+        setStoreChains(data);
+      } catch (err) {
+        console.error("Error fetching store chains:", err);
+      }
+    };
+
+    fetchChains();
+  }, []);
+
+  const fetchReceipts = async (userID : any) => {
+      try {
+        const res = await fetch(
+          "https://jwbdksbzpg.execute-api.us-east-1.amazonaws.com/prod/getReceipts",
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("id_token")}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ userID }),
+          }
+        );
+
+        const rows = await res.json();
+
+        const cleaned = rows.map((r: any) => ({
+          ...r,
+          date: r.date?.split("T")[0] // remove time part
+        }));
+
+        setExistingReceipts(cleaned);
+
+      } catch (err) {
+        console.error("Error loading receipts:", err);
+      }
+    };
+
+  // Load Receipts
+  useEffect(() => {
+    const userID = localStorage.getItem("user_id");
+    if (!userID) return;
+    fetchReceipts(userID);
+  }, [email]);
+
+  // CREATE RECEIPT + ADD ITEMS
+  const handleCreateReceipt = async () => {
+    if (!selectedStoreID || !date || currentItems.length === 0) {
+      alert("Store, date, and at least one item are required.");
+      return;
+    }
+
+    try {
+      const res = await fetch(
+        "https://jwbdksbzpg.execute-api.us-east-1.amazonaws.com/prod/createReceipt",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("id_token")}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            storeID: selectedStoreID,
+            date: date,
+            userID: localStorage.getItem("user_id"),
+          }),
+        }
+      );
+
+      const data = await res.json();
+      const receiptID = data.receiptID;
+
+      if (!receiptID) {
+        alert("Error creating receipt.");
+        return;
+      }
+
+      for (const item of currentItems) {
+        await fetch(
+          "https://jwbdksbzpg.execute-api.us-east-1.amazonaws.com/prod/addItemToReceipt",
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("id_token")}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              receiptID,
+              name: item.name,
+              price: item.price,
+              category: item.category,
+            }),
+          }
+        );
+      }
+
+      alert("Receipt stored successfully!");
+      fetchReceipts(localStorage.getItem("user_id"));
+      fetchCategories();
+
+      setSelectedStoreChainID("");
+      setSelectedStoreID("");
+      setDate("");
+      setCurrentItems([]);
+    } catch (err) {
+      console.error("Error creating receipt:", err);
+      alert("Receipt creation failed.");
+    }
   };
 
+  const handleDeleteReceipt = async (receiptID : any) => {
+    const confirm = window.confirm("Are you sure you want to delete this receipt? This cannot be undone.");
+    if (!confirm) return;
+    await fetch(
+          "https://jwbdksbzpg.execute-api.us-east-1.amazonaws.com/prod/deleteReceipt",
+      {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("id_token")}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+            receiptID: receiptID,
+            userID: localStorage.getItem("user_id"),
+        }),
+      }
+    );
+
+    fetchReceipts(localStorage.getItem("user_id"));
+  }
+
+  // LOCAL ITEMS
   const handleAddItem = () => {
     if (!itemName.trim() || itemPrice === "" || !itemCategory.trim()) return;
 
@@ -55,22 +223,18 @@ export default function UserDashboard() {
       category: itemCategory,
     };
 
-    setCurrentItems(prev => [...prev, newItem]);
+    setCurrentItems((prev) => [...prev, newItem]);
 
     setItemName("");
     setItemPrice("");
     setItemCategory("");
   };
 
-  const handleDeleteReceipt = (id: number) => {
-    setReceipts(prev => prev.filter(r => r.id !== id));
-  };
-
   const handleDeleteItem = (id: number) => {
-    setCurrentItems(prev => prev.filter(item => item.id !== id));
+    setCurrentItems((prev) => prev.filter((i) => i.id !== id));
   };
 
-  const handleEditItem = (item: { id: number; name: string; price: number; category: string }) => {
+  const handleEditItem = (item: any) => {
     setEditingItemId(item.id);
     setEditName(item.name);
     setEditPrice(item.price);
@@ -80,90 +244,155 @@ export default function UserDashboard() {
   const handleSaveItem = () => {
     if (!editingItemId) return;
 
-    setCurrentItems(prev =>
-      prev.map(item =>
-        item.id === editingItemId
-          ? { ...item, name: editName, price: Number(editPrice), category: editCategory }
-          : item
+    setCurrentItems((prev) =>
+      prev.map((i) =>
+        i.id === editingItemId
+          ? { ...i, name: editName, price: Number(editPrice), category: editCategory }
+          : i
       )
     );
 
     setEditingItemId(null);
   };
 
+  // UI RENDER
   return (
     <div>
       <h1>Dashboard</h1>
-      {email && (
-        <p>Signed in as: <strong>{email}</strong></p>
-      )}
+      {email && <p>Signed in as: <strong>{email}</strong></p>}
+
       <button onClick={() => router.push("/reviewActivity")}>Review Activity</button>
       <button onClick={() => router.push("/reviewHistory")}>Review History</button>
       <button onClick={() => router.push("/userStoreGUI")}>Store GUI</button>
       <button onClick={LOGOUT}>Log Out</button>
+
       <hr />
 
       <h2>Create Receipt</h2>
 
-      {/* Removed the receipt name input */}
-      <input
-        type="text"
-        placeholder="Store"
-        value={store}
-        onChange={e => setStore(e.target.value)}
-      />
+      {/* Store Chain Dropdown */}
+      <select
+        value={selectedStoreChainID}
+        onChange={(e) => {
+          setSelectedStoreChainID(Number(e.target.value));
+          setSelectedStoreID("");
+        }}
+      >
+        <option value="">Select Store Chain</option>
+        {storeChains.map((chain) => (
+          <option key={chain.idstoreChain} value={chain.idstoreChain}>
+            {chain.name}
+          </option>
+        ))}
+      </select>
+
+      {/* Store Dropdown */}
+      <select
+        value={selectedStoreID}
+        onChange={(e) => setSelectedStoreID(Number(e.target.value))}
+        disabled={
+          !selectedStoreChainID ||
+          !storeChains.find((c) => c.idstoreChain === selectedStoreChainID)?.stores?.length
+        }
+      >
+        <option value="">Select Store</option>
+        {selectedStoreChainID &&
+          storeChains
+            .find((c) => c.idstoreChain === selectedStoreChainID)
+            ?.stores.map((store) => (
+              <option key={store.idStores} value={store.idStores}>
+                {store.storeAddress}
+              </option>
+            ))}
+      </select>
+
+      {/* Date */}
+      <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
 
       <h3>Add Items</h3>
+
       <input
         type="text"
         placeholder="Item Name"
         value={itemName}
-        onChange={e => setItemName(e.target.value)}
+        onChange={(e) => setItemName(e.target.value)}
       />
+
       <input
         type="number"
         placeholder="Item Price"
         value={itemPrice}
-        onChange={e => setItemPrice(e.target.value === "" ? "" : Number(e.target.value))}
+        onChange={(e) =>
+          setItemPrice(e.target.value === "" ? "" : Number(e.target.value))
+        }
       />
-      <input
-        type="text"
-        placeholder="Category"
-        value={itemCategory}
-        onChange={e => setItemCategory(e.target.value)}
-      />
+
+      {/* CATEGORY DROPDOWN */}
+      <select
+        value={isNewCategory ? "new" : itemCategory}
+        onChange={(e) => {
+          if (e.target.value === "new") {
+            setIsNewCategory(true);
+            setItemCategory("");
+          } else {
+            setIsNewCategory(false);
+            setItemCategory(e.target.value);
+          }
+        }}
+      >
+        <option value="">Select Category</option>
+        
+        {categories.map((cat) => (
+          <option key={cat.categoryID} value={cat.name}>
+            {cat.name}
+          </option>
+        ))}
+
+        <option value="new">+ Create new category…</option>
+      </select>
+
+      {/* SHOW INPUT WHEN CREATING NEW CATEGORY */}
+      {isNewCategory && (
+        <input
+          type="text"
+          placeholder="Enter new category name"
+          value={itemCategory}
+          onChange={(e) => setItemCategory(e.target.value)}
+        />
+      )}
+
       <button onClick={handleAddItem}>Add Item</button>
 
       <h4>Items in This Receipt</h4>
+
       {currentItems.length === 0 && <p>No items added yet.</p>}
 
-      {currentItems.map(item => (
-        <div key={item.id} style={{ border: "1px solid #aaa", padding: "6px", marginTop: "6px" }}>
+      {currentItems.map((item) => (
+        <div
+          key={item.id}
+          style={{ border: "1px solid #aaa", padding: "6px", marginTop: "6px" }}
+        >
           {editingItemId === item.id ? (
             <>
-              <input
-                type="text"
-                value={editName}
-                onChange={e => setEditName(e.target.value)}
-                placeholder="Item Name"
-              />
+              <input value={editName} onChange={(e) => setEditName(e.target.value)} />
               <input
                 type="number"
                 value={editPrice}
-                onChange={e => setEditPrice(e.target.value === "" ? "" : Number(e.target.value))}
-                placeholder="Item Price"
+                onChange={(e) =>
+                  setEditPrice(e.target.value === "" ? "" : Number(e.target.value))
+                }
               />
               <input
-                type="text"
                 value={editCategory}
-                onChange={e => setEditCategory(e.target.value)}
-                placeholder="Category"
+                onChange={(e) => setEditCategory(e.target.value)}
               />
               <button onClick={handleSaveItem}>Save</button>
             </>
           ) : (
             <>
-              <p><strong>{item.name}</strong> — ${item.price.toFixed(2)}</p>
+              <p>
+                <strong>{item.name}</strong> — ${item.price.toFixed(2)}
+              </p>
               <p>Category: {item.category}</p>
               <button onClick={() => handleEditItem(item)}>Edit</button>
               <button
@@ -177,32 +406,72 @@ export default function UserDashboard() {
         </div>
       ))}
 
-      <button onClick={handleCreateReceipt}>Create Receipt</button>
-      <AnalyzeReceipt />
+      <button onClick={handleCreateReceipt}>Submit Receipt</button>
 
-      <h3>Receipts</h3>
-      {receipts.map(receipt => (
-        <div
-          key={receipt.id}
-          style={{ border: "2px solid #333", padding: "10px", marginTop: "12px" }}
-        >
-          {/* Removed receipt.name – only store displayed */}
-          <h4>
-            {receipt.store}
-            <button onClick={() => handleDeleteReceipt(receipt.id)}>Delete</button>
-          </h4>
+      {/* ---------------------------
+          EXISTING RECEIPTS UI
+         --------------------------- */}
+      <hr />
+      <h2>Existing Receipts</h2>
 
-          {receipt.items.map(item => (
-            <div key={item.id}>
-              <p>
-                <strong>{item.name}</strong> — ${item.price.toFixed(2)}
-                <br />
-                Category: {item.category}
-              </p>
-            </div>
-          ))}
-        </div>
-      ))}
+      {existingReceipts.length === 0 && <p>No receipts found.</p>}
+
+        {existingReceipts.map((receipt: any) => (
+          <div
+            key={receipt.receiptID}
+            style={{
+              border: "2px solid #444",
+              padding: "12px",
+              marginTop: "18px",
+              background: "#fafafa",
+              borderRadius: "6px",
+            }}
+          >
+            <h3>
+              Receipt from {receipt.storeAddress}
+              <span style={{ marginLeft: "10px", fontSize: "14px", color: "#666" }}>
+                (Store ID: {receipt.storeID})
+              </span>
+              <button 
+              onClick={() => handleDeleteReceipt(receipt.receiptID)}
+              style={{ marginLeft: "8px", background: "red", color: "white" }}
+                >
+                  Delete
+                </button>
+            </h3>
+
+            <p>
+              <strong>Date:</strong> {receipt.date}
+              <strong> Total: </strong> ${Number(receipt.total).toFixed(2)}
+            </p>
+
+            {(!receipt.items || receipt.items.length === 0) ? (
+              <p style={{ fontStyle: "italic" }}>No items in this receipt.</p>
+            ) : (
+              <div style={{ marginTop: "10px" }}>
+                {receipt.items.map((item: any) => (
+                  <div
+                    key={item.itemID}
+                    style={{
+                      border: "1px solid #bbb",
+                      padding: "8px",
+                      marginTop: "8px",
+                      background: "white",
+                      borderRadius: "4px",
+                    }}
+                  >
+                    <p>
+                      <strong>{item.name}</strong> — ${Number(item.price).toFixed(2)}
+                    </p>
+                    <p>
+                      Category: {item.categoryName} (ID {item.categoryID})
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
     </div>
   );
 }
