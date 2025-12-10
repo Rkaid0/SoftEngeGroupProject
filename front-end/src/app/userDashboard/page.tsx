@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { requireAuth, S3_URL, LOGOUT, detectLocal } from "@/utils/auth";
 import { useRouter } from "next/navigation";
+import AnalyzeReceipt from "../analyzeReceipt/AnalyzeReceipt"
 
 export default function UserDashboard() {
   const [email, setEmail] = useState<string | null>(null);
