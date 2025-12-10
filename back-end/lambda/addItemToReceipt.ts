@@ -112,6 +112,7 @@ export const handler = async function (event: any) {
         receiptID,
         name,
         price,
+        quantity,
         categoryID,
       }),
     };
