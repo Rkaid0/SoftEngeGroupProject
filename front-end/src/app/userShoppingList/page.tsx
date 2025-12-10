@@ -16,6 +16,7 @@ export default function userShoppingList() {
     if (userEmail) setEmail(userEmail);
     else if (detectLocal() == false) {window.location.href = `${S3_URL}`;
       return;}
+    fetchShoppingLists()
   }, []);
 
   const handleCreateShoppingList = async () => {
@@ -70,10 +71,14 @@ export default function userShoppingList() {
       const res = await fetch(
         "https://jwbdksbzpg.execute-api.us-east-1.amazonaws.com/prod/getShoppingLists",
         {
-          method: "GET",
+          method: "POST",
           headers: {
             Authorization: `Bearer ${localStorage.getItem("id_token")}`,
+            "Content-Type": "application/json",
           },
+          body: JSON.stringify({
+            userID: Number(localStorage.getItem("user_id")),
+          }),
         }
       );
 
@@ -101,7 +106,6 @@ export default function userShoppingList() {
         onChange={(e) => setShoppingListName(e.target.value)}/>
       <button onClick={handleCreateShoppingList}>Create Shopping List</button>
       <h2>Your Shopping Lists</h2>
-      <button onClick={fetchShoppingLists}>Load Shopping Lists</button>
       <ul>
         {shoppingLists.map((list) => (
           <li key={list.idshoppingList}>
