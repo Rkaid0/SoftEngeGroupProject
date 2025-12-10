@@ -13,16 +13,22 @@ export const getReceipts = async (userID: number) => {
 
         s.storeAddress,
 
+        sc.idstoreChain AS storeChainID,
+        sc.name AS storeChainName,
+
         i.idItem AS itemID,
         i.name AS itemName,
         i.price,
         i.categoryID,
+        i.quantity AS itemQuantity,
 
         c.name AS categoryName
 
     FROM Receipts r
     LEFT JOIN Stores s
         ON r.storeID = s.idStores
+    LEFT JOIN storeChain sc
+        ON s.storeChainID = sc.idstoreChain
     LEFT JOIN Item i 
         ON i.receiptID = r.receiptID
     LEFT JOIN Categories c 
@@ -48,6 +54,8 @@ export const getReceipts = async (userID: number) => {
         storeAddress: row.storeAddress,  
         date: row.date,
         total : row.total,
+        storeChainName : row.storeChainName,
+        storeChainID : row.storeChainID,
         items: [],
       };
 
@@ -60,6 +68,7 @@ export const getReceipts = async (userID: number) => {
         itemID: row.itemID,
         name: row.itemName,
         price: row.price,
+        quantity: row.itemQuantity,
         categoryID: row.categoryID,
         categoryName: row.categoryName,
       });
