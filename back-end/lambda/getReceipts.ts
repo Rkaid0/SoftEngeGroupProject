@@ -47,6 +47,7 @@ export const getReceipts = async (userID: number) => {
         storeID: row.storeID,
         storeAddress: row.storeAddress,  
         date: row.date,
+        total : row.total,
         items: [],
       };
 

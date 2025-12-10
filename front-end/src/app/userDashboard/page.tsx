@@ -440,7 +440,8 @@ export default function UserDashboard() {
             </h3>
 
             <p>
-              <strong>Date:</strong> {receipt.date?.split("T")[0]}
+              <strong>Date:</strong> {receipt.date}
+              <strong> Total: </strong> ${Number(receipt.total).toFixed(2)}
             </p>
 
             {(!receipt.items || receipt.items.length === 0) ? (
