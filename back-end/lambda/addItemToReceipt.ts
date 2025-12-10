@@ -7,12 +7,13 @@ let AddItemToDB = async (
   receiptID: number,
   name: string,
   price: number,
-  categoryID: number
+  categoryID: number,
+  quantity : number
 ): Promise<mysql.ResultSetHeader> => {
 
   const [rows] = await connection.execute<mysql.ResultSetHeader>(
-    "INSERT INTO Item (name, categoryID, price, receiptID) VALUES (?, ?, ?, ?)",
-    [name, categoryID, price, receiptID]
+    "INSERT INTO Item (name, categoryID, price, receiptID, quantity) VALUES (?, ?, ?, ?, ?)",
+    [name, categoryID, price, receiptID, quantity]
   );
 
   return rows;
@@ -51,11 +52,13 @@ let getCategoryID = async (
 let updateReceiptTotal = async (
   connection: mysql.Connection,
   price: number,
-  receiptID: number
+  quantity: number,
+  receiptID: number,
 ): Promise<mysql.ResultSetHeader> => {
+  const priceAdd = price * quantity;
   const [rows] = await connection.execute<mysql.ResultSetHeader>(
     "UPDATE Receipts SET total =  total + ? WHERE receiptID = ?",
-    [price, receiptID]
+    [priceAdd, receiptID]
   );
 
   return rows;
@@ -78,9 +81,10 @@ export const handler = async function (event: any) {
     const name: string = payload.name;
     const price: number = payload.price;
     const categoryName: string = payload.category;
+    const quantity: number = payload.quantity;
 
     // Validate input
-    if (!receiptID || !name || price == null || !categoryName) {
+    if (!receiptID || !name || price == null || !categoryName || !quantity) {
       return {
         statusCode: 400,
         headers: corsHeaders,
@@ -92,11 +96,11 @@ export const handler = async function (event: any) {
 
     const categoryID = await getCategoryID(connection, categoryName);
 
-    const result = await AddItemToDB(connection, receiptID, name, price, categoryID);
+    const result = await AddItemToDB(connection, receiptID, name, price, categoryID, quantity);
 
     const idItem = result.insertId
 
-    await updateReceiptTotal(connection, price, receiptID);
+    await updateReceiptTotal(connection, price, quantity, receiptID);
 
     await connection.end();
 
@@ -108,6 +112,7 @@ export const handler = async function (event: any) {
         receiptID,
         name,
         price,
+        quantity,
         categoryID,
       }),
     };

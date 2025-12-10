@@ -3,15 +3,13 @@ import { getConnection } from "./helpers/getDbConnection";
 
 let AddShoppingListDB = async (
   connection: mysql.Connection,
-  userID: Number,
+  userID: number,
   name: string
 ): Promise<mysql.ResultSetHeader> => {
-
   const [rows] = await connection.execute<mysql.ResultSetHeader>(
     "INSERT INTO shoppingList (userID, name) VALUES (?, ?)",
     [userID, name]
   );
-
   return rows;
 };
 
@@ -24,8 +22,6 @@ export const createShoppingList = async function(event: any) {
   };
 
   try {
-    console.log(JSON.stringify(event));
-
     const payload = JSON.parse(event.body || "{}");
 
     const userID = payload.userID;
@@ -35,10 +31,11 @@ export const createShoppingList = async function(event: any) {
       return {
         statusCode: 400,
         headers: corsHeaders,
-        body: JSON.stringify({ error: "Missing required fields: userID, name" }),
+        body: JSON.stringify({ error: "Missing required fields" })
       };
     }
 
+    // connect to DB
     const connection = await getConnection();
 
     const result: mysql.ResultSetHeader = await AddShoppingListDB(
@@ -49,15 +46,17 @@ export const createShoppingList = async function(event: any) {
 
     await connection.end();
 
+    const shoppingListID = result.insertId;
+
     return {
       statusCode: 200,
       headers: corsHeaders,
       body: JSON.stringify({
-        shoppingListID: result.insertId,
+        shoppingListID,
         userID,
         name,
         items: []
-      }),
+      })
     };
 
   } catch (error: any) {
@@ -66,8 +65,8 @@ export const createShoppingList = async function(event: any) {
       headers: corsHeaders,
       body: JSON.stringify({
         error: "Server error",
-        details: error.message || error,
-      }),
+        details: error.message || error
+      })
     };
   }
 };
