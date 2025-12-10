@@ -23,7 +23,6 @@ export default function UserDashboard() {
 
   const [itemName, setItemName] = useState("");
   const [itemPrice, setItemPrice] = useState<number | "">("");
-  const [itemCategory, setItemCategory] = useState("");
   const [editingItemId, setEditingItemId] = useState<number | null>(null);
   const [editName, setEditName] = useState("");
   const [editPrice, setEditPrice] = useState<number | "">("");
@@ -35,12 +34,40 @@ export default function UserDashboard() {
 
   const [existingReceipts, setExistingReceipts] = useState<any[]>([]);
 
+  const [categories, setCategories] = useState<
+    { categoryID: number; name: string }[]
+  >([]);
+
+  const [itemCategory, setItemCategory] = useState<string>("");  // user’s selected OR new input
+  const [isNewCategory, setIsNewCategory] = useState(false);
+
   useEffect(() => {
     const email = requireAuth();
     if (email) setEmail(email);
     else if (detectLocal() == false) {
       window.location.href = `${S3_URL}`;
     }
+  }, []);
+  
+  const fetchCategories = async () => {
+      try {
+        const res = await fetch(
+          "https://jwbdksbzpg.execute-api.us-east-1.amazonaws.com/prod/getCategories",
+          {
+            method: "GET",
+            headers: { Authorization: `Bearer ${localStorage.getItem("id_token")}` }
+          }
+        );
+
+        const data = await res.json();
+        setCategories(data);
+      } catch (err) {
+        console.error("Error fetching categories:", err);
+      }
+    };
+
+  useEffect(() => {
+    fetchCategories();
   }, []);
 
   useEffect(() => {
@@ -79,7 +106,6 @@ export default function UserDashboard() {
 
         const rows = await res.json();
 
-        // FIX: Lambda already returns grouped receipts
         const cleaned = rows.map((r: any) => ({
           ...r,
           date: r.date?.split("T")[0] // remove time part
@@ -92,18 +118,14 @@ export default function UserDashboard() {
       }
     };
 
-  // ------------------------------------------------
-  // FIXED RECEIPTS LOAD — Correct item detection
-  // ------------------------------------------------
+  // Load Receipts
   useEffect(() => {
     const userID = localStorage.getItem("user_id");
     if (!userID) return;
     fetchReceipts(userID);
   }, [email]);
 
-  // ----------------------------------
   // CREATE RECEIPT + ADD ITEMS
-  // ----------------------------------
   const handleCreateReceipt = async () => {
     if (!selectedStoreID || !date || currentItems.length === 0) {
       alert("Store, date, and at least one item are required.");
@@ -156,6 +178,7 @@ export default function UserDashboard() {
 
       alert("Receipt stored successfully!");
       fetchReceipts(localStorage.getItem("user_id"));
+      fetchCategories();
 
       setSelectedStoreChainID("");
       setSelectedStoreID("");
@@ -167,9 +190,28 @@ export default function UserDashboard() {
     }
   };
 
-  // -------------------
+  const handleDeleteReceipt = async (receiptID : any) => {
+    const confirm = window.confirm("Are you sure you want to delete this receipt? This cannot be undone.");
+    if (!confirm) return;
+    await fetch(
+          "https://jwbdksbzpg.execute-api.us-east-1.amazonaws.com/prod/deleteReceipt",
+      {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("id_token")}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+            receiptID: receiptID,
+            userID: localStorage.getItem("user_id"),
+        }),
+      }
+    );
+
+    fetchReceipts(localStorage.getItem("user_id"));
+  }
+
   // LOCAL ITEMS
-  // -------------------
   const handleAddItem = () => {
     if (!itemName.trim() || itemPrice === "" || !itemCategory.trim()) return;
 
@@ -212,9 +254,7 @@ export default function UserDashboard() {
     setEditingItemId(null);
   };
 
-  // -------------------
   // UI RENDER
-  // -------------------
   return (
     <div>
       <h1>Dashboard</h1>
@@ -286,12 +326,39 @@ export default function UserDashboard() {
         }
       />
 
-      <input
-        type="text"
-        placeholder="Category"
-        value={itemCategory}
-        onChange={(e) => setItemCategory(e.target.value)}
-      />
+      {/* CATEGORY DROPDOWN */}
+      <select
+        value={isNewCategory ? "new" : itemCategory}
+        onChange={(e) => {
+          if (e.target.value === "new") {
+            setIsNewCategory(true);
+            setItemCategory("");
+          } else {
+            setIsNewCategory(false);
+            setItemCategory(e.target.value);
+          }
+        }}
+      >
+        <option value="">Select Category</option>
+        
+        {categories.map((cat) => (
+          <option key={cat.categoryID} value={cat.name}>
+            {cat.name}
+          </option>
+        ))}
+
+        <option value="new">+ Create new category…</option>
+      </select>
+
+      {/* SHOW INPUT WHEN CREATING NEW CATEGORY */}
+      {isNewCategory && (
+        <input
+          type="text"
+          placeholder="Enter new category name"
+          value={itemCategory}
+          onChange={(e) => setItemCategory(e.target.value)}
+        />
+      )}
 
       <button onClick={handleAddItem}>Add Item</button>
 
@@ -364,6 +431,12 @@ export default function UserDashboard() {
               <span style={{ marginLeft: "10px", fontSize: "14px", color: "#666" }}>
                 (Store ID: {receipt.storeID})
               </span>
+              <button 
+              onClick={() => handleDeleteReceipt(receipt.receiptID)}
+              style={{ marginLeft: "8px", background: "red", color: "white" }}
+                >
+                  Delete
+                </button>
             </h3>
 
             <p>

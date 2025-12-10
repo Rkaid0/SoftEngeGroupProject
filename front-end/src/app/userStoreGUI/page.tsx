@@ -54,6 +54,7 @@ export default function UserStoreGUI() {
       console.error("Error loading store chains:", err)
     }
   }
+  
   const createStore = async () => {
       try {
         const chain = chains.find(c => c.name.toLowerCase() === storeChainName.toLowerCase());
