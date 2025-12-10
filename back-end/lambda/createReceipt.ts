@@ -3,8 +3,8 @@ import { getConnection } from "./helpers/getDbConnection"; // filename is getDbC
 
 let AddReceiptDB = async (connection: mysql.Connection, storeID: Number, date: Date, userID: Number): Promise<mysql.ResultSetHeader> => {
   const [rows] = await connection.execute<mysql.ResultSetHeader>(
-    "INSERT INTO Receipts (storeID, date, userID) VALUES (?, ?, ?)",
-    [storeID, date, userID]
+    "INSERT INTO Receipts (storeID, date, userID, total) VALUES (?, ?, ?, ?)",
+    [storeID, date, userID, 0.00]
   );
   return rows;
 };
@@ -48,6 +48,7 @@ export const createReceipt = async function(event: any) {
         storeID,
         date,
         items: [],
+        total: 0.00
       }),
     };
 

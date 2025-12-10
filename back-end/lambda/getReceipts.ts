@@ -9,6 +9,7 @@ export const getReceipts = async (userID: number) => {
         r.receiptID AS receiptID,
         r.storeID,
         r.date,
+        r.total,
 
         s.storeAddress,
 
