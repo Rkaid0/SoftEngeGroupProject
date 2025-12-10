@@ -12,7 +12,7 @@ const readFileAsDataURL = (file: File): Promise<string> =>
 const jsonPrompt = `
 You are a strict JSON API that extracts structured data from grocery store receipts.
 For the category item enter a general category like milk, water, apples, bread.
-For the item name enter the specific item like Hood 1% Milk.
+For the item name enter the specific item like Hood 1% Milk. Use normal capitalization.
 
 Return ONLY valid JSON, with this exact shape:
 
@@ -37,7 +37,7 @@ Rules:
 - Do NOT add any explanation text outside the JSON.
 `.trim();
 
-export default function AnalyzeReceipt({ apiKey }: {apiKey: string}) {
+export default function AnalyzeReceipt({ apiKey, handler }: {apiKey: string; handler:(a: any) => void}) {
   const openai = new OpenAI({
     apiKey: apiKey,
     dangerouslyAllowBrowser: true, // required in browser environments
@@ -47,6 +47,8 @@ export default function AnalyzeReceipt({ apiKey }: {apiKey: string}) {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleUploadReceipt = async ( event: React.ChangeEvent<HTMLInputElement> ) => {
+    console.log("Handling Upload");
+    
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -88,6 +90,9 @@ export default function AnalyzeReceipt({ apiKey }: {apiKey: string}) {
       const parsed = JSON.parse(jsonText);
 
       setParsedReceipt(parsed.receipt);
+
+      handler(parsed.receipt);
+
     } catch (err) {
       console.error(err);
       console.log("Failed to parse receipt. Try another image or try again.");

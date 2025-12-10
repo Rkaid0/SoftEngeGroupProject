@@ -61,8 +61,22 @@ export default function UserDashboard() {
     }
   }, []);
 
-  const handleReceiptParsed = () => {
-    
+  const handleReceiptParsed = (receipt: any) => {
+    const newItems = receipt.items.map((item: any) => ({
+      id: crypto.randomUUID(),
+      name: item.name,
+      price: item.unit_price,
+      category: item.category
+    }));
+
+    setCurrentItems((prev) => [...prev, ...newItems]);
+
+    if (receipt.purchase_date) {
+      const [mm, dd, yyyy] = receipt.purchase_date.split("/");
+      if (mm && dd && yyyy) {
+        setDate(`${yyyy}-${mm.padStart(2, "0")}-${dd.padStart(2, "0")}`);
+      }
+    }
   }
   
   const fetchCategories = async () => {
@@ -423,7 +437,7 @@ export default function UserDashboard() {
       ))}
 
       <button onClick={handleCreateReceipt}>Submit Receipt</button>
-      {apiKeyIsSet ? <AnalyzeReceipt apiKey = { apiKey }/> : (
+      {apiKeyIsSet ? <AnalyzeReceipt apiKey = { apiKey } handler = { handleReceiptParsed }/> : (
         <>
           <input placeholder="Enter API key" onChange={(e) => setApiKey(e.target.value)}/>
           <button onClick={() => {localStorage.setItem("API_KEY", apiKey); setApiKey(apiKey); setApiKeyIsSet(true)}}>Submit Key</button>
