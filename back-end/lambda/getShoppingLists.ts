@@ -10,8 +10,8 @@ export const getShoppingLists = async (userID: number) => {
   const [rows] = await connection.execute(
     `
     SELECT
-      sl.idshoppingList AS shoppingListID,
-      sl.name AS shoppingListName
+      sl.idshoppingList AS idshoppingList,
+      sl.name AS name
     FROM shoppingList sl
     WHERE sl.userID = ?
     ORDER BY sl.idshoppingList DESC
