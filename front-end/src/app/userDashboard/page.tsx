@@ -24,13 +24,15 @@ export default function UserDashboard() {
 
   const [itemName, setItemName] = useState("");
   const [itemPrice, setItemPrice] = useState<number | "">("");
+  const [itemQuantity, setItemQuantity] = useState<number | "">("");
   const [editingItemId, setEditingItemId] = useState<number | null>(null);
   const [editName, setEditName] = useState("");
   const [editPrice, setEditPrice] = useState<number | "">("");
+  const [editQuantity, setEditQuantity] = useState<number | "">("");
   const [editCategory, setEditCategory] = useState("");
 
   const [currentItems, setCurrentItems] = useState<
-    { id: number; name: string; price: number; category: string }[]
+    { id: number; name: string; price: number; quantity: number; category: string }[]
   >([]);
 
   const [existingReceipts, setExistingReceipts] = useState<any[]>([]);
@@ -171,6 +173,7 @@ export default function UserDashboard() {
               receiptID,
               name: item.name,
               price: item.price,
+              quantity: item.quantity,
               category: item.category,
             }),
           }
@@ -220,6 +223,7 @@ export default function UserDashboard() {
       id: Date.now(),
       name: itemName,
       price: Number(itemPrice),
+      quantity: Number(itemQuantity),
       category: itemCategory,
     };
 
@@ -228,6 +232,7 @@ export default function UserDashboard() {
     setItemName("");
     setItemPrice("");
     setItemCategory("");
+    setItemQuantity("");
   };
 
   const handleDeleteItem = (id: number) => {
@@ -239,6 +244,7 @@ export default function UserDashboard() {
     setEditName(item.name);
     setEditPrice(item.price);
     setEditCategory(item.category);
+    setEditQuantity(item.quantity)
   };
 
   const handleSaveItem = () => {
@@ -247,7 +253,7 @@ export default function UserDashboard() {
     setCurrentItems((prev) =>
       prev.map((i) =>
         i.id === editingItemId
-          ? { ...i, name: editName, price: Number(editPrice), category: editCategory }
+          ? { ...i, name: editName, price: Number(editPrice), category: editCategory, quantity: Number(editQuantity) }
           : i
       )
     );
@@ -327,6 +333,17 @@ export default function UserDashboard() {
         }
       />
 
+      <input
+        type="number"
+        min="1"
+        placeholder="Item Quantity"
+        style={{ width: '100px' }}
+        value={itemQuantity}
+        onChange={(e) =>
+          setItemQuantity(e.target.value === "" ? "" : Number(e.target.value))
+        }
+      />
+
       {/* CATEGORY DROPDOWN */}
       <select
         value={isNewCategory ? "new" : itemCategory}
@@ -391,7 +408,7 @@ export default function UserDashboard() {
           ) : (
             <>
               <p>
-                <strong>{item.name}</strong> — ${item.price.toFixed(2)}
+                <strong>{item.name}</strong> — ${item.price.toFixed(2)} x{item.quantity}
               </p>
               <p>Category: {item.category}</p>
               <button onClick={() => handleEditItem(item)}>Edit</button>
@@ -428,7 +445,7 @@ export default function UserDashboard() {
             }}
           >
             <h3>
-              Receipt from {receipt.storeAddress}
+              Receipt from {receipt.storeChainName} at {receipt.storeAddress}
               <span style={{ marginLeft: "10px", fontSize: "14px", color: "#666" }}>
                 (Store ID: {receipt.storeID})
               </span>
@@ -461,7 +478,7 @@ export default function UserDashboard() {
                     }}
                   >
                     <p>
-                      <strong>{item.name}</strong> — ${Number(item.price).toFixed(2)}
+                      <strong>{item.name}</strong> — ${Number(item.price).toFixed(2)} x{Number(item.quantity)}
                     </p>
                     <p>
                       Category: {item.categoryName} (ID {item.categoryID})
