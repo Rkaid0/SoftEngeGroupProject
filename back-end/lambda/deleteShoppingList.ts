@@ -1,21 +1,20 @@
 import mysql from "mysql2/promise";
-import { getConnection } from "./helpers/getDbConnection";
+import { getConnection } from "./helpers/getDbConnection"; // filename is getDbConnection.ts
 
-let AddShoppingListDB = async (
+let DeleteShoppingListDB = async (
   connection: mysql.Connection,
-  userID: Number,
-  name: string
+  shoppingListID: Number
 ): Promise<mysql.ResultSetHeader> => {
 
   const [rows] = await connection.execute<mysql.ResultSetHeader>(
-    "INSERT INTO shoppingList (userID, name) VALUES (?, ?)",
-    [userID, name]
+    "DELETE FROM shoppingList WHERE shoppingListID = ?",
+    [shoppingListID]
   );
 
   return rows;
 };
 
-export const createShoppingList = async function(event: any) {
+export const deleteShoppingList = async function(event: any) {
   const corsHeaders = {
     "Content-Type": "application/json",
     "Access-Control-Allow-Origin": "*",
@@ -27,36 +26,44 @@ export const createShoppingList = async function(event: any) {
     console.log(JSON.stringify(event));
 
     const payload = JSON.parse(event.body || "{}");
+    const shoppingListID = payload.shoppingListID;
 
-    const userID = payload.userID;
-    const name = payload.name;
-
-    if (!userID || !name) {
+    if (!shoppingListID) {
       return {
         statusCode: 400,
         headers: corsHeaders,
-        body: JSON.stringify({ error: "Missing required fields: userID, name" }),
+        body: JSON.stringify({ error: "Missing required field: shoppingListID" }),
       };
     }
 
+    // connect to db
     const connection = await getConnection();
 
-    const result: mysql.ResultSetHeader = await AddShoppingListDB(
+    const result: mysql.ResultSetHeader = await DeleteShoppingListDB(
       connection,
-      userID,
-      name
+      shoppingListID
     );
 
     await connection.end();
+
+    // If no rows deleted → invalid ID
+    if (result.affectedRows === 0) {
+      return {
+        statusCode: 404,
+        headers: corsHeaders,
+        body: JSON.stringify({
+          error: "Shopping list not found",
+          shoppingListID
+        }),
+      };
+    }
 
     return {
       statusCode: 200,
       headers: corsHeaders,
       body: JSON.stringify({
-        shoppingListID: result.insertId,
-        userID,
-        name,
-        items: []
+        message: "Shopping list deleted successfully",
+        shoppingListID
       }),
     };
 

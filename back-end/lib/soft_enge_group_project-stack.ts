@@ -289,6 +289,40 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
       addUserToDBFunction.functionName
     );
 
+    const createShoppingList = new NodejsFunction(this, 'CreatShoppingList', {
+      runtime: lambda.Runtime.NODEJS_22_X,
+      entry: path.join(__dirname, '../lambda/createShoppingList.ts'),
+      handler: 'createShoppingList',
+      bundling: {
+        externalModules: [],
+        nodeModules: ["mysql2"],
+      },
+      vpc,
+      securityGroups: [lambdaSG], 
+      vpcSubnets: {
+        subnetType: ec2.SubnetType.PUBLIC
+      },
+      allowPublicSubnet: true
+    });
+
+    const deleteShoppingListFunction = new NodejsFunction(this, 'DeleteShoppingList', {
+     runtime: lambda.Runtime.NODEJS_22_X,
+      entry: path.join(__dirname, '../lambda/deleteShoppingList.ts'),
+      handler: 'deleteShoppingList',
+      bundling: {
+        externalModules: [],
+        nodeModules: ["mysql2"],
+      },
+      vpc,
+      securityGroups: [lambdaSG], 
+      vpcSubnets: {
+        subnetType: ec2.SubnetType.PUBLIC
+      },
+      allowPublicSubnet: true
+    });
+
+        
+
     // end of LAMBDA FUNCTIONS ---------------------------------------------------------------
 
     //ADD DATABASE PASSWORD TO DB LAMBDA FUNCTIONS ----------------------------------
@@ -303,6 +337,8 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
     addItemToReceiptFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!);
     getStoresFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!);
     getReceiptsFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!);
+    createShoppingList.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!);
+    deleteShoppingListFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!);
     deleteReceiptFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!);
     getCategoriesFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!);
 
@@ -331,6 +367,9 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
     const addItemToReceiptIntegration = new LambdaIntegration(addItemToReceiptFunction);
     const getStoresIntegration = new LambdaIntegration(getStoresFunction);
     const getReceiptsIntegration = new LambdaIntegration(getReceiptsFunction);
+    const createShoppingListIntegration = new LambdaIntegration(createShoppingList);
+    const deleteShoppingListIntegration = new LambdaIntegration(deleteShoppingListFunction); 
+    
     const deleteReceiptIntegration = new LambdaIntegration(deleteReceiptFunction);
     const getCategoriesIntegration = new LambdaIntegration(getCategoriesFunction);
 
@@ -345,6 +384,9 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
     const addItemToReceiptResource = api.root.addResource('addItemToReceipt');
     const getStoresResource = api.root.addResource('getStores');
     const getReceiptsResource = api.root.addResource('getReceipts');
+    const createShoppingListResource = api.root.addResource('createShoppingList');
+    const deleteShoppingListResource = api.root.addResource('deleteShoppingList');
+   
     const deleteReceiptResource = api.root.addResource('deleteReceipt');
     const getCategoriesResource = api.root.addResource('getCategories');
 
@@ -405,6 +447,11 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
       authorizer,
       authorizationType: AuthorizationType.COGNITO,
     });
+    createShoppingListResource.addMethod('POST', createShoppingListIntegration, {
+      authorizer,
+      authorizationType: AuthorizationType.COGNITO,
+    });
+    deleteShoppingListResource.addMethod('DELETE', deleteShoppingListIntegration, {
     deleteReceiptResource.addMethod('POST', deleteReceiptIntegration, {
       authorizer,
       authorizationType: AuthorizationType.COGNITO,
@@ -474,12 +521,16 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
       allowHeaders: apigateway.Cors.DEFAULT_HEADERS,
       allowCredentials: true,
     });
+    createShoppingListResource.addCorsPreflight({
     deleteReceiptResource.addCorsPreflight({
       allowOrigins: apigateway.Cors.ALL_ORIGINS,
       allowMethods: ['POST'],
       allowHeaders: apigateway.Cors.DEFAULT_HEADERS,
       allowCredentials: true,
     });
+    deleteShoppingListResource.addCorsPreflight({
+      allowOrigins: apigateway.Cors.ALL_ORIGINS,
+      allowMethods: ['DELETE'],
     getCategoriesResource.addCorsPreflight({
       allowOrigins: apigateway.Cors.ALL_ORIGINS,
       allowMethods: ['GET'],
