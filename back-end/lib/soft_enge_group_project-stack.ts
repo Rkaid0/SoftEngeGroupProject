@@ -287,7 +287,7 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
     const createShoppingListFunction = new NodejsFunction(this, 'CreateShoppingList', {
       runtime: lambda.Runtime.NODEJS_22_X,
       entry: path.join(__dirname, '../lambda/createShoppingList.ts'),
-      handler: 'createShoopingList',
+      handler: 'createShoppingList',
       bundling: {
         externalModules: [],
         nodeModules: ["mysql2"],
@@ -363,7 +363,7 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
     const getReceiptsResource = api.root.addResource('getReceipts');
     const deleteReceiptResource = api.root.addResource('deleteReceipt');
     const getCategoriesResource = api.root.addResource('getCategories');
-     const createShoppingListResource = api.root.addResource('createShoppingList');
+    const createShoppingListResource = api.root.addResource('createShoppingList');
 
     // COGNITO LAMBDA RESOURCES  /api/ ENDPOINT (OAuth callback – NO authorization)
     const apiResource = api.root.addResource("api");
