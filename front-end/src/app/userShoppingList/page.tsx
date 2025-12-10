@@ -9,7 +9,7 @@ export default function userShoppingList() {
   const [email, setEmail] = useState<string | null>(null);
   const router = useRouter();
   const [shoppingListName, setShoppingListName] = useState("");
-  const [shoppingListUserID, setShoppingListUserID] = useState("");
+  const [shoppingLists, setShoppingLists] = useState<any[]>([]);
 
   useEffect(() => {
     const userEmail = requireAuth();
@@ -19,7 +19,7 @@ export default function userShoppingList() {
   }, []);
 
   const handleCreateShoppingList = async () => {
-    const userID = localStorage.getItem("user_id"); // ← automatic
+    const userID = localStorage.getItem("user_id");
 
     if (!userID) {
       alert("User ID not found — are you logged in?");
@@ -42,7 +42,7 @@ export default function userShoppingList() {
           },
           body: JSON.stringify({
             name: shoppingListName,
-            userID: userID, // automatic
+            userID: userID,
           }),
         }
       );
@@ -56,12 +56,40 @@ export default function userShoppingList() {
 
       alert("Shopping list created!");
       setShoppingListName("");
+
+      // refresh list automatically (optional)
+      fetchShoppingLists();
     } catch (err) {
       console.error("Error creating shopping list:", err);
       alert("Failed to create shopping list.");
     }
   };
 
+  const fetchShoppingLists = async () => {
+    try {
+      const res = await fetch(
+        "https://jwbdksbzpg.execute-api.us-east-1.amazonaws.com/prod/getShoppingLists",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("id_token")}`,
+          },
+        }
+      );
+
+      const data = await res.json();
+
+      if (data.error) {
+        alert("Error: " + data.error);
+        return;
+      }
+
+      setShoppingLists(data);
+    } catch (err) {
+      console.error("Error fetching shopping lists:", err);
+      alert("Failed to fetch shopping lists.");
+    }
+  };
   return (
     <div>
       <h1>Shopping List</h1>
@@ -72,6 +100,15 @@ export default function userShoppingList() {
       <input type="text" placeholder="Shopping list name" value={shoppingListName}
         onChange={(e) => setShoppingListName(e.target.value)}/>
       <button onClick={handleCreateShoppingList}>Create Shopping List</button>
+      <h2>Your Shopping Lists</h2>
+      <button onClick={fetchShoppingLists}>Load Shopping Lists</button>
+      <ul>
+        {shoppingLists.map((list) => (
+          <li key={list.idshoppingList}>
+            {list.name}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
