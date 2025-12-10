@@ -20,7 +20,7 @@ Receipt Use Cases for Shopper ----------
 • Delete Receipt ✓
 
 Shopping List Use Cases for Shopper ----
-• Create Shopping List ✓
+• Create Shopping List 
 • Add Item To Shopping List *need to test*
 • Remove Item From Shopping List *need to test*
 • Report Options For Shopping List
@@ -33,6 +33,6 @@ Store Use Cases for Shopper ------------
 Administrator Use Cases ----------------
 • Login Administrator ✓
 • Show Admin Dashboard ✓
-• Remove Store Chain
-• Remove Store
+• Remove Store Chain ✓
+• Remove Store ✓
 • Show Profit for Each Store
