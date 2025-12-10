@@ -42,6 +42,17 @@ export default function UserDashboard() {
   const [itemCategory, setItemCategory] = useState<string>("");  // user’s selected OR new input
   const [isNewCategory, setIsNewCategory] = useState(false);
 
+  const [apiKey, setApiKey] = useState<string>("");
+  const [apiKeyIsSet, setApiKeyIsSet] = useState<boolean>(false);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("API_KEY");
+    if (stored) {
+      setApiKey(stored);
+      setApiKeyIsSet(true);
+    }
+  }, []);
+
   useEffect(() => {
     const email = requireAuth();
     if (email) setEmail(email);
@@ -49,6 +60,10 @@ export default function UserDashboard() {
       window.location.href = `${S3_URL}`;
     }
   }, []);
+
+  const handleReceiptParsed = () => {
+    
+  }
   
   const fetchCategories = async () => {
       try {
@@ -312,6 +327,7 @@ export default function UserDashboard() {
       <h3>Add Items</h3>
 
       <input
+        id="receiptNameInput"
         type="text"
         placeholder="Item Name"
         value={itemName}
@@ -407,6 +423,12 @@ export default function UserDashboard() {
       ))}
 
       <button onClick={handleCreateReceipt}>Submit Receipt</button>
+      {apiKeyIsSet ? <AnalyzeReceipt apiKey = { apiKey }/> : (
+        <>
+          <input placeholder="Enter API key" onChange={(e) => setApiKey(e.target.value)}/>
+          <button onClick={() => {localStorage.setItem("API_KEY", apiKey); setApiKey(apiKey); setApiKeyIsSet(true)}}>Submit Key</button>
+        </>
+      )}
 
       {/* ---------------------------
           EXISTING RECEIPTS UI

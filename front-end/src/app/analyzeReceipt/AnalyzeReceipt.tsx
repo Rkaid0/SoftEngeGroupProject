@@ -1,13 +1,6 @@
 import OpenAI from "openai";
 import React, { useState } from "react";
 
-export const OPENAI_API_KEY = "PUT API KEY HERE"; // ⚠ demo only, not for prod
-
-export const openai = new OpenAI({
-  apiKey: OPENAI_API_KEY,
-  dangerouslyAllowBrowser: true, // required in browser environments
-});
-
 const readFileAsDataURL = (file: File): Promise<string> =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -44,7 +37,12 @@ Rules:
 - Do NOT add any explanation text outside the JSON.
 `.trim();
 
-export default function AnalyzeReceipt() {
+export default function AnalyzeReceipt({ apiKey }: {apiKey: string}) {
+  const openai = new OpenAI({
+    apiKey: apiKey,
+    dangerouslyAllowBrowser: true, // required in browser environments
+  });
+
   const [parsedReceipt, setParsedReceipt] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -100,11 +98,12 @@ export default function AnalyzeReceipt() {
 
   return (
     <div>
+        <br/>
         <h2>Upload store receipt</h2>
 
         <input type="file" accept="image/*" onChange={handleUploadReceipt} />
 
-        <p>Is Loading: {isLoading ? "True" : "False"}</p>
+        {isLoading ? <p>Loading...</p> : <></>}
 
         <h3>Parsed receipt JSON</h3>
         <pre
