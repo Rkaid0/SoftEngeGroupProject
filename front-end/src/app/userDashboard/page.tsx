@@ -79,6 +79,16 @@ export default function UserDashboard() {
         setDate(`${yyyy}-${mm.padStart(2, "0")}-${dd.padStart(2, "0")}`);
       }
     }
+
+    const correspoindingChain = storeChains.find((chain) => chain.name === receipt.merchant_name);
+    if (!correspoindingChain) {console.error("Chain not found"); return;}
+
+    setSelectedStoreChainID(correspoindingChain.idstoreChain);
+
+    const correspoindingStore = correspoindingChain.stores.find((store) => store.storeAddress === receipt.merchant_address);
+    if (!correspoindingStore) {console.error("Store not found"); return;}
+
+    setSelectedStoreID(correspoindingStore.idStores);
   }
   
   const fetchCategories = async () => {
