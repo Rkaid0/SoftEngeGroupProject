@@ -47,6 +47,20 @@ let getCategoryID = async (
   return newID;
 };
 
+//Update receipt total
+let updateReceiptTotal = async (
+  connection: mysql.Connection,
+  price: number,
+  receiptID: number
+): Promise<mysql.ResultSetHeader> => {
+  const [rows] = await connection.execute<mysql.ResultSetHeader>(
+    "UPDATE Receipts SET total =  total + ? WHERE receiptID = ?",
+    [price, receiptID]
+  );
+
+  return rows;
+};
+
 export const handler = async function (event: any) {
   const corsHeaders = {
     "Content-Type": "application/json",
@@ -81,6 +95,8 @@ export const handler = async function (event: any) {
     const result = await AddItemToDB(connection, receiptID, name, price, categoryID);
 
     const idItem = result.insertId
+
+    await updateReceiptTotal(connection, price, receiptID);
 
     await connection.end();
 

@@ -9,6 +9,7 @@ export const getReceipts = async (userID: number) => {
         r.receiptID AS receiptID,
         r.storeID,
         r.date,
+        r.total,
 
         s.storeAddress,
 
@@ -29,7 +30,7 @@ export const getReceipts = async (userID: number) => {
 
     WHERE r.userID = ?
 
-    ORDER BY r.receiptID DESC, i.idItem`,
+    ORDER BY r.date DESC, i.idItem`,
     [userID]
   );
 
@@ -46,6 +47,7 @@ export const getReceipts = async (userID: number) => {
         storeID: row.storeID,
         storeAddress: row.storeAddress,  
         date: row.date,
+        total : row.total,
         items: [],
       };
 

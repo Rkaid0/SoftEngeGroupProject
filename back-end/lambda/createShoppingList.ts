@@ -1,52 +1,73 @@
-
 import mysql from "mysql2/promise";
-import { getConnection } from "./helpers/getDbConnection"; // filename is getDbConnection.ts
+import { getConnection } from "./helpers/getDbConnection";
 
+let AddShoppingListDB = async (
+  connection: mysql.Connection,
+  userID: Number,
+  name: string
+): Promise<mysql.ResultSetHeader> => {
 
+  const [rows] = await connection.execute<mysql.ResultSetHeader>(
+    "INSERT INTO shoppingList (userID, name) VALUES (?, ?)",
+    [userID, name]
+  );
 
-export const handler = async (event : any) => {
+  return rows;
+};
+
+export const createShoppingList = async function(event: any) {
+  const corsHeaders = {
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers": "*",
+    "Access-Control-Allow-Methods": "*"
+  };
+
   try {
-    // Parse user input (API Gateway sends body as string)
-    const body = JSON.parse(event.body);
+    console.log(JSON.stringify(event));
 
-    const { userID, name } = body;
+    const payload = JSON.parse(event.body || "{}");
+
+    const userID = payload.userID;
+    const name = payload.name;
 
     if (!userID || !name) {
       return {
         statusCode: 400,
-        body: JSON.stringify({ error: "userID and name are required" }),
+        headers: corsHeaders,
+        body: JSON.stringify({ error: "Missing required fields: userID, name" }),
       };
     }
 
-    // connect to DB and insert
     const connection = await getConnection();
-    try {
-      const [result] = await connection.execute<mysql.ResultSetHeader>(
-        `INSERT INTO shoppingLists (userID, name) VALUES (?, ?)`,
-        [userID, name]
-      );
 
-      const shoppingListID = (result as mysql.ResultSetHeader).insertId;
+    const result: mysql.ResultSetHeader = await AddShoppingListDB(
+      connection,
+      userID,
+      name
+    );
 
-      return {
-        statusCode: 200,
-        body: JSON.stringify({ shoppingListID, userID, name }),
-      };
-    } finally {
-      // always close DB connection
-      await connection.end();
-    }
-
-    
-
-    // unreachable — response returned from inside try block above
-
-  } catch (err) {
-    console.error("Error creating shopping list:", err);
+    await connection.end();
 
     return {
+      statusCode: 200,
+      headers: corsHeaders,
+      body: JSON.stringify({
+        shoppingListID: result.insertId,
+        userID,
+        name,
+        items: []
+      }),
+    };
+
+  } catch (error: any) {
+    return {
       statusCode: 500,
-      body: JSON.stringify({ error: "Internal Server Error" }),
+      headers: corsHeaders,
+      body: JSON.stringify({
+        error: "Server error",
+        details: error.message || error,
+      }),
     };
   }
 };
