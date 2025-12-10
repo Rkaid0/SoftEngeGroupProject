@@ -44,6 +44,17 @@ export default function UserDashboard() {
   const [itemCategory, setItemCategory] = useState<string>("");  // user’s selected OR new input
   const [isNewCategory, setIsNewCategory] = useState(false);
 
+  const [apiKey, setApiKey] = useState<string>("");
+  const [apiKeyIsSet, setApiKeyIsSet] = useState<boolean>(false);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("API_KEY");
+    if (stored) {
+      setApiKey(stored);
+      setApiKeyIsSet(true);
+    }
+  }, []);
+
   useEffect(() => {
     const email = requireAuth();
     if (email) setEmail(email);
@@ -51,6 +62,34 @@ export default function UserDashboard() {
       window.location.href = `${S3_URL}`;
     }
   }, []);
+
+  const handleReceiptParsed = (receipt: any) => {
+    const newItems = receipt.items.map((item: any) => ({
+      id: crypto.randomUUID(),
+      name: item.name,
+      price: item.unit_price,
+      category: item.category
+    }));
+
+    setCurrentItems((prev) => [...prev, ...newItems]);
+
+    if (receipt.purchase_date) {
+      const [mm, dd, yyyy] = receipt.purchase_date.split("/");
+      if (mm && dd && yyyy) {
+        setDate(`${yyyy}-${mm.padStart(2, "0")}-${dd.padStart(2, "0")}`);
+      }
+    }
+
+    const correspoindingChain = storeChains.find((chain) => chain.name === receipt.merchant_name);
+    if (!correspoindingChain) {console.error("Chain not found"); return;}
+
+    setSelectedStoreChainID(correspoindingChain.idstoreChain);
+
+    const correspoindingStore = correspoindingChain.stores.find((store) => store.storeAddress === receipt.merchant_address);
+    if (!correspoindingStore) {console.error("Store not found"); return;}
+
+    setSelectedStoreID(correspoindingStore.idStores);
+  }
   
   const fetchCategories = async () => {
       try {
@@ -319,6 +358,7 @@ export default function UserDashboard() {
       <h3>Add Items</h3>
 
       <input
+        id="receiptNameInput"
         type="text"
         placeholder="Item Name"
         value={itemName}
@@ -425,6 +465,12 @@ export default function UserDashboard() {
       ))}
 
       <button onClick={handleCreateReceipt}>Submit Receipt</button>
+      {apiKeyIsSet ? <AnalyzeReceipt apiKey = { apiKey } handler = { handleReceiptParsed }/> : (
+        <>
+          <input placeholder="Enter API key" onChange={(e) => setApiKey(e.target.value)}/>
+          <button onClick={() => {localStorage.setItem("API_KEY", apiKey); setApiKey(apiKey); setApiKeyIsSet(true)}}>Submit Key</button>
+        </>
+      )}
 
       {/* ---------------------------
           EXISTING RECEIPTS UI
