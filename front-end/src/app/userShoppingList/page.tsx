@@ -182,14 +182,47 @@ export default function UserShoppingList() {
       setItemName("");
       setItemQuantity("");
       setItemCategory("");
+      fetchShoppingLists()
       setIsNewCategory(false);
     } catch (err) {
       console.error("Error adding item:", err);
       alert("Failed to add item.");
     }
   };
+  const handleDeleteItem = async (idShoppingListItem: number) => {
+    if (!selectedListID) return alert("Select a shopping list first.");
+
+    try {
+      const res = await fetch("https://jwbdksbzpg.execute-api.us-east-1.amazonaws.com/prod/removeItemFromShoppingList", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("id_token")}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          shoppingListID: selectedListID,
+          idShoppingListItem: idShoppingListItem,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (data.error) {
+        alert("Error deleting item: " + data.error);
+        return;
+      }
+
+      // Update front-end list by removing the deleted item
+      setListItems((prevItems) => prevItems.filter((item) => item.idShoppingListItem !== idShoppingListItem));
+      alert("Item deleted successfully.");
+      fetchShoppingLists()
+    } catch (err) {
+      console.error("Error deleting item:", err);
+      alert("Failed to delete item.");
+    }
+  };
   interface Item {
-    itemID: number;
+    idShoppingListItem: number;
     name: string;
     quantity: number;
     categoryID: number;
@@ -229,14 +262,14 @@ export default function UserShoppingList() {
                 <span style={{ marginRight: "10px" }}>
                   <strong>{list.name}</strong>
                 </span>
-                <button onClick={() => handleSelectList(list)}>Add Item</button>
+                <button onClick={() => handleSelectList(list)}>Edit List</button>
               </div>
 
               {/* Check if there are items in the list and render them */}
               {list.items && list.items.length > 0 ? (
                 <ul style={{ listStyleType: "disc", marginLeft: "20px" }}>
                   {list.items.map((item: Item) => (
-                    <li key={item.itemID}>
+                    <li key={item.idShoppingListItem}>
                       <strong>{item.name}</strong> × {item.quantity} (Category: {item.categoryName})
                     </li>
                   ))}
@@ -314,17 +347,36 @@ export default function UserShoppingList() {
           ) : (
             listItems.map((item) => (
               <div
-                key={item.itemID}
+                key={item.idShoppingListItem}
                 style={{
                   border: "1px solid #aaa",
                   padding: "6px",
                   marginTop: "6px",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
                 }}
               >
-                <p>
-                  <strong>{item.name}</strong> × {item.quantity}
-                </p>
-                <p>Category: {item.categoryName}</p>
+                <div>
+                  <p>
+                    <strong>{item.name}</strong> × {item.quantity}
+                  </p>
+                  <p>Category: {item.categoryName}</p>
+                </div>
+
+                {/* Delete Button */}
+                <button
+                  onClick={() => handleDeleteItem(item.itemID)} // Call delete function
+                  style={{
+                    backgroundColor: "red",
+                    color: "white",
+                    border: "none",
+                    padding: "5px 10px",
+                    cursor: "pointer",
+                  }}
+                >
+                  Delete
+                </button>
               </div>
             ))
           )}
