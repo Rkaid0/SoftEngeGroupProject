@@ -21,7 +21,7 @@ Receipt Use Cases for Shopper ----------
 
 Shopping List Use Cases for Shopper ----
 • Create Shopping List ✓
-• Add Item To Shopping List
+• Add Item To Shopping List ✓
 • Remove Item From Shopping List
 • Report Options For Shopping List
 
