@@ -6,9 +6,9 @@ Shopper --------------------------------
 • Register Shopper ✓
 • Login Shopper ✓
 • Show Account Dashboard ✓
-• Review History
-• Review Activity
-• Search Recent Purchases
+• Review History ✓
+• Review Activity ✓
+• Search Recent Purchases ✓
 
 Receipt Use Cases for Shopper ----------
 • Create Receipt ✓
