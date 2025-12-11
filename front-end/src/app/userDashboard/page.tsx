@@ -86,6 +86,7 @@ export default function UserDashboard() {
       id: Date.now(),
       name: item.name,
       price: item.unit_price,
+      quantity: item.quantity,
       category: item.category
     }));
 
