@@ -7,6 +7,8 @@ export default function ReviewHistory() {
   const router = useRouter()
   const [email, setEmail] = useState<string | null>(null)
   const [existingReceipts, setExistingReceipts] = useState<any[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
+
 
   useEffect(() => {
       const userEmail = requireAuth();
@@ -71,6 +73,19 @@ export default function ReviewHistory() {
     fetchReceipts(localStorage.getItem("user_id"));
   }
 
+  const filteredReceipts = existingReceipts.filter((receipt) => {
+    // If no search text, show everything
+    if (!searchTerm.trim()) return true;
+
+    // If receipt has no items, it cannot match
+    if (!receipt.items || receipt.items.length === 0) return false;
+
+    // Check if ANY item name contains the search term
+    return receipt.items.some((item: any) =>
+      item.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  });
+
   //UI RENDER  
   return (
     <div>
@@ -82,10 +97,31 @@ export default function ReviewHistory() {
          --------------------------- */}
       <hr />
       <h2>Existing Receipts</h2>
-
+      <div style={{ marginTop: "16px", marginBottom: "20px" }}>
+        <input
+          type="text"
+          placeholder="Search receipts by item name..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          style={{
+            width: "100%",
+            maxWidth: "400px",
+            padding: "8px 10px",
+            fontSize: "16px",
+            borderRadius: "4px",
+            border: "1px solid #ccc",
+          }}
+        />
+      </div>
       {existingReceipts.length === 0 && <p>No receipts found.</p>}
+      {filteredReceipts.length === 0 && searchTerm && existingReceipts.length !== 0 && (
+        <p style={{ fontStyle: "italic" }}>
+          No receipts match your search.
+        </p>
+      )}
 
-        {existingReceipts.map((receipt: any) => (
+
+        {filteredReceipts.map((receipt: any) => (
           <div
             key={receipt.receiptID}
             style={{

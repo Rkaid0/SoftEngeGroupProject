@@ -102,7 +102,7 @@ export default function UserStoreGUI() {
       <ul>
         {chains.map((chain) => (
           <li key={chain.idstoreChain}>
-            <strong>{chain.name}</strong> — {chain.url}
+            <strong>{chain.name}</strong> — <a href={chain.url} target="_blank" rel="noopener noreferrer">{chain.url}</a>
             <ul>
               {chain.stores.length === 0 && <li>No stores</li>}
               {chain.stores.map((s: any) => (
