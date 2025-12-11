@@ -483,6 +483,8 @@ export default function UserDashboard() {
       ))}
 
       <button onClick={handleCreateReceipt}>Submit Receipt</button>
+      <hr />
+      <h2>Analyze Receipt With AI</h2>
       {apiKeyIsSet ? <AnalyzeReceipt apiKey = { apiKey } handler = { handleReceiptParsed }/> : (
         <>
           <input placeholder="Enter API key" onChange={(e) => setApiKey(e.target.value)}/>
