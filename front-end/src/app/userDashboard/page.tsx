@@ -83,7 +83,7 @@ export default function UserDashboard() {
 
   const handleReceiptParsed = (receipt: any) => {
     const newItems = receipt.items.map((item: any) => ({
-      id: crypto.randomUUID(),
+      id: Date.now(),
       name: item.name,
       price: item.unit_price,
       category: item.category
