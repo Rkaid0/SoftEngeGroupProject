@@ -329,6 +329,21 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
       },
       allowPublicSubnet: true
     });
+    const removeItemFromShoppingListFunction = new NodejsFunction(this, 'RemoveItemFromShoppingList', {
+      runtime: lambda.Runtime.NODEJS_22_X,
+      entry: path.join(__dirname, '../lambda/removeItemFromShoppingList.ts'),
+      handler: 'handler',
+      bundling: {
+        externalModules: [],
+        nodeModules: ["mysql2"],
+      },
+      vpc,
+      securityGroups: [lambdaSG], 
+      vpcSubnets: {
+        subnetType: ec2.SubnetType.PUBLIC
+      },
+      allowPublicSubnet: true
+    });
 
 
     addUserToDBFunction.grantInvoke(callbackLambda);
@@ -355,6 +370,8 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
     createShoppingListFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!);
     getShoppingListsFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!);
     addItemToShoppingListFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!);
+    removeItemFromShoppingListFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!);
+
 
     //--------------------------------------------------------------------------
 
@@ -386,6 +403,7 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
     const createShoppingListIntegration = new LambdaIntegration(createShoppingListFunction);
     const getShoppingListsIntegration = new LambdaIntegration(getShoppingListsFunction);
     const addItemToShoppingListIntegration = new LambdaIntegration(addItemToShoppingListFunction);
+    const removeItemFromShoppingListIntegration = new LambdaIntegration(removeItemFromShoppingListFunction);
 
   
     //Add resource for each lambda function
@@ -404,6 +422,7 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
     const createShoppingListResource = api.root.addResource('createShoppingList');
     const getShoppingListsResource = api.root.addResource('getShoppingLists');
     const addItemToShoppingListResource = api.root.addResource('addItemToShoppingList');
+    const removeItemFromShoppingListResource = api.root.addResource('removeItemFromShoppingList');
 
 
     // COGNITO LAMBDA RESOURCES  /api/ ENDPOINT (OAuth callback – NO authorization)
@@ -480,6 +499,10 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
       authorizationType: AuthorizationType.COGNITO,
     });
     addItemToShoppingListResource.addMethod('POST', addItemToShoppingListIntegration, {
+      authorizer,
+      authorizationType: AuthorizationType.COGNITO,
+    });
+    removeItemFromShoppingListResource.addMethod('POST', removeItemFromShoppingListIntegration, {
       authorizer,
       authorizationType: AuthorizationType.COGNITO,
     });
@@ -568,6 +591,12 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
       allowCredentials: true,
     });
     addItemToShoppingListResource.addCorsPreflight({
+      allowOrigins: apigateway.Cors.ALL_ORIGINS,
+      allowMethods: ['POST'],
+      allowHeaders: apigateway.Cors.DEFAULT_HEADERS,
+      allowCredentials: true,
+    });
+    removeItemFromShoppingListResource.addCorsPreflight({
       allowOrigins: apigateway.Cors.ALL_ORIGINS,
       allowMethods: ['POST'],
       allowHeaders: apigateway.Cors.DEFAULT_HEADERS,
