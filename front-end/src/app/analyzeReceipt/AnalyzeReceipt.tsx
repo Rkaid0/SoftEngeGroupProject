@@ -1,13 +1,6 @@
 import OpenAI from "openai";
 import React, { useState } from "react";
 
-export const OPENAI_API_KEY = "PUT API KEY HERE"; // ⚠ demo only, not for prod
-
-export const openai = new OpenAI({
-  apiKey: OPENAI_API_KEY,
-  dangerouslyAllowBrowser: true, // required in browser environments
-});
-
 const readFileAsDataURL = (file: File): Promise<string> =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -19,7 +12,7 @@ const readFileAsDataURL = (file: File): Promise<string> =>
 const jsonPrompt = `
 You are a strict JSON API that extracts structured data from grocery store receipts.
 For the category item enter a general category like milk, water, apples, bread.
-For the item name enter the specific item like Hood 1% Milk.
+For the item name enter the specific item like Hood 1% Milk. Use normal capitalization.
 
 Return ONLY valid JSON, with this exact shape:
 
@@ -44,11 +37,18 @@ Rules:
 - Do NOT add any explanation text outside the JSON.
 `.trim();
 
-export default function AnalyzeReceipt() {
+export default function AnalyzeReceipt({ apiKey, handler }: {apiKey: string; handler:(a: any) => void}) {
+  const openai = new OpenAI({
+    apiKey: apiKey,
+    dangerouslyAllowBrowser: true, // required in browser environments
+  });
+
   const [parsedReceipt, setParsedReceipt] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
 
   const handleUploadReceipt = async ( event: React.ChangeEvent<HTMLInputElement> ) => {
+    console.log("Handling Upload");
+    
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -90,6 +90,9 @@ export default function AnalyzeReceipt() {
       const parsed = JSON.parse(jsonText);
 
       setParsedReceipt(parsed.receipt);
+
+      handler(parsed.receipt);
+
     } catch (err) {
       console.error(err);
       console.log("Failed to parse receipt. Try another image or try again.");
@@ -100,11 +103,12 @@ export default function AnalyzeReceipt() {
 
   return (
     <div>
+        <br/>
         <h2>Upload store receipt</h2>
 
         <input type="file" accept="image/*" onChange={handleUploadReceipt} />
 
-        <p>Is Loading: {isLoading ? "True" : "False"}</p>
+        {isLoading ? <p>Loading...</p> : <></>}
 
         <h3>Parsed receipt JSON</h3>
         <pre

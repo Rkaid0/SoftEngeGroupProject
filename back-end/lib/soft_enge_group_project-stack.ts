@@ -315,6 +315,53 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
       },
       allowPublicSubnet: true
     });
+    const getShoppingListsFunction = new NodejsFunction(this, 'GetShoppingLists', {
+      runtime: lambda.Runtime.NODEJS_22_X,
+      entry: path.join(__dirname, '../lambda/getShoppingLists.ts'),
+      handler: 'handler',
+      bundling: {
+        externalModules: [],
+        nodeModules: ["mysql2"],
+      },
+      vpc,
+      securityGroups: [lambdaSG], 
+      vpcSubnets: {
+        subnetType: ec2.SubnetType.PUBLIC
+      },
+      allowPublicSubnet: true
+    });
+    const addItemToShoppingListFunction = new NodejsFunction(this, 'AddItemToShoppingList', {
+      runtime: lambda.Runtime.NODEJS_22_X,
+      entry: path.join(__dirname, '../lambda/addItemToShoppingList.ts'),
+      handler: 'handler',
+      bundling: {
+        externalModules: [],
+        nodeModules: ["mysql2"],
+      },
+      vpc,
+      securityGroups: [lambdaSG], 
+      vpcSubnets: {
+        subnetType: ec2.SubnetType.PUBLIC
+      },
+      allowPublicSubnet: true
+    });
+    const removeItemFromShoppingListFunction = new NodejsFunction(this, 'RemoveItemFromShoppingList', {
+      runtime: lambda.Runtime.NODEJS_22_X,
+      entry: path.join(__dirname, '../lambda/removeItemFromShoppingList.ts'),
+      handler: 'handler',
+      bundling: {
+        externalModules: [],
+        nodeModules: ["mysql2"],
+      },
+      vpc,
+      securityGroups: [lambdaSG], 
+      vpcSubnets: {
+        subnetType: ec2.SubnetType.PUBLIC
+      },
+      allowPublicSubnet: true
+    });
+
+
     addUserToDBFunction.grantInvoke(callbackLambda);
     callbackLambda.addEnvironment(
       "ADD_USER_FUNCTION_NAME",
@@ -337,6 +384,11 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
     deleteReceiptFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!);
     getCategoriesFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!);
     createShoppingListFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!);
+    getShoppingListsFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!);
+    addItemToShoppingListFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!);
+    removeItemFromShoppingListFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!);
+
+
     getReceiptsTimeFrameFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!);
     //--------------------------------------------------------------------------
 
@@ -366,8 +418,12 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
     const deleteReceiptIntegration = new LambdaIntegration(deleteReceiptFunction);
     const getCategoriesIntegration = new LambdaIntegration(getCategoriesFunction);
     const createShoppingListIntegration = new LambdaIntegration(createShoppingListFunction);
+    const getShoppingListsIntegration = new LambdaIntegration(getShoppingListsFunction);
+    const addItemToShoppingListIntegration = new LambdaIntegration(addItemToShoppingListFunction);
+    const removeItemFromShoppingListIntegration = new LambdaIntegration(removeItemFromShoppingListFunction);
     const getReceiptsTimeFrameIntegration = new LambdaIntegration(getReceiptsTimeFrameFunction);
 
+  
     //Add resource for each lambda function
     const resource = api.root.addResource('hello');
     const createStoreChainResource = api.root.addResource('createStoreChain');
@@ -382,6 +438,10 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
     const deleteReceiptResource = api.root.addResource('deleteReceipt');
     const getCategoriesResource = api.root.addResource('getCategories');
     const createShoppingListResource = api.root.addResource('createShoppingList');
+    const getShoppingListsResource = api.root.addResource('getShoppingLists');
+    const addItemToShoppingListResource = api.root.addResource('addItemToShoppingList');
+    const removeItemFromShoppingListResource = api.root.addResource('removeItemFromShoppingList');
+
     const getReceiptsTimeFrameResource = api.root.addResource('getReceiptsTimeFrame');
 
     // COGNITO LAMBDA RESOURCES  /api/ ENDPOINT (OAuth callback – NO authorization)
@@ -450,6 +510,18 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
       authorizationType: AuthorizationType.COGNITO,
     });
     createShoppingListResource.addMethod('POST', createShoppingListIntegration, {
+      authorizer,
+      authorizationType: AuthorizationType.COGNITO,
+    });
+    getShoppingListsResource.addMethod('POST', getShoppingListsIntegration, {
+      authorizer,
+      authorizationType: AuthorizationType.COGNITO,
+    });
+    addItemToShoppingListResource.addMethod('POST', addItemToShoppingListIntegration, {
+      authorizer,
+      authorizationType: AuthorizationType.COGNITO,
+    });
+    removeItemFromShoppingListResource.addMethod('POST', removeItemFromShoppingListIntegration, {
       authorizer,
       authorizationType: AuthorizationType.COGNITO,
     });
@@ -530,6 +602,24 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
       allowCredentials: true,
     });
     createShoppingListResource.addCorsPreflight({
+      allowOrigins: apigateway.Cors.ALL_ORIGINS,
+      allowMethods: ['POST'],
+      allowHeaders: apigateway.Cors.DEFAULT_HEADERS,
+      allowCredentials: true,
+    });
+    getShoppingListsResource.addCorsPreflight({
+      allowOrigins: apigateway.Cors.ALL_ORIGINS,
+      allowMethods: ['POST'],
+      allowHeaders: apigateway.Cors.DEFAULT_HEADERS,
+      allowCredentials: true,
+    });
+    addItemToShoppingListResource.addCorsPreflight({
+      allowOrigins: apigateway.Cors.ALL_ORIGINS,
+      allowMethods: ['POST'],
+      allowHeaders: apigateway.Cors.DEFAULT_HEADERS,
+      allowCredentials: true,
+    });
+    removeItemFromShoppingListResource.addCorsPreflight({
       allowOrigins: apigateway.Cors.ALL_ORIGINS,
       allowMethods: ['POST'],
       allowHeaders: apigateway.Cors.DEFAULT_HEADERS,
