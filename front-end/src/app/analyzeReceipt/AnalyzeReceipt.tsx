@@ -106,7 +106,6 @@ export default function AnalyzeReceipt({ apiKey, handler }: {apiKey: string; han
 
   return (
     <div>
-        <br/>
         <h2>Upload store receipt</h2>
 
         <input type="file" accept="image/*" onChange={handleUploadReceipt} />

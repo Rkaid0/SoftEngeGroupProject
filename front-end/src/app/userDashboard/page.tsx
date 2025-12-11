@@ -500,17 +500,14 @@ export default function UserDashboard() {
           )}
         </div>
       ))}
-
       <button onClick={handleCreateReceipt}>Submit Receipt</button>
       <hr />
-      <h2>Analyze Receipt With AI</h2>
       {apiKeyIsSet ? <AnalyzeReceipt apiKey = { apiKey } handler = { handleReceiptParsed }/> : (
-        <>
+        <><h2>Analyze Receipt With AI</h2>
           <input placeholder="Enter API key" onChange={(e) => setApiKey(e.target.value)}/>
           <button onClick={() => {localStorage.setItem("API_KEY", apiKey); setApiKey(apiKey); setApiKeyIsSet(true)}}>Submit Key</button>
         </>
       )}
-
       {/* ---------------------------
           EXISTING RECEIPTS UI
          --------------------------- */}
