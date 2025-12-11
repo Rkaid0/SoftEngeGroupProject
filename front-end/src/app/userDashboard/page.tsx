@@ -30,6 +30,23 @@ export default function UserDashboard() {
   const [editPrice, setEditPrice] = useState<number | "">("");
   const [editQuantity, setEditQuantity] = useState<number | "">("");
   const [editCategory, setEditCategory] = useState("");
+  
+  const today = new Date();
+  const getWeekDates = (): string[] => {
+    const currentDayOfWeek = today.getDay(); // Sunday is 0, Monday is 1, etc.
+
+    // Calculate the date of the first day of the week (Sunday)
+    const startOfWeek = new Date(today);
+    startOfWeek.setDate(today.getDate() - 7);
+    const endOfWeek = new Date(today);
+
+    const weekDates: string[] = [];
+    weekDates.push(startOfWeek.toISOString().split('T')[0].replaceAll("-", "/"));
+    weekDates.push(endOfWeek.toISOString().split('T')[0].replaceAll("-", "/"));
+
+    return weekDates;
+  };
+
 
   const [currentItems, setCurrentItems] = useState<
     { id: number; name: string; price: number; quantity: number; category: string }[]
@@ -133,16 +150,16 @@ export default function UserDashboard() {
   }, []);
 
   const fetchReceipts = async (userID : any) => {
-      try {
+    try {
         const res = await fetch(
-          "https://jwbdksbzpg.execute-api.us-east-1.amazonaws.com/prod/getReceipts",
+          "https://jwbdksbzpg.execute-api.us-east-1.amazonaws.com/prod/getReceiptsTimeFrame",
           {
             method: "POST",
             headers: {
               Authorization: `Bearer ${localStorage.getItem("id_token")}`,
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ userID }),
+            body: JSON.stringify({ userID, startDate : getWeekDates()[0], endDate : getWeekDates()[1]}),
           }
         );
 
@@ -304,7 +321,7 @@ export default function UserDashboard() {
   return (
     <div>
       <h1>Dashboard</h1>
-      {email && <p>Signed in as: <strong>{email}</strong></p>}
+      {email && <p>Welcome, <strong>{email}</strong> </p>}
 
       <button onClick={() => router.push("/reviewActivity")}>Review Activity</button>
       <button onClick={() => router.push("/reviewHistory")}>Review History</button>
@@ -476,7 +493,7 @@ export default function UserDashboard() {
           EXISTING RECEIPTS UI
          --------------------------- */}
       <hr />
-      <h2>Existing Receipts</h2>
+      <h2>This Week's Receipts</h2> <p> <strong>{getWeekDates()[0]} - {getWeekDates()[1]}</strong> </p>
 
       {existingReceipts.length === 0 && <p>No receipts found.</p>}
 
