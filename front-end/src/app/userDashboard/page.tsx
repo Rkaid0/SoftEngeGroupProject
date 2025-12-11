@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { requireAuth, S3_URL, LOGOUT, detectLocal } from "@/utils/auth";
 import { useRouter } from "next/navigation";
 import AnalyzeReceipt from "../analyzeReceipt/AnalyzeReceipt"
+import crypto from 'crypto';
 
 export default function UserDashboard() {
   const [email, setEmail] = useState<string | null>(null);
@@ -82,7 +83,7 @@ export default function UserDashboard() {
 
   const handleReceiptParsed = (receipt: any) => {
     const newItems = receipt.items.map((item: any) => ({
-      id: crypto.randomUUID(),
+      id: Date.now(),
       name: item.name,
       price: item.unit_price,
       category: item.category
