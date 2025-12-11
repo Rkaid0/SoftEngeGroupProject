@@ -83,10 +83,11 @@ export default function UserDashboard() {
 
   const handleReceiptParsed = (receipt: any) => {
     const newItems = receipt.items.map((item: any) => ({
-      id: Date.now(),
+      id: generateNumericId(),
       name: item.name,
       price: item.unit_price,
-      category: item.category
+      category: item.category,
+      quantity: item.quantity
     }));
 
     setCurrentItems((prev) => [...prev, ...newItems]);
@@ -272,12 +273,18 @@ export default function UserDashboard() {
     fetchReceipts(localStorage.getItem("user_id"));
   }
 
+  let itemCounter = 0;
+
+  function generateNumericId() {
+    return Date.now() * 1000 + (itemCounter++ % 1000);
+  }
+
   // LOCAL ITEMS
   const handleAddItem = () => {
     if (!itemName.trim() || itemPrice === "" || !itemCategory.trim()) return;
 
     const newItem = {
-      id: Date.now(),
+      id: generateNumericId(),
       name: itemName,
       price: Number(itemPrice),
       quantity: Number(itemQuantity),
@@ -450,16 +457,28 @@ export default function UserDashboard() {
         >
           {editingItemId === item.id ? (
             <>
-              <input value={editName} onChange={(e) => setEditName(e.target.value)} />
+              <input value={editName} placeholder="Item Name" onChange={(e) => setEditName(e.target.value)} />
               <input
                 type="number"
                 value={editPrice}
+                placeholder="Item Price"
                 onChange={(e) =>
                   setEditPrice(e.target.value === "" ? "" : Number(e.target.value))
                 }
               />
               <input
+                type="number"
+                min="1"
+                placeholder="Item Quantity"
+                style={{ width: '100px' }}
+                value={editQuantity}
+                onChange={(e) =>
+                  setEditQuantity(e.target.value === "" ? "" : Number(e.target.value))
+                }
+              />
+              <input
                 value={editCategory}
+                placeholder="Item Category"
                 onChange={(e) => setEditCategory(e.target.value)}
               />
               <button onClick={handleSaveItem}>Save</button>
