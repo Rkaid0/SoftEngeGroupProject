@@ -375,6 +375,21 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
       },
       allowPublicSubnet: true
     });
+    const getProfitByChainFunction = new NodejsFunction(this, 'GetProfitByChain', {
+      runtime: lambda.Runtime.NODEJS_22_X,
+      entry: path.join(__dirname, '../lambda/getProfitByChain.ts'),
+      handler: 'getProfitByChain',
+      bundling: {
+        externalModules: [],
+        nodeModules: ["mysql2"],
+      },
+      vpc,
+      securityGroups: [lambdaSG], 
+      vpcSubnets: {
+        subnetType: ec2.SubnetType.PUBLIC
+      },
+      allowPublicSubnet: true
+    });
 
 
     addUserToDBFunction.grantInvoke(callbackLambda);
@@ -404,6 +419,7 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
     removeItemFromShoppingListFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!);
     reviewActivityFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!);
     getReceiptsTimeFrameFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!);
+    getProfitByChainFunction.addEnvironment("DB_PASSWORD", process.env.DB_PASSWORD!);
 
     //--------------------------------------------------------------------------
 
@@ -438,6 +454,7 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
     const removeItemFromShoppingListIntegration = new LambdaIntegration(removeItemFromShoppingListFunction);
     const getReceiptsTimeFrameIntegration = new LambdaIntegration(getReceiptsTimeFrameFunction);
     const reviewActivityIntegration = new LambdaIntegration(reviewActivityFunction);
+    const getProfitByChainIntegration = new LambdaIntegration(getProfitByChainFunction);
 
   
     //Add resource for each lambda function
@@ -459,6 +476,7 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
     const removeItemFromShoppingListResource = api.root.addResource('removeItemFromShoppingList');
     const getReceiptsTimeFrameResource = api.root.addResource('getReceiptsTimeFrame');
     const reviewActivityResource = api.root.addResource('reviewActivity');
+    const getProfitByChainResource = api.root.addResource('getProfitByChain');
 
     // COGNITO LAMBDA RESOURCES  /api/ ENDPOINT (OAuth callback – NO authorization)
     const apiResource = api.root.addResource("api");
@@ -546,6 +564,10 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
       authorizationType: AuthorizationType.COGNITO,
     });
     reviewActivityResource.addMethod('POST', reviewActivityIntegration, {
+      authorizer,
+      authorizationType: AuthorizationType.COGNITO,
+    });
+    getProfitByChainResource.addMethod('GET', getProfitByChainIntegration, {
       authorizer,
       authorizationType: AuthorizationType.COGNITO,
     });
@@ -654,6 +676,12 @@ export class SoftEngeGroupProjectStack extends cdk.Stack {
     reviewActivityResource.addCorsPreflight({
       allowOrigins: apigateway.Cors.ALL_ORIGINS,
       allowMethods: ['POST'],
+      allowHeaders: apigateway.Cors.DEFAULT_HEADERS,
+      allowCredentials: true,
+    });
+    getProfitByChainResource.addCorsPreflight({
+      allowOrigins: apigateway.Cors.ALL_ORIGINS,
+      allowMethods: ['GET'],
       allowHeaders: apigateway.Cors.DEFAULT_HEADERS,
       allowCredentials: true,
     });
