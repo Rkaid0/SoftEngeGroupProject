@@ -133,7 +133,7 @@ export default function ReviewHistory() {
             }}
           >
             <h3>
-              Receipt from {receipt.storeAddress}
+              Receipt from {receipt.storeChainName} at {receipt.storeAddress}
               <span style={{ marginLeft: "10px", fontSize: "14px", color: "#666" }}>
                 (Store ID: {receipt.storeID})
               </span>

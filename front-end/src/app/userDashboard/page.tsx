@@ -34,8 +34,6 @@ export default function UserDashboard() {
   
   const today = new Date();
   const getWeekDates = (): string[] => {
-    const currentDayOfWeek = today.getDay(); // Sunday is 0, Monday is 1, etc.
-
     // Calculate the date of the first day of the week (Sunday)
     const startOfWeek = new Date(today);
     startOfWeek.setDate(today.getDate() - 7);
@@ -47,7 +45,6 @@ export default function UserDashboard() {
 
     return weekDates;
   };
-
 
   const [currentItems, setCurrentItems] = useState<
     { id: number; name: string; price: number; quantity: number; category: string }[]
@@ -61,6 +58,11 @@ export default function UserDashboard() {
 
   const [itemCategory, setItemCategory] = useState<string>("");  // user’s selected OR new input
   const [isNewCategory, setIsNewCategory] = useState(false);
+  const [isNewStoreChain, setIsNewStoreChain] = useState(false);
+  const [newStoreChainName, setNewStoreChainName] = useState("");
+  const [newStoreChainURL, setNewStoreChainURL] = useState("");
+  const [isNewStore, setIsNewStore] = useState(false);
+  const [newStoreAddress, setNewStoreAddress] = useState("");
 
   const [apiKey, setApiKey] = useState<string>("");
   const [apiKeyIsSet, setApiKeyIsSet] = useState<boolean>(false);
@@ -99,15 +101,21 @@ export default function UserDashboard() {
       }
     }
 
-    const correspoindingChain = storeChains.find((chain) => chain.name === receipt.merchant_name);
-    if (!correspoindingChain) {console.error("Chain not found"); return;}
+    const correspondingChain = storeChains.find((chain) => chain.name === receipt.merchant_name);
+    if (!correspondingChain) {
+      setIsNewStoreChain(true);
+      setNewStoreChainName(receipt.merchant_name);
+    }
+    else setSelectedStoreChainID(correspondingChain.idstoreChain);
 
-    setSelectedStoreChainID(correspoindingChain.idstoreChain);
-
-    const correspoindingStore = correspoindingChain.stores.find((store) => store.storeAddress === receipt.merchant_address);
-    if (!correspoindingStore) {console.error("Store not found"); return;}
-
-    setSelectedStoreID(correspoindingStore.idStores);
+    const correspondingStore = correspondingChain 
+      ? correspondingChain.stores.find((store) => store.storeAddress === receipt.merchant_address)
+      : null;
+    if (correspondingStore == null) {
+      setIsNewStore(true);
+      setNewStoreAddress(receipt.merchant_address);
+    }
+    else setSelectedStoreID(correspondingStore.idStores);
   }
   
   const fetchCategories = async () => {
@@ -131,8 +139,7 @@ export default function UserDashboard() {
     fetchCategories();
   }, []);
 
-  useEffect(() => {
-    const fetchChains = async () => {
+  const fetchChains = async () => {
       try {
         const res = await fetch(
           "https://jwbdksbzpg.execute-api.us-east-1.amazonaws.com/prod/getStoreChains",
@@ -148,8 +155,53 @@ export default function UserDashboard() {
       }
     };
 
+  useEffect(() => {
     fetchChains();
   }, []);
+
+  const createStoreChain = async() => {
+    try { const res = await fetch(
+            "https://jwbdksbzpg.execute-api.us-east-1.amazonaws.com/prod/createStoreChain",{
+              method: "POST", 
+              headers: {"Content-Type": "application/json", "Authorization": `Bearer ${localStorage.getItem("id_token")}` }, 
+              body: JSON.stringify({
+                  name: newStoreChainName,
+                  url: newStoreChainURL
+              })
+            } 
+        )
+        const data = await res.json();
+        return(data.storeChainID)
+    }
+    catch (err) {console.error("Error creating store chain:", err)}
+  }
+
+  const createStore = async (storeChainID : number) => {  
+    try {
+        if (!storeChainID) {
+          alert("Store Chain creation error.");
+          return;
+        }
+        const res = await fetch(
+          "https://jwbdksbzpg.execute-api.us-east-1.amazonaws.com/prod/createStore",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${localStorage.getItem("id_token")}`
+            },
+            body: JSON.stringify({
+              storeAddress: newStoreAddress,
+              storeChainID: storeChainID
+            })
+          }
+        );
+        const data = await res.json();
+        return data.storeID;
+      } catch (err) {
+        console.error("Error creating store:", err)
+      }
+    }
 
   const fetchReceipts = async (userID : any) => {
     try {
@@ -188,9 +240,20 @@ export default function UserDashboard() {
 
   // CREATE RECEIPT + ADD ITEMS
   const handleCreateReceipt = async () => {
-    if (!selectedStoreID || !date || currentItems.length === 0) {
+    if (!selectedStoreID && isNewStore === false || !date || currentItems.length === 0) {
       alert("Store, date, and at least one item are required.");
       return;
+    }
+
+    let storeChainID = Number(selectedStoreChainID);
+    let storeID = selectedStoreID;
+
+    if (isNewStoreChain) {
+      storeChainID = await createStoreChain();
+    }
+
+    if (isNewStore) {
+      storeID = await createStore(storeChainID);
     }
 
     try {
@@ -203,7 +266,7 @@ export default function UserDashboard() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            storeID: selectedStoreID,
+            storeID: storeID,
             date: date,
             userID: localStorage.getItem("user_id"),
           }),
@@ -243,6 +306,11 @@ export default function UserDashboard() {
       fetchCategories();
 
       setSelectedStoreChainID("");
+      setIsNewStore(false);
+      setIsNewStoreChain(false);
+      setNewStoreAddress("");
+      setNewStoreChainName("");
+      setNewStoreChainURL("");
       setSelectedStoreID("");
       setDate("");
       setCurrentItems([]);
@@ -341,41 +409,89 @@ export default function UserDashboard() {
 
       <h2>Create Receipt</h2>
 
-      {/* Store Chain Dropdown */}
+      {/* STORE CHAIN DROPDOWN */}
       <select
-        value={selectedStoreChainID}
+        value={isNewStoreChain ? "new" : selectedStoreChainID}
         onChange={(e) => {
-          setSelectedStoreChainID(Number(e.target.value));
-          setSelectedStoreID("");
+          if (e.target.value === "new") {
+            setIsNewStoreChain(true);
+            setSelectedStoreChainID("");
+            setSelectedStoreID("");
+          } else {
+            setIsNewStoreChain(false);
+            setSelectedStoreChainID(Number(e.target.value));
+            setSelectedStoreID("");
+          }
         }}
       >
         <option value="">Select Store Chain</option>
+
         {storeChains.map((chain) => (
           <option key={chain.idstoreChain} value={chain.idstoreChain}>
             {chain.name}
           </option>
         ))}
+
+        <option value="new">+ Create new store chain…</option>
       </select>
 
-      {/* Store Dropdown */}
-      <select
-        value={selectedStoreID}
-        onChange={(e) => setSelectedStoreID(Number(e.target.value))}
-        disabled={
-          !selectedStoreChainID ||
-          !storeChains.find((c) => c.idstoreChain === selectedStoreChainID)?.stores?.length
-        }
-      >
-        <option value="">Select Store</option>
-        {selectedStoreChainID &&
-          storeChains
-            .find((c) => c.idstoreChain === selectedStoreChainID)
-            ?.stores.map((store) => (
-              <option key={store.idStores} value={store.idStores}>
-                {store.storeAddress}
-              </option>
-            ))}
-      </select>
+      {/* New Store Chain Input */}
+      {isNewStoreChain && (
+        <input
+          type="text"
+          placeholder="New store chain name"
+          value={newStoreChainName}
+          onChange={(e) => setNewStoreChainName(e.target.value)}
+        />
+      )}
+      {isNewStoreChain && (
+        <input
+          type="text"
+          placeholder="New store chain URL"
+          value={newStoreChainURL}
+          onChange={(e) => setNewStoreChainURL(e.target.value)}
+        />
+      )}
+
+      {/* STORE DROPDOWN */}
+        <select
+          value={isNewStore ? "new" : selectedStoreID}
+          onChange={(e) => {
+            if (e.target.value === "new") {
+              setIsNewStore(true);
+              setSelectedStoreID("");
+            } else {
+              setIsNewStore(false);
+              setSelectedStoreID(Number(e.target.value));
+            }
+          }}
+          disabled={!selectedStoreChainID && !isNewStoreChain}
+        >
+          <option value="">Select Store</option>
+
+          {!isNewStoreChain &&
+            selectedStoreChainID &&
+            storeChains
+              .find((c) => c.idstoreChain === selectedStoreChainID)
+              ?.stores.map((store) => (
+                <option key={store.idStores} value={store.idStores}>
+                  {store.storeAddress}
+                </option>
+              ))}
+
+          <option value="new">+ Create new store…</option>
+        </select>
+
+        {/* New Store Input */}
+        {isNewStore && (
+          <input
+            type="text"
+            placeholder="New store address"
+            value={newStoreAddress}
+            onChange={(e) => setNewStoreAddress(e.target.value)}
+          />
+        )}
+
 
       {/* Date */}
       <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
