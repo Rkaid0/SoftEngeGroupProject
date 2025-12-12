@@ -1,0 +1,2315 @@
+commit 51a256d2866ecd19ed1eb054f66c8dfa5e700443
+Merge: 648f486 3504eeb
+Author: Artyom Yesayan <99305396+Rkaid0@users.noreply.github.com>
+Date:   Fri Dec 12 13:21:21 2025 -0500
+
+    Merge pull request #67 from Rkaid0/artyom-options
+    
+    Implemented Options
+
+commit 3504eeb8b57ac232d51e24cd3acff19b52487314
+Merge: 552ba68 648f486
+Author: Artyom Yesayan <99305396+Rkaid0@users.noreply.github.com>
+Date:   Fri Dec 12 13:21:10 2025 -0500
+
+    Merge branch 'main' into artyom-options
+
+commit 648f486d1c750f9d9a8ad76c5e1ae45d90124af5
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Fri Dec 12 11:50:48 2025 -0500
+
+    Update README.md
+
+ README.md | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 483dae6c70f0014c19d02ad95a1a2df2a6c09d2b
+Merge: 4e16f6a 712b968
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Fri Dec 12 11:50:17 2025 -0500
+
+    Merge pull request #66 from Rkaid0/ryan-messing-with-stuff
+    
+    total profit
+
+commit 712b9687ea645e210f60836741dc26d9cf505ce7
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Fri Dec 12 11:49:47 2025 -0500
+
+    total profit
+
+ back-end/lambda/getProfitByChain.ts           |  46 ++++++++
+ back-end/lib/soft_enge_group_project-stack.ts |  28 +++++
+ front-end/src/app/adminDashboard/page.tsx     |  44 +++++--
+ front-end/src/app/adminStoreGUI/page.tsx      | 164 --------------------------
+ 4 files changed, 109 insertions(+), 173 deletions(-)
+
+commit f2b77fce33798c8a05fa404bf10df0b12a6dcdc6
+Merge: 0115f16 4e16f6a
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Fri Dec 12 11:04:54 2025 -0500
+
+    Merge pull request #65 from Rkaid0/main
+    
+    pulling
+
+commit 4e16f6ac3964747f289a8648246a541e9331c0b4
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Fri Dec 12 11:04:12 2025 -0500
+
+    Update README.md
+
+ README.md | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 552ba686145b3d157a866e8d331e1be7305015da
+Author: Artyom Yesayan <yesart8@gmail.com>
+Date:   Thu Dec 11 22:56:50 2025 -0500
+
+    options work i think
+
+ back-end/lambda/getShoppingListItemOption.ts  | 131 +++++++++++++
+ back-end/lib/soft_enge_group_project-stack.ts |  29 +++
+ front-end/src/app/reportOptions/page.tsx      | 264 ++++++++++++++++++++------
+ 3 files changed, 366 insertions(+), 58 deletions(-)
+
+commit a5ba8e961e21238ae86859e06fe9f7117ef37a9a
+Author: Artyom Yesayan <yesart8@gmail.com>
+Date:   Thu Dec 11 21:49:02 2025 -0500
+
+    Working on report options
+
+ front-end/src/app/reportOptions/page.tsx | 60 ++++++++++++++++++++++++++++++++
+ front-end/src/app/userDashboard/page.tsx |  2 +-
+ 2 files changed, 61 insertions(+), 1 deletion(-)
+
+commit aa54548e41e36239ff14b399a2f253128a3fd676
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Thu Dec 11 19:34:39 2025 -0500
+
+    Highlight text when searching for items
+
+ front-end/src/app/reviewHistory/page.tsx | 26 +++++++++++++++++++++++++-
+ 1 file changed, 25 insertions(+), 1 deletion(-)
+
+commit e0f6360c8c76ddc4b75dcad8414c3267c5d55083
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Thu Dec 11 19:27:47 2025 -0500
+
+    Front end fixes
+    
+    - AI can now populate store chain and store address fields
+    - Can now create receipt that doesn't have an existing store/store chain -- it gets created before the receipt
+
+ front-end/src/app/adminStoreGUI/page.tsx |   2 +-
+ front-end/src/app/reviewHistory/page.tsx |   2 +-
+ front-end/src/app/userDashboard/page.tsx | 194 ++++++++++++++++++++++++-------
+ 3 files changed, 157 insertions(+), 41 deletions(-)
+
+commit 659921fe25fb07c10352226bd804988b10ed59c5
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Thu Dec 11 18:07:16 2025 -0500
+
+    Front end fixes
+
+ front-end/src/app/analyzeReceipt/AnalyzeReceipt.tsx | 1 -
+ front-end/src/app/userDashboard/page.tsx            | 5 +----
+ 2 files changed, 1 insertion(+), 5 deletions(-)
+
+commit c2af8a58f8bf82ab63adba26b5ddaab74fa0f4b4
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Thu Dec 11 17:58:15 2025 -0500
+
+    AI quantity and ID fixed
+
+ front-end/src/app/userDashboard/page.tsx | 27 +++++++++++++++++++++++----
+ 1 file changed, 23 insertions(+), 4 deletions(-)
+
+commit 25e0d61e2975b8254d215a2c130414e2843d6bc6
+Author: Artyom Yesayan <yesart8@gmail.com>
+Date:   Thu Dec 11 17:38:10 2025 -0500
+
+    fixed item count
+
+ front-end/src/app/userDashboard/page.tsx | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 181fe032493ada561df773a9da0642aff3fcb594
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Thu Dec 11 17:37:19 2025 -0500
+
+    Minor front end changes
+    
+    added a section for the ai stuff
+
+ front-end/src/app/userDashboard/page.tsx    | 2 ++
+ front-end/src/app/userShoppingList/page.tsx | 2 +-
+ front-end/src/app/userStoreGUI/page.tsx     | 2 +-
+ 3 files changed, 4 insertions(+), 2 deletions(-)
+
+commit aeb74292633297a0790afb320c3328a4d1e41b5b
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Thu Dec 11 17:13:43 2025 -0500
+
+    Very Important Changes (!!!)
+
+ front-end/src/app/layout.tsx | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit b301a9e4150ce368af483e454462738cce3c70fb
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Thu Dec 11 17:10:21 2025 -0500
+
+    Update README.md
+
+ README.md | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit a4f905b378b47f969f90a3673d08f9ef85a25c75
+Merge: 40b8079 ec99411
+Author: andremataassis <andremataassis@gmail.com>
+Date:   Thu Dec 11 16:59:41 2025 -0500
+
+    Merge pull request #64 from Rkaid0/reviewHistory
+    
+    review activity front end
+
+commit ec99411688812f0bee6a7e86f0b14ee7e45f0a7a
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Thu Dec 11 16:59:22 2025 -0500
+
+    review activity front end
+
+ back-end/lambda/reviewActivity.ts             | 149 ++++++++++++++++++++++++++
+ back-end/lib/soft_enge_group_project-stack.ts |  32 +++++-
+ front-end/src/app/reviewActivity/page.tsx     |  89 +++++++++++++++
+ 3 files changed, 267 insertions(+), 3 deletions(-)
+
+commit 40b8079c51eb1e4438f8d1922526f9054303b7d1
+Merge: 0d3a34d 10e2268
+Author: Artyom Yesayan <99305396+Rkaid0@users.noreply.github.com>
+Date:   Thu Dec 11 16:52:19 2025 -0500
+
+    Merge pull request #63 from Rkaid0/artyom-chatgpt-integration
+    
+    Chatgpt integration works
+
+commit 10e22681d11aa8834d214b03f35bf067256e0f9e
+Author: Artyom Yesayan <yesart8@gmail.com>
+Date:   Thu Dec 11 16:50:49 2025 -0500
+
+    fixed id gen
+
+ front-end/src/app/userDashboard/page.tsx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit ebf8bfef722ffc5ee758aa84689833d8a6832cc4
+Merge: eea4dd0 0d3a34d
+Author: Artyom Yesayan <yesart8@gmail.com>
+Date:   Thu Dec 11 16:35:08 2025 -0500
+
+    Merge branch 'main' of https://github.com/Rkaid0/SoftEngeGroupProject
+
+commit eea4dd0c883a1750607438176c4ce291d0082bb7
+Author: Artyom Yesayan <yesart8@gmail.com>
+Date:   Thu Dec 11 16:34:59 2025 -0500
+
+    Id gen fix
+
+ front-end/src/app/analyzeReceipt/AnalyzeReceipt.tsx | 1 +
+ front-end/src/app/userDashboard/page.tsx            | 1 +
+ 2 files changed, 2 insertions(+)
+
+commit 0d3a34dbeec3af4e3cfdbbd9844de2bb0cbd929b
+Merge: fee41ea 5426479
+Author: andremataassis <andremataassis@gmail.com>
+Date:   Thu Dec 11 16:10:15 2025 -0500
+
+    Merge pull request #62 from Rkaid0/reviewHistory
+    
+    Review history
+
+commit 5426479b8736581296a56d8048c6856208a86721
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Thu Dec 11 16:09:52 2025 -0500
+
+    URL and search recent purchases
+
+ back-end/lambda/reviewActivity.ts        |  0
+ front-end/src/app/reviewHistory/page.tsx | 40 ++++++++++++++++++++++++++++++--
+ front-end/src/app/userStoreGUI/page.tsx  |  2 +-
+ 3 files changed, 39 insertions(+), 3 deletions(-)
+
+commit c2d639b9bd8524ef54cba0ddcff00ba105d6d271
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Thu Dec 11 15:44:22 2025 -0500
+
+    get this weeks receipts front end
+
+ front-end/package-lock.json              | 12 ------------
+ front-end/src/app/userDashboard/page.tsx | 27 ++++++++++++++++++++++-----
+ 2 files changed, 22 insertions(+), 17 deletions(-)
+
+commit fee41ea6c2ef29e3adef6a5075ee4b53e44b8fe0
+Merge: 68c28be 0115f16
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Thu Dec 11 13:40:38 2025 -0500
+
+    Merge pull request #61 from Rkaid0/ryan-messing-with-stuff
+    
+    moving some stuff
+
+commit 0115f1685a6385607babebcfea14b175dbc7cd9a
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Thu Dec 11 13:39:53 2025 -0500
+
+    moving some stuff
+
+ front-end/src/app/adminDashboard/page.tsx | 158 ++++++++++++++++++++++++++----
+ 1 file changed, 138 insertions(+), 20 deletions(-)
+
+commit 68c28be05ca0788df7c6b0177d44814270baf921
+Author: Artyom Yesayan <99305396+Rkaid0@users.noreply.github.com>
+Date:   Thu Dec 11 13:05:04 2025 -0500
+
+    Update README.md
+
+ README.md | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit bc898b4e9815faa02d437b704c09bc479c4436c0
+Merge: e90f4f0 98eda2a
+Author: Artyom Yesayan <99305396+Rkaid0@users.noreply.github.com>
+Date:   Thu Dec 11 13:04:20 2025 -0500
+
+    Merge pull request #60 from Rkaid0/artyom-chatgpt-integration
+    
+    Finalized chatgpt
+
+commit bea8b160370bc811dabbd85d06b0db337525b70d
+Merge: 5b44f76 e90f4f0
+Author: andremataassis <andremataassis@gmail.com>
+Date:   Thu Dec 11 13:03:33 2025 -0500
+
+    Merge pull request #59 from Rkaid0/main
+    
+    merge
+
+commit 98eda2acb28b33a5116b534db438fb7bbee16212
+Author: Artyom Yesayan <yesart8@gmail.com>
+Date:   Thu Dec 11 13:03:09 2025 -0500
+
+    Finalized chatgpt
+
+ front-end/src/app/analyzeReceipt/AnalyzeReceipt.tsx | 15 ++-------------
+ 1 file changed, 2 insertions(+), 13 deletions(-)
+
+commit e90f4f05e273603ec27b732856d8988d55c0a99b
+Merge: 794dc9a 5b44f76
+Author: andremataassis <andremataassis@gmail.com>
+Date:   Thu Dec 11 13:01:40 2025 -0500
+
+    Merge branch 'reviewHistory' into main
+
+commit 6d5745e88866b502ea6f89d22ad54f41fe52c910
+Merge: 6544351 794dc9a
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Wed Dec 10 21:39:17 2025 -0500
+
+    Merge pull request #58 from Rkaid0/main
+    
+    pulling
+
+commit 794dc9a0a4e1d895a9de3959f070c4445f107633
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Wed Dec 10 21:24:12 2025 -0500
+
+    Update README.md
+
+ README.md | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 0c9e06652e63221aed8a11e3fd4c0f5bea460fe6
+Merge: 48f21c9 6544351
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Wed Dec 10 21:21:12 2025 -0500
+
+    Merge pull request #57 from Rkaid0/ryan-messing-with-stuff
+    
+    remove item from shopping list
+
+commit 65443515828e720d0001b81517d04ecc6c41f2cc
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Wed Dec 10 21:20:44 2025 -0500
+
+    remove item from shopping list
+    
+    FINALLY
+
+ back-end/lambda/removeItemFromShoppingList.ts | 72 +++++++++++++++++++++++++++
+ back-end/lib/soft_enge_group_project-stack.ts | 29 +++++++++++
+ front-end/src/app/userShoppingList/page.tsx   | 68 ++++++++++++++++++++++---
+ 3 files changed, 161 insertions(+), 8 deletions(-)
+
+commit 48f21c9abc84c13892e78817d216cf4171116d01
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Wed Dec 10 20:20:37 2025 -0500
+
+    Update README.md
+
+ README.md | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit c4ab5f824644803230418a086e614c07de46a0c6
+Merge: ade36ff a0effe7
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Wed Dec 10 20:20:06 2025 -0500
+
+    Merge pull request #56 from Rkaid0/ryan-messing-with-stuff
+    
+    add item to shopping list
+
+commit a0effe71d3a50ab4cf7c49dd8ad94c944471ac86
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Wed Dec 10 20:19:01 2025 -0500
+
+    additem to shopping list
+
+ back-end/lambda/addItemToShoppingList.ts      | 102 +++++++++
+ back-end/lambda/getShoppingLists.ts           |  57 ++++-
+ back-end/lib/soft_enge_group_project-stack.ts |  32 +++
+ front-end/src/app/userShoppingList/page.tsx   | 293 ++++++++++++++++++++++----
+ 4 files changed, 436 insertions(+), 48 deletions(-)
+
+commit 1e098524738040caae2df9f3792406f016aaf452
+Merge: 442ea16 ade36ff
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Wed Dec 10 18:55:58 2025 -0500
+
+    Merge pull request #55 from Rkaid0/main
+    
+    pulling
+
+commit ade36ff59ce41723cb4db851fe5afc1320709227
+Merge: 5973799 442ea16
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Wed Dec 10 18:55:28 2025 -0500
+
+    Merge pull request #54 from Rkaid0/ryan-messing-with-stuff
+    
+    shows shopping lists
+
+commit 442ea16beceebf3d8872fa31fb6e5149f5594368
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Wed Dec 10 18:55:10 2025 -0500
+
+    shows shopping lists
+
+ back-end/lambda/getShoppingLists.ts           |  4 ++--
+ back-end/lib/soft_enge_group_project-stack.ts | 29 +++++++++++++++++++++++++++
+ front-end/src/app/userShoppingList/page.tsx   |  8 ++++++--
+ 3 files changed, 37 insertions(+), 4 deletions(-)
+
+commit 5b44f76e521e9381e9da2c969512e46df8300072
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Wed Dec 10 17:56:00 2025 -0500
+
+    merge from main & readd receiptstimeframe to stack
+
+ back-end/lambda/getReceiptsTimeFrame.ts       | 134 ++++++++++++++++++++++++++
+ back-end/lib/soft_enge_group_project-stack.ts |  29 ++++++
+ 2 files changed, 163 insertions(+)
+
+commit 59737990c504f77f31043a3c0dbfe1ba840f1c7c
+Merge: cfc550e 9054aaf
+Author: Artyom Yesayan <99305396+Rkaid0@users.noreply.github.com>
+Date:   Wed Dec 10 17:20:52 2025 -0500
+
+    Merge pull request #53 from Rkaid0/artyom-chatgpt-integration
+    
+    ChatGPT Integration works
+
+commit cfc550edddd67f50d3d835e72f1ff977a87c27f3
+Merge: 3878ea4 4d378a9
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Wed Dec 10 17:18:52 2025 -0500
+
+    Merge pull request #52 from Rkaid0/ryan-messing-with-stuff
+    
+    i dont even know at this point
+
+commit 4d378a945671cf2588f4a51dbc3da4927f0ca3b2
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Wed Dec 10 17:18:09 2025 -0500
+
+    idk
+
+ back-end/lambda/getShoppingLists.ts         | 76 +++++++++++++++++++++++++++++
+ back-end/package-lock.json                  | 56 ++++++++++++++++++++-
+ back-end/package.json                       |  4 +-
+ front-end/package-lock.json                 | 36 +++++++++++++-
+ front-end/src/app/userShoppingList/page.tsx | 43 ++++++++++++++--
+ 5 files changed, 209 insertions(+), 6 deletions(-)
+
+commit 9054aafe12d0f7a7330a5625393650210a18245a
+Author: Artyom Yesayan <yesart8@gmail.com>
+Date:   Wed Dec 10 17:02:04 2025 -0500
+
+    find store chain and store from analyzed receipt
+
+ front-end/package-lock.json              | 32 +++++++++++++++++++++++++++-----
+ front-end/src/app/userDashboard/page.tsx | 10 ++++++++++
+ 2 files changed, 37 insertions(+), 5 deletions(-)
+
+commit dd9145ff62b33861711068f5fbcc239d4b1115d6
+Merge: fdba05c 3878ea4
+Author: Artyom Yesayan <yesart8@gmail.com>
+Date:   Wed Dec 10 16:42:43 2025 -0500
+
+    Merge branch 'main' into artyom-chatgpt-integration
+
+commit fdba05c4ffb631b61ca3a317d98e91932ac46ee6
+Author: Artyom Yesayan <yesart8@gmail.com>
+Date:   Wed Dec 10 16:39:25 2025 -0500
+
+    minor
+
+ front-end/src/app/analyzeReceipt/AnalyzeReceipt.tsx |  9 +++++++--
+ front-end/src/app/userDashboard/page.tsx            | 20 +++++++++++++++++---
+ 2 files changed, 24 insertions(+), 5 deletions(-)
+
+commit 1efc223270bdc96a2fcf299adca58d85edece6ff
+Merge: 5d27835 3878ea4
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Wed Dec 10 16:24:58 2025 -0500
+
+    Merge pull request #51 from Rkaid0/main
+    
+    pulling
+
+commit 3878ea48e400bc989eb21185bfa791030e3784df
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Wed Dec 10 14:21:40 2025 -0500
+
+    Update README.md
+
+ README.md | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit 9d5f9a43f40a46b58fe2a0d4aedbfb0067c869cc
+Merge: aa9bf85 5d27835
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Wed Dec 10 14:20:50 2025 -0500
+
+    Merge pull request #50 from Rkaid0/ryan-messing-with-stuff
+    
+    actually working create shopping list
+
+commit 5d27835ab6d89edcba73a10ba4e106a1186c66c2
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Wed Dec 10 14:19:59 2025 -0500
+
+    actually woring create shopping list
+    
+    yipee
+
+ back-end/lib/soft_enge_group_project-stack.ts |  4 +-
+ front-end/src/app/userShoppingList/page.tsx   | 57 ++++++++++++++-------------
+ 2 files changed, 31 insertions(+), 30 deletions(-)
+
+commit 39f679865e80df11f2cd399c5d125880c8a9b5ed
+Author: Artyom Yesayan <yesart8@gmail.com>
+Date:   Wed Dec 10 13:58:03 2025 -0500
+
+    added api key input
+
+ .../src/app/analyzeReceipt/AnalyzeReceipt.tsx      | 17 ++++++++---------
+ front-end/src/app/userDashboard/page.tsx           | 22 ++++++++++++++++++++++
+ 2 files changed, 30 insertions(+), 9 deletions(-)
+
+commit aa9bf859405410d688516315c5944c4ab7731cc3
+Merge: 6a85cbb 9380034
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Wed Dec 10 13:46:43 2025 -0500
+
+    Merge pull request #49 from Rkaid0/ryan-messing-with-stuff
+    
+    create shiopping list
+
+commit 9380034553dd2cc5d7d2bffdf8c0afd51f114084
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Wed Dec 10 13:45:47 2025 -0500
+
+    createshopping list
+    
+    gonna be some conflicts
+
+ back-end/lambda/addItemToReceipt.ts           |  23 ++--
+ back-end/lambda/addItemtoShoppingList.ts      |  88 ---------------
+ back-end/lambda/createShoppingList.ts         |  19 ++--
+ back-end/lambda/deleteShoppingList.ts         |  80 --------------
+ back-end/lambda/getReceipts.ts                |  11 +-
+ back-end/lambda/getShoppingList.ts            |  64 -----------
+ back-end/lambda/removeItemfromShoppingList.ts |  85 ---------------
+ back-end/lib/soft_enge_group_project-stack.ts | 147 +++-----------------------
+ front-end/src/app/userDashboard/page.tsx      |   3 +-
+ front-end/src/app/userShoppingList/page.tsx   |  76 +++++++++++++
+ 10 files changed, 123 insertions(+), 473 deletions(-)
+
+commit 6a85cbb23979cd5e8098f762253c2f7b3fa5008c
+Merge: ebde549 8a870ff
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Wed Dec 10 13:34:39 2025 -0500
+
+    Merge branch 'reviewHistory'
+
+commit 8a870ffee00d3b59f3f11bef9a95d58aface5920
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Wed Dec 10 13:34:25 2025 -0500
+
+    Quantity front end (also mistake in additem)
+
+ back-end/lambda/addItemToReceipt.ts      |   1 +
+ front-end/src/app/reviewHistory/page.tsx | 126 ++++++++++++++++++++++++++++++-
+ front-end/src/app/userDashboard/page.tsx |  27 +++++--
+ 3 files changed, 147 insertions(+), 7 deletions(-)
+
+commit ebde549a5a1fb1a08300211d4acb0dbf3de864e1
+Merge: 2ba86c7 8d6d7d6
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Wed Dec 10 13:16:58 2025 -0500
+
+    Merge branch 'reviewHistory'
+
+commit 8d6d7d68c8fc5bcf36ef116b7aea2af8e5fb416d
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Wed Dec 10 13:16:42 2025 -0500
+
+    back end item quantity
+
+ back-end/lambda/addItemToReceipt.ts | 20 ++++++++++++--------
+ back-end/lambda/getReceipts.ts      |  9 +++++++++
+ 2 files changed, 21 insertions(+), 8 deletions(-)
+
+commit 2ba86c7d7b8ce2410b3c17dbc9bf36ca2644cd9a
+Merge: 7325db6 1be41e3
+Author: Artyom Yesayan <99305396+Rkaid0@users.noreply.github.com>
+Date:   Wed Dec 10 13:08:14 2025 -0500
+
+    Merge pull request #48 from Rkaid0/artyom-chatgpt-integration
+    
+    Chatgpt integration
+
+commit 1be41e3578d5285e8cedce0d2a405645f957b698
+Merge: 54b8c1c 7325db6
+Author: Artyom Yesayan <99305396+Rkaid0@users.noreply.github.com>
+Date:   Wed Dec 10 13:07:58 2025 -0500
+
+    Merge branch 'main' into artyom-chatgpt-integration
+
+commit 979556876e9eae601815ecf618385a9bd2d90b57
+Merge: aa2d7f1 7325db6
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Wed Dec 10 12:48:02 2025 -0500
+
+    Merge pull request #47 from Rkaid0/main
+    
+    pulling
+
+commit 7325db67553ffc4f24a649d3b55b1ba5fc02db29
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Wed Dec 10 12:45:23 2025 -0500
+
+    Update README.md
+
+ README.md | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+commit 836546ced9cfc8e2bafcebee6454b37416d172f4
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Wed Dec 10 12:15:39 2025 -0500
+
+    Fixed getReceipt bug and added receipt total to front end
+
+ back-end/lambda/getReceipts.ts           | 1 +
+ front-end/src/app/userDashboard/page.tsx | 3 ++-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+commit 9785e60333ef27b9c049a0d56f5d396477c39c24
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Wed Dec 10 11:48:45 2025 -0500
+
+    Receipt totals backend
+
+ back-end/lambda/addItemToReceipt.ts | 16 ++++++++++++++++
+ back-end/lambda/createReceipt.ts    |  5 +++--
+ back-end/lambda/getReceipts.ts      |  1 +
+ 3 files changed, 20 insertions(+), 2 deletions(-)
+
+commit 92c375c45877b7c06abd611e004ac9cb17cc1a30
+Merge: c1b9500 0b21e58
+Author: Forest Garvin <fgchickennugget@gmail.com>
+Date:   Tue Dec 9 21:20:27 2025 -0500
+
+    Merge pull request #46 from Rkaid0/FOREST
+    
+    created rmItemfromSL, getSL, and addItemtoSL
+
+commit 0b21e58e73e932652df58f4ba8421ae1de8ca457
+Author: Forest Garvin <fgchickennugget@gmail.com>
+Date:   Tue Dec 9 21:08:13 2025 -0500
+
+    created rmItemfromSL, getSL, and addItemtoSL
+
+ README.md                                     |   6 +-
+ back-end/cdk.context.json                     |   5 +-
+ back-end/lambda/addItemtoShoppingList.ts      |  88 +++++++++++++++++++++
+ back-end/lambda/getShoppingList.ts            |  64 +++++++++++++++
+ back-end/lambda/removeItemfromShoppingList.ts |  85 ++++++++++++++++++++
+ back-end/lib/soft_enge_group_project-stack.ts | 108 ++++++++++++++++++++++++--
+ 6 files changed, 347 insertions(+), 9 deletions(-)
+
+commit c1b9500d3007dafcb24128d0fa570b6165d16a15
+Merge: 8748dbb e772c75
+Author: Forest Garvin <fgchickennugget@gmail.com>
+Date:   Tue Dec 9 20:07:33 2025 -0500
+
+    Merge pull request #45 from Rkaid0/FOREST
+    
+    Forest
+
+commit e772c7507fed1a62407778a86cf08fef7060a504
+Merge: 421024a 8748dbb
+Author: Forest Garvin <fgchickennugget@gmail.com>
+Date:   Tue Dec 9 20:06:02 2025 -0500
+
+    Merge branch 'main' into FOREST
+
+commit 421024ad80950f3e6054050a8f96f43810ae46e3
+Author: Forest Garvin <fgchickennugget@gmail.com>
+Date:   Tue Dec 9 20:00:26 2025 -0500
+
+    added Delete Shopping List
+
+ back-end/lambda/deleteShoppingList.ts         | 80 +++++++++++++++++++++++++++
+ back-end/lib/soft_enge_group_project-stack.ts | 35 +++++++++++-
+ 2 files changed, 113 insertions(+), 2 deletions(-)
+
+commit 8748dbb3640e1c3a3dda4e7155ca8eed604b5b86
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Tue Dec 9 18:11:56 2025 -0500
+
+    getReceipt now sorts by date desc
+
+ back-end/lambda/getReceipts.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 2c1d9ff1a055605ba924b29f434f62a237f91953
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Tue Dec 9 17:53:41 2025 -0500
+
+    Added drop-down field for category and lambda function getCategories
+
+ back-end/lambda/getCategories.ts              | 42 ++++++++++++++++
+ back-end/lib/soft_enge_group_project-stack.ts | 30 ++++++++++++
+ front-end/src/app/userDashboard/page.tsx      | 69 ++++++++++++++++++++++++---
+ 3 files changed, 134 insertions(+), 7 deletions(-)
+
+commit bd72afcd9dced6228dc3f03f4fb4038d35c075e1
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Tue Dec 9 16:49:21 2025 -0500
+
+    Cleaned up somethings + polish
+
+ front-end/src/app/userDashboard/page.tsx | 13 +++----------
+ 1 file changed, 3 insertions(+), 10 deletions(-)
+
+commit 9516d0baa0ae635b463bf78a75c5d9d43920452c
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Tue Dec 9 16:39:51 2025 -0500
+
+    Working delete receipt
+
+ README.md                                     |  2 +-
+ back-end/lambda/deleteReceipt.ts              | 56 +++++++++++++++++++++++++++
+ back-end/lib/soft_enge_group_project-stack.ts | 29 ++++++++++++++
+ front-end/src/app/userDashboard/page.tsx      | 25 ++++++++++++
+ front-end/src/app/userStoreGUI/page.tsx       |  1 +
+ 5 files changed, 112 insertions(+), 1 deletion(-)
+
+commit ffd080b35d00b0785991012a8e2c55d128079575
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Tue Dec 9 12:23:43 2025 -0500
+
+    Added usecases checklist to README
+
+ README.md | 39 ++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 38 insertions(+), 1 deletion(-)
+
+commit aa2d7f18845222cdbaaf27f838a979a60c759508
+Merge: 6d4f5a1 0557db7
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Tue Dec 9 09:21:41 2025 -0500
+
+    Merge pull request #44 from Rkaid0/main
+    
+    pulling
+
+commit dc324ea9758439b6c287317f632db2d21f072aa4
+Author: Forest Garvin <fgchickennugget@gmail.com>
+Date:   Mon Dec 8 18:56:53 2025 -0500
+
+    Update createShoppingList.ts
+
+ back-end/lambda/createShoppingList.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit a3b9da946c0810987f8ba0914cd3a3ccc043d70e
+Author: Forest Garvin <fgchickennugget@gmail.com>
+Date:   Mon Dec 8 18:56:04 2025 -0500
+
+    Update createShoppingList.ts
+
+ back-end/lambda/createShoppingList.ts | 27 ++++++++++++++-------------
+ 1 file changed, 14 insertions(+), 13 deletions(-)
+
+commit d262b83e4cef9f94dd3ba2aacc2bb594e4561178
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Mon Dec 8 18:53:26 2025 -0500
+
+    S -> s
+
+ back-end/lambda/createShoppingList.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 9e060eee3aae567d9f38b2c78438e4bad269e1a7
+Author: Forest Garvin <fgchickennugget@gmail.com>
+Date:   Mon Dec 8 18:42:33 2025 -0500
+
+    yes
+
+ back-end/lambda/createShoppingList.ts         | 76 +++++++++++++++++----------
+ back-end/lib/soft_enge_group_project-stack.ts | 30 ++++++++++-
+ 2 files changed, 77 insertions(+), 29 deletions(-)
+
+commit e9c41b83adb7afafcae9d5a8299e05b8275f66fc
+Merge: f2f5bd5 0557db7
+Author: Forest Garvin <fgchickennugget@gmail.com>
+Date:   Mon Dec 8 18:02:13 2025 -0500
+
+    Merge pull request #43 from Rkaid0/main
+    
+    new forest
+
+commit 0557db7eae3c1db0b7de330909e88826cf890abd
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Mon Dec 8 01:49:16 2025 -0500
+
+    some fixes
+
+ back-end/lambda/getReceipts.ts           |  2 +-
+ front-end/src/app/userDashboard/page.tsx | 18 +++++++++---------
+ 2 files changed, 10 insertions(+), 10 deletions(-)
+
+commit 585297976ef7bf5311aebd254726d2f98d3f9fda
+Merge: 33eb3b9 da1acf3
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Mon Dec 8 00:59:00 2025 -0500
+
+    Merge branch 'createReceipt'
+
+commit da1acf38f76b519d4f199968d0297a24e1b599a8
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Mon Dec 8 00:58:43 2025 -0500
+
+    Fully working create receipt!
+
+ back-end/lambda/getReceipts.ts                | 113 +++++++++++++++++
+ back-end/lambda/getStoreChains.ts             |  42 +++++-
+ back-end/lib/soft_enge_group_project-stack.ts |  29 +++++
+ front-end/src/app/userDashboard/page.tsx      | 176 ++++++++++++++++++--------
+ 4 files changed, 302 insertions(+), 58 deletions(-)
+
+commit 9284ec3da33a2948616d062cf78bb0d8118c2392
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Sun Dec 7 23:13:41 2025 -0500
+
+    Working Receipt Creation with existing store!
+
+ back-end/lambda/getStores.ts                  |  61 ++++++++
+ back-end/lib/soft_enge_group_project-stack.ts |  29 ++++
+ front-end/src/app/userDashboard/page.tsx      | 199 ++++++++++++++++----------
+ 3 files changed, 212 insertions(+), 77 deletions(-)
+
+commit 2b5db9f97bea2f74ef405a0c42ad79239ee1e0d2
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Sun Dec 7 22:09:50 2025 -0500
+
+    Working creation of receipt!
+    
+    No display yet
+
+ back-end/lambda/addUserToDB.ts           |  71 +++++++---
+ back-end/lambda/callback.ts              |  46 +++----
+ front-end/src/app/userDashboard/page.tsx | 214 +++++++++++++++++++++----------
+ front-end/src/utils/auth.ts              |  27 +++-
+ 4 files changed, 244 insertions(+), 114 deletions(-)
+
+commit bdc19545184fa3c5523aa9745c100c944e18260e
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Sun Dec 7 19:32:37 2025 -0500
+
+    mistake in stack
+
+ back-end/lib/soft_enge_group_project-stack.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 33eb3b9817581b957fb3cc4b70e5087bd1e111ce
+Merge: 9255b24 f793f12
+Author: andremataassis <andremataassis@gmail.com>
+Date:   Sun Dec 7 19:07:34 2025 -0500
+
+    Merge pull request #42 from Rkaid0/createReceipt
+    
+    Create receipt
+
+commit f793f125d99ec04972ec4c4fce4836fa02d81c36
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Sun Dec 7 19:06:55 2025 -0500
+
+    added add item to receipt to stack
+
+ back-end/lib/soft_enge_group_project-stack.ts | 29 +++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
+
+commit 8d1a4ada18fee004c8685c2584a17ef7411c46c7
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Sun Dec 7 14:02:47 2025 -0500
+
+    add item to receipt
+
+ back-end/lambda/addItemToReceipt.ts      | 111 +++++++++++++++++++++++++++++++
+ front-end/src/app/userDashboard/page.tsx |   1 -
+ 2 files changed, 111 insertions(+), 1 deletion(-)
+
+commit 54b8c1c728f72cdfe216a6f1bd696210184bcb9b
+Author: Artyom Yesayan <yesart8@gmail.com>
+Date:   Sun Dec 7 12:19:43 2025 -0500
+
+    Better chatgpt prompt
+
+ .../src/app/analyzeReceipt/AnalyzeReceipt.tsx      | 47 ++++++++++------------
+ 1 file changed, 21 insertions(+), 26 deletions(-)
+
+commit c283c33b800f67d5902e8142c65ba1521fed7a95
+Author: Artyom Yesayan <yesart8@gmail.com>
+Date:   Sun Dec 7 11:57:41 2025 -0500
+
+    got chatgpt to work
+
+ front-end/package.json                             |   2 +-
+ .../src/app/analyzeReceipt/AnalyzeReceipt.tsx      | 128 +++++++++++++++++++++
+ front-end/src/app/userDashboard/page.tsx           |   2 +
+ 3 files changed, 131 insertions(+), 1 deletion(-)
+
+commit 9255b241adb513b4248ad6d853a1acc5305849ac
+Merge: 66bffff 6d4f5a1
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Sat Dec 6 14:36:03 2025 -0500
+
+    Merge pull request #41 from Rkaid0/ryan-messing-with-stuff
+    
+    deletes store
+
+commit 6d4f5a152df6a98ff7dca8034cf8473de686d140
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Sat Dec 6 14:35:29 2025 -0500
+
+    deletes store
+    
+    yippee
+
+ back-end/lambda/removeStore.ts                | 79 +++++++++++++++++++++++++
+ back-end/lib/soft_enge_group_project-stack.ts | 29 +++++++++
+ front-end/src/app/adminStoreGUI/page.tsx      | 84 ++++++++++++++++++++++-----
+ front-end/src/app/userStoreGUI/page.tsx       |  4 +-
+ 4 files changed, 180 insertions(+), 16 deletions(-)
+
+commit 66bffff7dae6399df955f39da94ff9aa17bb92d1
+Merge: 6a5a593 8d18b97
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Sat Dec 6 13:54:58 2025 -0500
+
+    Merge pull request #40 from Rkaid0/ryan-messing-with-stuff
+    
+    create store
+
+commit 8d18b977c6a0eb4a86738620be04a838b0cbfb03
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Sat Dec 6 13:46:48 2025 -0500
+
+    create store
+    
+    create store and show them
+
+ back-end/lambda/createStore.ts                | 74 +++++++++++++++++++++++++++
+ back-end/lambda/getStoreChains.ts             | 40 +++++++++++++--
+ back-end/lib/soft_enge_group_project-stack.ts | 29 +++++++++++
+ front-end/src/app/userStoreGUI/page.tsx       | 44 +++++++++++++++-
+ 4 files changed, 182 insertions(+), 5 deletions(-)
+
+commit 9eb3cb2b2f06267cd7f0283b67273980332c7ff1
+Merge: ada18da 6a5a593
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Sat Dec 6 11:48:33 2025 -0500
+
+    Merge pull request #39 from Rkaid0/main
+    
+    Merge pull request #38 from Rkaid0/ryan-messing-with-stuff
+
+commit 6a5a593b5ae57d5e3cbacc21c7b387d0c065ca6e
+Merge: 05cf969 ada18da
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Sat Dec 6 11:47:51 2025 -0500
+
+    Merge pull request #38 from Rkaid0/ryan-messing-with-stuff
+    
+    remove storce chain
+
+commit ada18da498810cd1d196d142f911efafd8083843
+Merge: e02008c 05cf969
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Sat Dec 6 11:47:21 2025 -0500
+
+    Merge branch 'main' into ryan-messing-with-stuff
+
+commit e02008cf34d3525564e7a7c37aa7466ba9d11ffc
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Sat Dec 6 11:44:09 2025 -0500
+
+    remove storce chain
+    
+    gonna be some conflicts
+
+ back-end/bin/soft_enge_group_project.ts       |   2 +-
+ back-end/lambda/removeStoreChain.ts           |  70 ++++++++++++++++
+ back-end/lib/soft_enge_group_project-stack.ts |  29 +++++++
+ back-end/package-lock.json                    | 114 +++++++++++++++++++++++++-
+ back-end/package.json                         |   1 +
+ front-end/src/app/adminStoreGUI/page.tsx      |  83 ++++++++++++++++---
+ 6 files changed, 285 insertions(+), 14 deletions(-)
+
+commit 05cf969325634409ca20bfc4f1a118a55359985f
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Fri Dec 5 19:59:32 2025 -0500
+
+    Users are now in our MySQL DB
+
+ back-end/lambda/addUserToDB.ts                |  31 ++++++
+ back-end/lambda/callback.ts                   |  34 ++++++-
+ back-end/lib/soft_enge_group_project-stack.ts | 141 ++++++++++++++++++--------
+ 3 files changed, 157 insertions(+), 49 deletions(-)
+
+commit 0242efe4d9b34768943426fec37a576569a0bcc2
+Merge: 578acb9 65d54d6
+Author: andremataassis <andremataassis@gmail.com>
+Date:   Fri Dec 5 17:58:43 2025 -0500
+
+    Merge pull request #37 from Rkaid0/createReceipt
+    
+    Create receipt
+
+commit 65d54d6d1dbffc5f0ff5522b4f92e6aefb041943
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Fri Dec 5 17:57:01 2025 -0500
+
+    Create createReceipt.ts
+
+ back-end/lambda/createReceipt.ts | 64 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 64 insertions(+)
+
+commit 578acb9296d53cdad4f4ca75c99c93cdaf0c3491
+Merge: 402a792 5aab2b5
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Fri Dec 5 15:49:29 2025 -0500
+
+    Merge pull request #36 from Rkaid0/ryan-messing-with-stuff
+    
+    working list store chains
+
+commit 5aab2b5ddf6c504fafa078981f5ab05bbc48564a
+Merge: e51a6a5 402a792
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Fri Dec 5 15:48:59 2025 -0500
+
+    Merge branch 'main' into ryan-messing-with-stuff
+
+commit e51a6a57118a4865f719c8ed1de169d6746de9d1
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Fri Dec 5 15:47:36 2025 -0500
+
+    wokring list store chains
+    
+    yipee
+
+ back-end/lambda/getStoreChains.ts             |   2 +-
+ back-end/lambda/package-lock.json             |  24 +--
+ back-end/lambda/package.json                  |   2 +-
+ back-end/lib/soft_enge_group_project-stack.ts |   2 +-
+ back-end/package-lock.json                    | 217 +++++++++++++-------------
+ back-end/package.json                         |   2 +-
+ 6 files changed, 125 insertions(+), 124 deletions(-)
+
+commit 402a792d51b14f6c197edfdb7c4daad2aa4d769d
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Fri Dec 5 14:32:34 2025 -0500
+
+    Update soft_enge_group_project-stack.ts
+
+ back-end/lib/soft_enge_group_project-stack.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 3d2b41eb9d44023d18e0bc56f7aa6b657036d2e9
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Fri Dec 5 14:00:20 2025 -0500
+
+    booomshakalaka
+
+ back-end/lambda/getStoreChains.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit a331cdcf7db1397dfc0d4f6fd2b23bbfffeda9ed
+Merge: bc069c5 35f7ebe
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Fri Dec 5 13:50:41 2025 -0500
+
+    Merge pull request #35 from Rkaid0/ryan-messing-with-stuff
+    
+    maynbe see existsing store chain
+
+commit 35f7ebe935cd7bc6682e9f06ed1949e37a250597
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Fri Dec 5 13:49:58 2025 -0500
+
+    maynbe see existsing store chain
+    
+    i hope
+
+ back-end/lib/soft_enge_group_project-stack.ts | 30 +++++++++++++++++++++++++++
+ front-end/src/app/userStoreGUI/page.tsx       |  8 +++++++
+ 2 files changed, 38 insertions(+)
+
+commit ff37b31bbe062df14a2400a5da34f6db5088777b
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Fri Dec 5 13:33:20 2025 -0500
+
+    got rid of name field for receipt
+
+ front-end/src/app/userDashboard/page.tsx | 161 ++++++++++++++++++++-----------
+ 1 file changed, 107 insertions(+), 54 deletions(-)
+
+commit bc069c5bd60f84f242fd72611bcc0bb4c47fb7cb
+Merge: bcdd9e6 7960c4d
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Fri Dec 5 13:23:43 2025 -0500
+
+    Merge pull request #34 from Rkaid0/ryan-messing-with-stuff
+    
+    temp
+
+commit 7960c4de5ba9945849fcacddd0ce5806a52605d9
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Fri Dec 5 13:22:52 2025 -0500
+
+    temp
+    
+    working
+
+ back-end/lambda/getStoreChains.ts       | 41 +++++++++++++++++++++++++++++++++
+ front-end/src/app/userStoreGUI/page.tsx | 18 +++++++++++++++
+ 2 files changed, 59 insertions(+)
+
+commit bcdd9e64dc7b457c660f53414d0c6f25e7616cdd
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Fri Dec 5 13:16:08 2025 -0500
+
+    fixed create store chain JSON
+
+ back-end/lambda/createStoreChain.ts     | 4 ++--
+ front-end/src/app/userStoreGUI/page.tsx | 5 ++---
+ 2 files changed, 4 insertions(+), 5 deletions(-)
+
+commit 1bbf6f9ba389374d7dfb33f7a3d9b241d18a2084
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Wed Dec 3 23:15:05 2025 -0500
+
+    working create store chain
+
+ back-end/lambda/createStoreChain.ts           |  9 ++---
+ back-end/lib/soft_enge_group_project-stack.ts | 58 +++++++++------------------
+ front-end/src/app/userStoreGUI/page.tsx       |  6 ++-
+ 3 files changed, 29 insertions(+), 44 deletions(-)
+
+commit 75700b36a42f4e2515d2dd2eef153df00018cdc8
+Merge: a56d14d 4d61677
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Wed Dec 3 19:37:42 2025 -0500
+
+    Merge branch 'main' into ryan-messing-with-stuff
+
+commit 4d61677d24b0d21f12d0892150171098dddd52aa
+Author: Artyom Yesayan <yesart8@gmail.com>
+Date:   Wed Dec 3 14:50:46 2025 -0500
+
+    That was scary
+
+ back-end/lib/soft_enge_group_project-stack.ts | 13 +------------
+ 1 file changed, 1 insertion(+), 12 deletions(-)
+
+commit ab4bafec4e818ad5a420ec5509ca19e1998d0b85
+Author: Artyom Yesayan <yesart8@gmail.com>
+Date:   Wed Dec 3 14:01:18 2025 -0500
+
+    Cors errors
+
+ back-end/lambda/create_store_chain.ts         |  6 +++++-
+ back-end/lib/soft_enge_group_project-stack.ts | 12 ++++++++++++
+ 2 files changed, 17 insertions(+), 1 deletion(-)
+
+commit a56d14da1dfc41aa54357d316fbeeb5faac47a66
+Merge: 5b7f9e2 30cfb35
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Wed Dec 3 13:35:02 2025 -0500
+
+    Merge branch 'ryan-messing-with-stuff' of https://github.com/Rkaid0/SoftEngeGroupProject into ryan-messing-with-stuff
+
+commit 5b7f9e2438b857c9803a99419d3bee9431236f7a
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Wed Dec 3 13:34:43 2025 -0500
+
+    fixing?
+
+ back-end/lambda/createStoreChain.ts | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
+
+commit 30cfb357ecef877cc7797957eef797c841e52655
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Wed Dec 3 13:21:43 2025 -0500
+
+    Update soft_enge_group_project-stack.ts
+
+ back-end/lib/soft_enge_group_project-stack.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit ab827155ea7825ab6d7a3a10d24dd96b108b42ad
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Wed Dec 3 13:21:26 2025 -0500
+
+    token
+
+ front-end/src/app/userStoreGUI/page.tsx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 5fbc357057e6a93b234a3c98a9a513cdb0ba119d
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Tue Dec 2 19:47:00 2025 -0500
+
+    create store chain
+    
+    should be able to create a store chain in the database as a user
+
+ .../{create_store_chain.ts => createStoreChain.ts}  | 14 ++++++++------
+ front-end/src/app/userStoreGUI/page.tsx             | 21 +++++++++++++++++++--
+ 2 files changed, 27 insertions(+), 8 deletions(-)
+
+commit 1547b2ee3a7866c1b00edd7515be48ef7347194b
+Merge: 34bc6c3 ec61851
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Tue Dec 2 18:53:28 2025 -0500
+
+    Merge pull request #32 from Rkaid0/main
+    
+    pulling andres screwup
+
+commit ec618513e02a6cb733f58a40a783d5b7dc4cf6ca
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Tue Dec 2 18:51:02 2025 -0500
+
+    localhost now works alongside s3 bucket
+    
+    cognito still doesn't redirect properly so you can't get tokens on localhost, might just like....not bother fixing that
+
+ front-end/src/app/adminDashboard/page.tsx | 10 ++++++++--
+ front-end/src/app/adminStoreGUI/page.tsx  | 10 ++++++++--
+ front-end/src/app/reviewActivity/page.tsx |  4 ++--
+ front-end/src/app/reviewHistory/page.tsx  |  4 ++--
+ front-end/src/app/userDashboard/page.tsx  | 12 +++++++-----
+ front-end/src/app/userStoreGUI/page.tsx   | 10 ++++++----
+ front-end/src/utils/auth.ts               |  5 ++++-
+ 7 files changed, 37 insertions(+), 18 deletions(-)
+
+commit f2f5bd5a298a2d74a9d3ae9c16683fb5cb965eb4
+Merge: 456d2b2 e0cb755
+Author: Forest Garvin <fgchickennugget@gmail.com>
+Date:   Tue Dec 2 18:33:52 2025 -0500
+
+    Merge pull request #31 from Rkaid0/main
+    
+    gimme
+
+commit e0cb755128b93bc49640719135dd50d853195e01
+Merge: 1fcb51c 11149a3
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Tue Dec 2 18:29:04 2025 -0500
+
+    Merge branch 'main' of https://github.com/Rkaid0/SoftEngeGroupProject
+
+commit 1fcb51cf3c29a6f8bf824532bccd015160684195
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Tue Dec 2 18:28:45 2025 -0500
+
+    deleted out folder in back-end and added it to gitignore
+
+ back-end/.gitignore                                |   1 +
+ back-end/site/out/404.html                         |   1 -
+ back-end/site/out/404/index.html                   |   1 -
+ back-end/site/out/__next.__PAGE__.txt              |  10 ----------
+ back-end/site/out/__next._full.txt                 |  21 ---------------------
+ back-end/site/out/__next._head.txt                 |   8 --------
+ back-end/site/out/__next._index.txt                |   5 -----
+ back-end/site/out/__next._tree.txt                 |   5 -----
+ .../1764650912811/_clientMiddlewareManifest.json   |   1 -
+ .../out/_next/static/chunks/1f53b65807981b2c.css   |   3 ---
+ .../out/_next/static/chunks/9041478821a4eb3b.css   |   1 -
+ .../static/media/4fa387ec64143e14-s.c1fdd6c2.woff2 | Bin 12608 -> 0 bytes
+ .../static/media/7178b3e590c64307-s.b97b3418.woff2 | Bin 15292 -> 0 bytes
+ .../media/797e433ab948586e-s.p.dbea232f.woff2      | Bin 31288 -> 0 bytes
+ .../static/media/8a480f0b521d4e75-s.8e0177b5.woff2 | Bin 14676 -> 0 bytes
+ .../static/media/bbc41e54d2fcbd21-s.799d8ef8.woff2 | Bin 13036 -> 0 bytes
+ .../media/caa3a2e1cccd8315-s.p.853070df.woff2      | Bin 28388 -> 0 bytes
+ .../out/_next/static/media/favicon.0b3bf435.ico    | Bin 25931 -> 0 bytes
+ back-end/site/out/_not-found/__next._full.txt      |  14 --------------
+ back-end/site/out/_not-found/__next._head.txt      |   8 --------
+ back-end/site/out/_not-found/__next._index.txt     |   5 -----
+ back-end/site/out/_not-found/__next._not-found.txt |   4 ----
+ .../out/_not-found/__next._not-found/__PAGE__.txt  |   5 -----
+ back-end/site/out/_not-found/__next._tree.txt      |   2 --
+ back-end/site/out/_not-found/index.html            |   1 -
+ back-end/site/out/_not-found/index.txt             |  14 --------------
+ back-end/site/out/adminDashboard/__next._full.txt  |  20 --------------------
+ back-end/site/out/adminDashboard/__next._head.txt  |   8 --------
+ back-end/site/out/adminDashboard/__next._index.txt |   5 -----
+ back-end/site/out/adminDashboard/__next._tree.txt  |   4 ----
+ .../out/adminDashboard/__next.adminDashboard.txt   |   4 ----
+ .../__next.adminDashboard/__PAGE__.txt             |   9 ---------
+ back-end/site/out/adminDashboard/index.html        |   1 -
+ back-end/site/out/adminDashboard/index.txt         |  20 --------------------
+ back-end/site/out/adminStoreGUI/__next._full.txt   |  20 --------------------
+ back-end/site/out/adminStoreGUI/__next._head.txt   |   8 --------
+ back-end/site/out/adminStoreGUI/__next._index.txt  |   5 -----
+ back-end/site/out/adminStoreGUI/__next._tree.txt   |   4 ----
+ .../out/adminStoreGUI/__next.adminStoreGUI.txt     |   4 ----
+ .../__next.adminStoreGUI/__PAGE__.txt              |   9 ---------
+ back-end/site/out/adminStoreGUI/index.html         |   1 -
+ back-end/site/out/adminStoreGUI/index.txt          |  20 --------------------
+ back-end/site/out/favicon.ico                      | Bin 25931 -> 0 bytes
+ back-end/site/out/file.svg                         |   1 -
+ back-end/site/out/globe.svg                        |   1 -
+ back-end/site/out/index.html                       |   1 -
+ back-end/site/out/index.txt                        |  21 ---------------------
+ back-end/site/out/next.svg                         |   1 -
+ back-end/site/out/reviewActivity/__next._full.txt  |  20 --------------------
+ back-end/site/out/reviewActivity/__next._head.txt  |   8 --------
+ back-end/site/out/reviewActivity/__next._index.txt |   5 -----
+ back-end/site/out/reviewActivity/__next._tree.txt  |   4 ----
+ .../out/reviewActivity/__next.reviewActivity.txt   |   4 ----
+ .../__next.reviewActivity/__PAGE__.txt             |   9 ---------
+ back-end/site/out/reviewActivity/index.html        |   1 -
+ back-end/site/out/reviewActivity/index.txt         |  20 --------------------
+ back-end/site/out/reviewHistory/__next._full.txt   |  20 --------------------
+ back-end/site/out/reviewHistory/__next._head.txt   |   8 --------
+ back-end/site/out/reviewHistory/__next._index.txt  |   5 -----
+ back-end/site/out/reviewHistory/__next._tree.txt   |   4 ----
+ .../out/reviewHistory/__next.reviewHistory.txt     |   4 ----
+ .../__next.reviewHistory/__PAGE__.txt              |   9 ---------
+ back-end/site/out/reviewHistory/index.html         |   1 -
+ back-end/site/out/reviewHistory/index.txt          |  20 --------------------
+ back-end/site/out/userDashboard/__next._full.txt   |  20 --------------------
+ back-end/site/out/userDashboard/__next._head.txt   |   8 --------
+ back-end/site/out/userDashboard/__next._index.txt  |   5 -----
+ back-end/site/out/userDashboard/__next._tree.txt   |   4 ----
+ .../out/userDashboard/__next.userDashboard.txt     |   4 ----
+ .../__next.userDashboard/__PAGE__.txt              |   9 ---------
+ back-end/site/out/userDashboard/index.html         |   1 -
+ back-end/site/out/userDashboard/index.txt          |  20 --------------------
+ back-end/site/out/userStoreGUI/__next._full.txt    |  20 --------------------
+ back-end/site/out/userStoreGUI/__next._head.txt    |   8 --------
+ back-end/site/out/userStoreGUI/__next._index.txt   |   5 -----
+ back-end/site/out/userStoreGUI/__next._tree.txt    |   4 ----
+ .../site/out/userStoreGUI/__next.userStoreGUI.txt  |   4 ----
+ .../userStoreGUI/__next.userStoreGUI/__PAGE__.txt  |   9 ---------
+ back-end/site/out/userStoreGUI/index.html          |   1 -
+ back-end/site/out/userStoreGUI/index.txt           |  20 --------------------
+ back-end/site/out/vercel.svg                       |   1 -
+ back-end/site/out/window.svg                       |   1 -
+ front-end/src/utils/auth.ts                        |   4 ++++
+ 83 files changed, 5 insertions(+), 562 deletions(-)
+
+commit 11149a3b109f3ad0d8b2a1cee4997c1ee03db1a0
+Merge: 4108372 34bc6c3
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Tue Dec 2 18:19:16 2025 -0500
+
+    Merge pull request #30 from Rkaid0/ryan-messing-with-stuff
+    
+    idk
+
+commit 34bc6c3109118b0beea7f084121a90e3b2e31778
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Tue Dec 2 18:18:19 2025 -0500
+
+    Update package-lock.json
+
+ back-end/package-lock.json | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
+
+commit 520473f041f13653537a10d663dc847185b5a699
+Merge: f26c455 4108372
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Tue Dec 2 18:17:59 2025 -0500
+
+    Merge pull request #29 from Rkaid0/main
+    
+    broke cdk and fixed it
+
+commit 41083727c615132da8434f8a2921706acbfe691d
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Mon Dec 1 23:52:34 2025 -0500
+
+    broke cdk and fixed it
+    
+    took forever.
+
+ back-end/lambda/callback.ts                        |   4 ++--
+ back-end/lib/soft_enge_group_project-stack.ts      |   3 ++-
+ back-end/site/out/404.html                         |   1 +
+ back-end/site/out/404/index.html                   |   1 +
+ back-end/site/out/__next.__PAGE__.txt              |  10 ++++++++++
+ back-end/site/out/__next._full.txt                 |  21 +++++++++++++++++++++
+ back-end/site/out/__next._head.txt                 |   8 ++++++++
+ back-end/site/out/__next._index.txt                |   5 +++++
+ back-end/site/out/__next._tree.txt                 |   5 +++++
+ .../1764650912811/_clientMiddlewareManifest.json   |   1 +
+ .../out/_next/static/chunks/1f53b65807981b2c.css   |   3 +++
+ .../out/_next/static/chunks/9041478821a4eb3b.css   |   1 +
+ .../static/media/4fa387ec64143e14-s.c1fdd6c2.woff2 | Bin 0 -> 12608 bytes
+ .../static/media/7178b3e590c64307-s.b97b3418.woff2 | Bin 0 -> 15292 bytes
+ .../media/797e433ab948586e-s.p.dbea232f.woff2      | Bin 0 -> 31288 bytes
+ .../static/media/8a480f0b521d4e75-s.8e0177b5.woff2 | Bin 0 -> 14676 bytes
+ .../static/media/bbc41e54d2fcbd21-s.799d8ef8.woff2 | Bin 0 -> 13036 bytes
+ .../media/caa3a2e1cccd8315-s.p.853070df.woff2      | Bin 0 -> 28388 bytes
+ .../out/_next/static/media/favicon.0b3bf435.ico    | Bin 0 -> 25931 bytes
+ back-end/site/out/_not-found/__next._full.txt      |  14 ++++++++++++++
+ back-end/site/out/_not-found/__next._head.txt      |   8 ++++++++
+ back-end/site/out/_not-found/__next._index.txt     |   5 +++++
+ back-end/site/out/_not-found/__next._not-found.txt |   4 ++++
+ .../out/_not-found/__next._not-found/__PAGE__.txt  |   5 +++++
+ back-end/site/out/_not-found/__next._tree.txt      |   2 ++
+ back-end/site/out/_not-found/index.html            |   1 +
+ back-end/site/out/_not-found/index.txt             |  14 ++++++++++++++
+ back-end/site/out/adminDashboard/__next._full.txt  |  20 ++++++++++++++++++++
+ back-end/site/out/adminDashboard/__next._head.txt  |   8 ++++++++
+ back-end/site/out/adminDashboard/__next._index.txt |   5 +++++
+ back-end/site/out/adminDashboard/__next._tree.txt  |   4 ++++
+ .../out/adminDashboard/__next.adminDashboard.txt   |   4 ++++
+ .../__next.adminDashboard/__PAGE__.txt             |   9 +++++++++
+ back-end/site/out/adminDashboard/index.html        |   1 +
+ back-end/site/out/adminDashboard/index.txt         |  20 ++++++++++++++++++++
+ back-end/site/out/adminStoreGUI/__next._full.txt   |  20 ++++++++++++++++++++
+ back-end/site/out/adminStoreGUI/__next._head.txt   |   8 ++++++++
+ back-end/site/out/adminStoreGUI/__next._index.txt  |   5 +++++
+ back-end/site/out/adminStoreGUI/__next._tree.txt   |   4 ++++
+ .../out/adminStoreGUI/__next.adminStoreGUI.txt     |   4 ++++
+ .../__next.adminStoreGUI/__PAGE__.txt              |   9 +++++++++
+ back-end/site/out/adminStoreGUI/index.html         |   1 +
+ back-end/site/out/adminStoreGUI/index.txt          |  20 ++++++++++++++++++++
+ back-end/site/out/favicon.ico                      | Bin 0 -> 25931 bytes
+ back-end/site/out/file.svg                         |   1 +
+ back-end/site/out/globe.svg                        |   1 +
+ back-end/site/out/index.html                       |   1 +
+ back-end/site/out/index.txt                        |  21 +++++++++++++++++++++
+ back-end/site/out/next.svg                         |   1 +
+ back-end/site/out/reviewActivity/__next._full.txt  |  20 ++++++++++++++++++++
+ back-end/site/out/reviewActivity/__next._head.txt  |   8 ++++++++
+ back-end/site/out/reviewActivity/__next._index.txt |   5 +++++
+ back-end/site/out/reviewActivity/__next._tree.txt  |   4 ++++
+ .../out/reviewActivity/__next.reviewActivity.txt   |   4 ++++
+ .../__next.reviewActivity/__PAGE__.txt             |   9 +++++++++
+ back-end/site/out/reviewActivity/index.html        |   1 +
+ back-end/site/out/reviewActivity/index.txt         |  20 ++++++++++++++++++++
+ back-end/site/out/reviewHistory/__next._full.txt   |  20 ++++++++++++++++++++
+ back-end/site/out/reviewHistory/__next._head.txt   |   8 ++++++++
+ back-end/site/out/reviewHistory/__next._index.txt  |   5 +++++
+ back-end/site/out/reviewHistory/__next._tree.txt   |   4 ++++
+ .../out/reviewHistory/__next.reviewHistory.txt     |   4 ++++
+ .../__next.reviewHistory/__PAGE__.txt              |   9 +++++++++
+ back-end/site/out/reviewHistory/index.html         |   1 +
+ back-end/site/out/reviewHistory/index.txt          |  20 ++++++++++++++++++++
+ back-end/site/out/userDashboard/__next._full.txt   |  20 ++++++++++++++++++++
+ back-end/site/out/userDashboard/__next._head.txt   |   8 ++++++++
+ back-end/site/out/userDashboard/__next._index.txt  |   5 +++++
+ back-end/site/out/userDashboard/__next._tree.txt   |   4 ++++
+ .../out/userDashboard/__next.userDashboard.txt     |   4 ++++
+ .../__next.userDashboard/__PAGE__.txt              |   9 +++++++++
+ back-end/site/out/userDashboard/index.html         |   1 +
+ back-end/site/out/userDashboard/index.txt          |  20 ++++++++++++++++++++
+ back-end/site/out/userStoreGUI/__next._full.txt    |  20 ++++++++++++++++++++
+ back-end/site/out/userStoreGUI/__next._head.txt    |   8 ++++++++
+ back-end/site/out/userStoreGUI/__next._index.txt   |   5 +++++
+ back-end/site/out/userStoreGUI/__next._tree.txt    |   4 ++++
+ .../site/out/userStoreGUI/__next.userStoreGUI.txt  |   4 ++++
+ .../userStoreGUI/__next.userStoreGUI/__PAGE__.txt  |   9 +++++++++
+ back-end/site/out/userStoreGUI/index.html          |   1 +
+ back-end/site/out/userStoreGUI/index.txt           |  20 ++++++++++++++++++++
+ back-end/site/out/vercel.svg                       |   1 +
+ back-end/site/out/window.svg                       |   1 +
+ front-end/next.config.ts                           |   1 +
+ front-end/package.json                             |   5 ++++-
+ front-end/src/app/page.tsx                         |   6 ++----
+ front-end/src/app/userDashboard/page.tsx           |   3 +--
+ front-end/src/utils/auth.ts                        |   6 +++---
+ 88 files changed, 577 insertions(+), 13 deletions(-)
+
+commit f26c455b22449783e0d19da1c8fc2b063778ad18
+Merge: 14dbed1 1563b00
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Mon Dec 1 13:05:42 2025 -0500
+
+    Merge pull request #28 from Rkaid0/main
+    
+    pulling
+
+commit 456d2b2091953996bf796c620441503936cee648
+Merge: 0eb591b 1563b00
+Author: Forest Garvin <fgchickennugget@gmail.com>
+Date:   Tue Nov 25 20:18:36 2025 -0500
+
+    Merge pull request #26 from Rkaid0/main
+    
+    get
+
+commit 1563b00dbe7a87c50844873fd5e37f3ba171bf7a
+Merge: 1ef4885 0eb591b
+Author: Forest Garvin <fgchickennugget@gmail.com>
+Date:   Tue Nov 25 20:17:13 2025 -0500
+
+    Merge pull request #25 from Rkaid0/FOREST
+    
+    create shopping list
+
+commit 0eb591bed9cec29765a7039cae14af4603392ad7
+Author: Forest Garvin <fgchickennugget@gmail.com>
+Date:   Tue Nov 25 20:15:27 2025 -0500
+
+    added create shopping list
+
+ back-end/lambda/createShoppingList.ts | 52 +++++++++++++++++++++++++++++++++++
+ back-end/lambda/create_store_chain.ts |  2 +-
+ 2 files changed, 53 insertions(+), 1 deletion(-)
+
+commit 1ef488558b5d818c7894f498059234ff7dd26729
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Tue Nov 25 20:09:54 2025 -0500
+
+    Removed ryans silly thing
+    
+    removed
+    <h3>USER SHOULD NOT BE ALLOWED TO CREATE STORE CHAIN THATS AN ADMIN ONLY USE CASE</h3>
+    from userStoreGUI
+
+ front-end/src/app/userStoreGUI/page.tsx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 2e4add5a69df68544654b7f83d7533aaa26304dd
+Merge: fc24571 14dbed1
+Author: andremataassis <andremataassis@gmail.com>
+Date:   Tue Nov 25 19:38:05 2025 -0500
+
+    Merge pull request #24 from Rkaid0/ryan-messing-with-stuff
+    
+    delete and edit item on eciept
+
+commit 14dbed121c0599e77364cfabf1301f1730c229d6
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Tue Nov 25 19:35:27 2025 -0500
+
+    edit item and delete item from reciept
+    
+    fully on front end no database used
+
+ front-end/src/app/userDashboard/page.tsx | 48 +++++++++++++++++++++++++++++---
+ 1 file changed, 44 insertions(+), 4 deletions(-)
+
+commit d8ba912a6917ef195fcffa2e56863f00de22766a
+Merge: d5f54ce fc24571
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Tue Nov 25 19:04:26 2025 -0500
+
+    Merge pull request #23 from Rkaid0/main
+    
+    pulling
+
+commit fc245716746505b56fa7b3d0a809c5aff617e032
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Tue Nov 25 18:21:05 2025 -0500
+
+    Update page.tsx
+
+ front-end/src/app/userDashboard/page.tsx | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+commit 97c9829dfecc1b0589415d8ebafc3ee8acce77eb
+Merge: 204b303 d5f54ce
+Author: andremataassis <andremataassis@gmail.com>
+Date:   Tue Nov 25 18:16:22 2025 -0500
+
+    Merge pull request #22 from Rkaid0/ryan-messing-with-stuff
+    
+    create reciept juts on the front end
+
+commit d5f54ce3cfb7e3eebb93bc181e57814ca3207654
+Merge: 7efb634 204b303
+Author: andremataassis <andremataassis@gmail.com>
+Date:   Tue Nov 25 18:16:00 2025 -0500
+
+    Merge branch 'main' into ryan-messing-with-stuff
+
+commit 204b303b300ebe8777e82567dc98abc03a790d4b
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Tue Nov 25 18:13:13 2025 -0500
+
+    Update page.tsx
+
+ front-end/src/app/adminDashboard/page.tsx | 1 -
+ 1 file changed, 1 deletion(-)
+
+commit c274fb664bd8b79f997df1a710d113cc9da7641e
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Tue Nov 25 18:00:59 2025 -0500
+
+    fully functional S3 bucket deployment
+    
+    No more cognito bugs
+
+ back-end/lambda/logout.ts                     | 13 +++++++++++++
+ back-end/lib/soft_enge_group_project-stack.ts | 14 ++++++++++++++
+ front-end/src/app/adminDashboard/page.tsx     |  8 ++++----
+ front-end/src/app/adminStoreGUI/page.tsx      |  2 +-
+ front-end/src/app/reviewActivity/page.tsx     | 16 ++++++----------
+ front-end/src/app/reviewHistory/page.tsx      | 16 ++++++----------
+ front-end/src/app/userDashboard/page.tsx      |  2 +-
+ front-end/src/app/userStoreGUI/page.tsx       | 17 ++++++-----------
+ front-end/src/utils/auth.ts                   | 22 ++++++----------------
+ front-end/src/utils/getUserFromCookie.ts      | 19 -------------------
+ 10 files changed, 57 insertions(+), 72 deletions(-)
+
+commit 53918de3b48c013edf92fefc99758ee3c9c42ede
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Tue Nov 25 16:59:15 2025 -0500
+
+    small changes to callback and dashboards
+    
+    Logging in now stores tokens in local storage
+
+ back-end/lambda/callback.ts              | 27 ++++-----------------
+ front-end/src/app/adminStoreGUI/page.tsx |  2 +-
+ front-end/src/app/userDashboard/page.tsx |  4 +++-
+ front-end/src/utils/auth.ts              | 40 ++++++++++++++------------------
+ 4 files changed, 25 insertions(+), 48 deletions(-)
+
+commit 7efb634882a356b3a6bdfe9391548dc7a6ae1149
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Tue Nov 25 16:54:56 2025 -0500
+
+    delete reciept
+    
+    delete recipt not usign database
+
+ front-end/src/app/userDashboard/page.tsx | 24 +++++++++---------------
+ 1 file changed, 9 insertions(+), 15 deletions(-)
+
+commit 7fe80eac7b63608745d6d35ca48ad58f9150d0dc
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Tue Nov 25 16:29:49 2025 -0500
+
+    create reciept
+    
+    added the ability to create a receipt on the front end not using the database as a backup usecase completion
+
+ front-end/src/app/userDashboard/page.tsx | 88 +++++++++++++++++++++++++++++++-
+ front-end/src/app/userStoreGUI/page.tsx  |  2 +-
+ front-end/tsconfig.json                  | 18 +++++--
+ 3 files changed, 101 insertions(+), 7 deletions(-)
+
+commit cacd52c039190b1fffdf8be03ef520244477e021
+Merge: 54bba37 f85b5da
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Tue Nov 25 15:44:44 2025 -0500
+
+    Merge pull request #21 from Rkaid0/main
+    
+    pulling
+
+commit a66abd94893ffc5cdc46ff697a34c0ac9f9f887b
+Merge: 7d62f1a f85b5da
+Author: Forest Garvin <fgchickennugget@gmail.com>
+Date:   Tue Nov 25 14:27:17 2025 -0500
+
+    Merge pull request #19 from Rkaid0/main
+    
+    Update page.tsx
+
+commit f85b5da15162f1d0aabcd6dcb10f66167af62b67
+Author: Forest Garvin <fgchickennugget@gmail.com>
+Date:   Tue Nov 25 14:24:29 2025 -0500
+
+    Update page.tsx
+
+ front-end/src/app/userStoreGUI/page.tsx | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+commit 7d62f1a3ba41e1fc226b8cf5799e8ae78cc0675a
+Merge: faac63b 2b0be96
+Author: andremataassis <andremataassis@gmail.com>
+Date:   Tue Nov 25 14:10:29 2025 -0500
+
+    Merge pull request #18 from Rkaid0/main
+    
+    ForestPull
+
+commit 2b0be9663b58cce8c06acfdae8b318081fd33824
+Merge: b7394e4 6feaaf4
+Author: andremataassis <andremataassis@gmail.com>
+Date:   Tue Nov 25 13:50:15 2025 -0500
+
+    god help us
+    
+    Cognito lambda for s3 bucket
+
+commit 6feaaf46d112f2b5e3ab622a3320037427f2e680
+Merge: e73a5d8 b7394e4
+Author: andremataassis <andremataassis@gmail.com>
+Date:   Tue Nov 25 13:50:02 2025 -0500
+
+    Merge branch 'main' into cognitoLambdaForS3Bucket
+
+commit e73a5d8c31a1a3ce0238002a298cf541691fa185
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Tue Nov 25 13:47:42 2025 -0500
+
+    Almost working
+    
+    Logout on user page doesn't do anything
+    Logout on admin page redirects to cognito domain w/ redirect error
+    Being on admin/user page when not authorized does not kick user out
+
+ back-end/lambda/callback.ts              | 14 ++++----
+ front-end/src/app/adminStoreGUI/page.tsx | 62 ++++++++++++++++++--------------
+ front-end/src/app/userDashboard/page.tsx | 24 +++----------
+ front-end/src/utils/auth.ts              | 37 +++++++++++++++----
+ 4 files changed, 80 insertions(+), 57 deletions(-)
+
+commit b7394e4421e421ad65572bedd30e4ebe5a41d5cb
+Merge: 91501fa 8bc9e84
+Author: Artyom Yesayan <99305396+Rkaid0@users.noreply.github.com>
+Date:   Tue Nov 25 13:11:20 2025 -0500
+
+    Merge pull request #16 from Rkaid0/artyom-create-store-chain
+    
+    Was able to add store chain with api
+
+commit 8bc9e84445f28450b6f50212d275741562d55e89
+Author: Artyom Yesayan <yesart8@gmail.com>
+Date:   Tue Nov 25 13:00:57 2025 -0500
+
+    Was able to add store chain with api
+
+ back-end/cdk.context.json                     | 52 ++++++++++++++++++++++
+ back-end/lambda/create_store_chain.ts         | 56 ++++++++++++++++++++++++
+ back-end/lambda/helpers/getDbConfig.ts        |  7 +++
+ back-end/lambda/helpers/getDbConnection.ts    | 11 +++++
+ back-end/lib/soft_enge_group_project-stack.ts | 62 +++++++++++++++++++++++----
+ front-end/package-lock.json                   | 12 ------
+ 6 files changed, 179 insertions(+), 21 deletions(-)
+
+commit e2402029357630d1a859095a500f0bf7fce82347
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Tue Nov 25 00:00:37 2025 -0500
+
+    Nearly functional S3 bucket deployment
+    
+    To do:
+    fix issue where cookies aren't stored between cognito sign in and s3 bucket static website. Token will be read from URL and not stored in cookies
+
+ back-end/lambda/callback.ts                   | 109 ++++++
+ back-end/lambda/hello.ts                      |  11 +
+ back-end/lambda/package-lock.json             | 518 ++++++++++++++++++++++++++
+ back-end/lambda/package.json                  |  20 +
+ back-end/lib/soft_enge_group_project-stack.ts | 132 ++++---
+ front-end/next.config.ts                      |   4 +-
+ front-end/package.json                        |   3 +-
+ front-end/src/app/adminDashboard/page.tsx     |  46 ++-
+ front-end/src/app/api/callback/route.ts       |  64 ----
+ front-end/src/app/api/login/route.ts          |  28 --
+ front-end/src/app/api/logout/route.ts         |   6 -
+ front-end/src/app/lib/authCookies.ts          |  16 -
+ front-end/src/app/lib/cognitoClient.ts        |  17 -
+ front-end/src/app/page.tsx                    |  23 +-
+ front-end/src/app/userDashboard/page.tsx      |  51 ++-
+ front-end/src/utils/auth.ts                   |  55 +++
+ 16 files changed, 875 insertions(+), 228 deletions(-)
+
+commit 54bba377cc6ec7dd7303facdfabf0987a63e8e50
+Merge: b9790ed 91501fa
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Mon Nov 24 18:11:32 2025 -0500
+
+    Merge pull request #14 from Rkaid0/main
+    
+    pulling
+
+commit 91501fa99e4956a6104c3e35c0693ecf6514d1db
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Mon Nov 24 18:09:44 2025 -0500
+
+    Create README.md
+
+ README.md | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit f3d4a7bc62797d8a1cc6ee69a893f22d1cc2a147
+Merge: 6f13d3e 3da6bc2
+Author: Artyom Yesayan <99305396+Rkaid0@users.noreply.github.com>
+Date:   Mon Nov 24 18:09:09 2025 -0500
+
+    Merge pull request #13 from Rkaid0/repo-restructuring
+    
+    Restructured into two folders
+
+commit 3da6bc293272d0787e220c0f1f862d4602c9d7d1
+Author: Artyom Yesayan <yesart8@gmail.com>
+Date:   Mon Nov 24 18:06:49 2025 -0500
+
+    trust me bro
+
+ .gitignore => back-end/.gitignore                  |   0
+ .npmignore => back-end/.npmignore                  |   0
+ README.md => back-end/README.md                    |   0
+ {bin => back-end/bin}/soft_enge_group_project.ts   |   0
+ cdk.json => back-end/cdk.json                      |   0
+ jest.config.js => back-end/jest.config.js          |   0
+ {lambda => back-end/lambda}/test_handler.ts        |   0
+ .../lib}/soft_enge_group_project-stack.ts          |   0
+ package-lock.json => back-end/package-lock.json    | 134 ++++++++++++++++++++-
+ package.json => back-end/package.json              |   3 +-
+ .../test}/soft_enge_group_project.test.ts          |   0
+ tsconfig.json => back-end/tsconfig.json            |   0
+ 12 files changed, 135 insertions(+), 2 deletions(-)
+
+commit 6f13d3e9cfe4284819d0f8daeff3c6d21122eaf0
+Merge: 8860ae7 b9790ed
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Mon Nov 24 17:22:36 2025 -0500
+
+    Merge pull request #12 from Rkaid0/ryan-messing-with-stuff
+    
+    more protect
+
+commit b9790ed38a9ac3fc38e93fe85f44cbde7d95aef5
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Mon Nov 24 17:21:32 2025 -0500
+
+    more protect
+    
+    url change protection on the other views
+
+ front-end/src/app/adminDashboard/page.tsx |  4 ++--
+ front-end/src/app/adminStoreGUI/page.tsx  | 20 ++++++++++++++++++++
+ front-end/src/app/reviewActivity/page.tsx | 15 +++++++++++++++
+ front-end/src/app/reviewHistory/page.tsx  | 15 +++++++++++++++
+ front-end/src/app/userDashboard/page.tsx  |  2 +-
+ front-end/src/app/userStoreGUI/page.tsx   | 15 +++++++++++++++
+ 6 files changed, 68 insertions(+), 3 deletions(-)
+
+commit 8860ae72729189f4288d14647a69fe3420ffba78
+Merge: 64fe06d 7ee53d4
+Author: Forest Garvin <fgchickennugget@gmail.com>
+Date:   Mon Nov 24 17:10:23 2025 -0500
+
+    Merge pull request #10 from Rkaid0/ryan-messing-with-stuff
+    
+    display and protect
+
+commit 7ee53d4db89de9430bec36ecf8e2d59de39c4fab
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Mon Nov 24 17:04:30 2025 -0500
+
+    display name and protection
+    
+    displays email of logged in user and stops users from manually changing the url to go to the admin dashboard, and stops anyone whos not logged in from manually going to admin dashboard or user dashboard
+
+ front-end/package-lock.json               | 30 ++++++++++++++++++++++++++++++
+ front-end/package.json                    |  2 ++
+ front-end/src/app/adminDashboard/page.tsx | 20 ++++++++++++++++++++
+ front-end/src/app/test.txt                |  1 -
+ front-end/src/app/userDashboard/page.tsx  | 16 +++++++++++++++-
+ front-end/src/utils/getUserFromCookie.ts  | 19 +++++++++++++++++++
+ 6 files changed, 86 insertions(+), 2 deletions(-)
+
+commit eabd965887265bae27cf547a6a15eab5e6cd2cea
+Merge: 9eadf00 64fe06d
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Mon Nov 24 16:29:32 2025 -0500
+
+    Merge pull request #9 from Rkaid0/main
+    
+    pulling
+
+commit 64fe06d2a940e8d7be698ff015c8d20318e04b81
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Mon Nov 24 13:50:52 2025 -0500
+
+    Fixed the thing ryan broke
+    
+    He broke it on prupose he won't admit it but he hates me
+    
+    Co-Authored-By: RyanPKirk <209690216+RyanPKirk@users.noreply.github.com>
+
+ front-end/src/app/api/callback/route.ts | 24 +++++++++++++-----------
+ 1 file changed, 13 insertions(+), 11 deletions(-)
+
+commit 9eadf0009436a205ea151c55a450711c3122c75f
+Merge: 7b4c66b 333e188
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Mon Nov 24 13:39:39 2025 -0500
+
+    Merge pull request #8 from Rkaid0/main
+    
+    PULLING
+
+commit 333e188378f174c4e835374e1990b69776c1b61c
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Mon Nov 24 13:31:52 2025 -0500
+
+    Logout Functionality for both dashboards
+
+ front-end/package-lock.json               | 12 ------------
+ front-end/src/app/adminDashboard/page.tsx |  2 +-
+ front-end/src/app/api/logout/route.ts     |  6 ++++++
+ front-end/src/app/userDashboard/page.tsx  |  3 ++-
+ 4 files changed, 9 insertions(+), 14 deletions(-)
+
+commit c57ecbebe75abcddb524788654307aba002fb27a
+Merge: cec830b 7b4c66b
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Sun Nov 23 13:24:08 2025 -0500
+
+    Merge pull request #7 from Rkaid0/ryan-messing-with-stuff
+    
+    Ryan messing with stuff
+
+commit 7b4c66b3112649b3734f2e8f376cd4ed06ec5ac1
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Sun Nov 23 13:21:56 2025 -0500
+
+    redirect to admin/user page on login
+    
+    made it so that if you login with a predetermined admin email you go to admin dashboard, any other email goes to user dashboard
+
+ front-end/package-lock.json             | 153 +++++++++++++++++++++++++++++++-
+ front-end/package.json                  |   2 +
+ front-end/src/app/api/callback/route.ts |  18 +++-
+ front-end/src/app/page.tsx              |  11 +--
+ 4 files changed, 171 insertions(+), 13 deletions(-)
+
+commit 4a1f25e39e03f85feb78e43a60faaf5372ecdfe2
+Merge: c306e4c cec830b
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Sat Nov 22 18:12:40 2025 -0500
+
+    Merge pull request #6 from Rkaid0/main
+    
+    pulling changes
+
+commit cec830b9ba0c20b27736f226e94107460994749d
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Sat Nov 22 18:10:04 2025 -0500
+
+    Update page.tsx
+
+ front-end/src/app/page.tsx | 1 -
+ 1 file changed, 1 deletion(-)
+
+commit ee368c135fa74adbbc51a944edeb3b74f70e71fd
+Merge: faac63b 2caeacf
+Author: andremataassis <andremataassis@gmail.com>
+Date:   Sat Nov 22 17:59:49 2025 -0500
+
+    Merge pull request #5 from Rkaid0/andreTryingToGetCognitoToWork
+    
+    Andre trying to get cognito to work
+
+commit 2caeacf656167dba6870258a22c40206a1d9c4f1
+Merge: 0b724f3 faac63b
+Author: andremataassis <andremataassis@gmail.com>
+Date:   Sat Nov 22 17:59:40 2025 -0500
+
+    Merge branch 'main' into andreTryingToGetCognitoToWork
+
+commit 0b724f3437c34edf27049cd25d51b42ef60423ba
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Sat Nov 22 17:57:24 2025 -0500
+
+    Login and sign up working for shoppers
+
+ front-end/src/app/api/callback/route.ts | 85 ++++++++++++++++-----------------
+ front-end/src/app/api/login/route.ts    | 40 ++++++++--------
+ front-end/src/app/lib/cognitoClient.ts  |  1 -
+ front-end/src/app/page.tsx              | 18 ++-----
+ lib/soft_enge_group_project-stack.ts    |  1 -
+ 5 files changed, 66 insertions(+), 79 deletions(-)
+
+commit 151c0810c403b2d225d423d68cc300ac051312d7
+Merge: f9927b1 2f5764e
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Sat Nov 22 17:03:04 2025 -0500
+
+    Merge branch 'cdkCognito' into andreTryingToGetCognitoToWork
+
+commit 2f5764ed58d3da8869e253cd25aaabdedde6a8c6
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Sat Nov 22 15:15:11 2025 -0500
+
+    CDK DEPLOYMENT OF AWS WORKING!!!!!!!!
+
+ front-end/src/app/page.tsx           |   2 +-
+ lib/soft_enge_group_project-stack.ts |   5 +-
+ package-lock.json                    | 443 ++++++++++++++++++++++++++++++++++-
+ tsconfig.json                        |   3 +-
+ 4 files changed, 447 insertions(+), 6 deletions(-)
+
+commit faac63b46a63cf257a32fc178583d75874b2cac5
+Merge: af4fc70 c306e4c
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Sat Nov 22 13:54:53 2025 -0500
+
+    Merge pull request #4 from Rkaid0/ryan-messing-with-stuff
+    
+    added views
+
+commit c306e4c5a15863547f02ba74dbf95f8e35468dfb
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Sat Nov 22 13:53:57 2025 -0500
+
+    added views
+    
+    added admin only views
+
+ front-end/src/app/adminDashboard/page.tsx             | 14 ++++++++++++++
+ front-end/src/app/adminStoreGUI/page.tsx              | 13 +++++++++++++
+ front-end/src/app/page.tsx                            |  4 ++++
+ front-end/src/app/userDashboard/page.tsx              |  2 +-
+ front-end/src/app/{storeGUI => userStoreGUI}/page.tsx |  4 ++--
+ 5 files changed, 34 insertions(+), 3 deletions(-)
+
+commit af4fc7029cf47baceb987ea3c95212b9f6e223c6
+Merge: 371a76d 44567df
+Author: andremataassis <andremataassis@gmail.com>
+Date:   Sat Nov 22 13:36:54 2025 -0500
+
+    Merge pull request #3 from Rkaid0/ryan-messing-with-stuff
+    
+    Ryan messing with stuff
+
+commit 44567df8fb1a87192a855b8ce437e980a5fded29
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Fri Nov 21 13:49:40 2025 -0500
+
+    Different Views
+    
+    Added temp button to be able to switch views
+
+ front-end/package-lock.json               | 12 ++++++++++++
+ front-end/package.json                    |  4 ++--
+ front-end/src/app/page.tsx                |  8 +++++++-
+ front-end/src/app/reviewActivity/page.tsx | 13 +++++++++++++
+ front-end/src/app/reviewHistory/page.tsx  | 13 +++++++++++++
+ front-end/src/app/storeGUI/page.tsx       | 13 +++++++++++++
+ front-end/src/app/userDashboard/page.tsx  | 15 +++++++++++++++
+ 7 files changed, 75 insertions(+), 3 deletions(-)
+
+commit 371a76d89c3c3955c2c777f3b4ad5b4633c8df6f
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Fri Nov 21 13:35:42 2025 -0500
+
+    lil merge problem
+
+ lib/soft_enge_group_project-stack.ts | 1 -
+ 1 file changed, 1 deletion(-)
+
+commit eed0154324e9819391fa6303802e71fe1e567fb8
+Merge: 8a73927 2a5b452
+Author: andremataassis <andremataassis@gmail.com>
+Date:   Fri Nov 21 13:33:19 2025 -0500
+
+    Merge pull request #2 from Rkaid0/cdkCognito
+    
+    Merge With Main
+
+commit 2a5b452908bf6b0a774ff7b96740d31a2317ca6b
+Merge: 5da3981 8a73927
+Author: andremataassis <andremataassis@gmail.com>
+Date:   Fri Nov 21 13:33:06 2025 -0500
+
+    Merge branch 'main' into cdkCognito
+
+commit b9517cdeb5c75f5b57885c7685815e33c68989a5
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Fri Nov 21 13:19:25 2025 -0500
+
+    Update page.tsx
+
+ front-end/src/app/page.tsx | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 8a73927ee7bbfa64d1b7842ae2fb97fe93ec6242
+Merge: 85de00b 68c166e
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Fri Nov 21 13:04:30 2025 -0500
+
+    Merge pull request #1 from Rkaid0/artyom-cdk-dev
+    
+    Setup for deploying with CDK + test Lambda function
+
+commit 5da3981fb26b76dcbd385532e56301557e0e5a3c
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Thu Nov 20 18:29:20 2025 -0500
+
+    How far I got
+    
+    added things to soft_enge_group_project-stack.ts and thats it. An example Lambda function is defined in there
+
+ lib/soft_enge_group_project-stack.ts |   81 +-
+ package-lock.json                    | 5469 +++++++++++++++++++++++++++++-----
+ package.json                         |    3 +-
+ 3 files changed, 4860 insertions(+), 693 deletions(-)
+
+commit f9927b10f244eed237645e39a7ea6c96ffc8e531
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Thu Nov 20 17:46:07 2025 -0500
+
+    giving up on this and trying something else
+    
+    stashing this here just in case
+
+ front-end/src/app/api/callback.ts       | 36 ------------------------
+ front-end/src/app/api/callback/route.ts | 49 +++++++++++++++++++++++++++++++++
+ front-end/src/app/api/login.ts          | 25 -----------------
+ front-end/src/app/api/login/route.ts    | 28 +++++++++++++++++++
+ front-end/src/app/lib/authCookies.ts    |  2 +-
+ front-end/src/app/page.tsx              | 10 +++----
+ 6 files changed, 83 insertions(+), 67 deletions(-)
+
+commit 68c166eba40c11b5e58f4bdf123774122d701915
+Author: Artyom Yesayan <yesart8@gmail.com>
+Date:   Thu Nov 20 16:59:42 2025 -0500
+
+    Was able to deploy with aws cdk
+
+ bin/soft_enge_group_project.ts       |   4 +-
+ lambda/test_handler.ts               |   6 +
+ lib/soft_enge_group_project-stack.ts |  27 +-
+ package-lock.json                    | 494 ++++++++++++++++++++++++++++++++++-
+ package.json                         |   7 +-
+ 5 files changed, 524 insertions(+), 14 deletions(-)
+
+commit 85de00b1f3f2b16e199c4a5d135cab8d4b7e867f
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Thu Nov 20 12:36:12 2025 -0500
+
+    More Cognito Stuff
+    
+    Not sure if it's working? I had to add a .env.local which is not included in the git for security reasons but I will send it to yall later.
+    page.tsx now contains a login button that redirects to aws cognito's login page
+
+ front-end/src/app/api/callback.ts      | 36 +++++++++++++++++
+ front-end/src/app/api/login.ts         | 25 ++++++++++++
+ front-end/src/app/lib/authCookies.ts   | 16 ++++++++
+ front-end/src/app/lib/cognitoClient.ts | 18 +++++++++
+ front-end/src/app/page.tsx             | 73 ++++++++--------------------------
+ 5 files changed, 111 insertions(+), 57 deletions(-)
+
+commit 882b0249a5390a57ebb33cb8c7688005a8068e83
+Author: AndreMAssis <andremataassis@gmail.com>
+Date:   Thu Nov 20 01:26:54 2025 -0500
+
+    Added AWS Cognito dependencies to package.json
+    
+    Still more for AWS Cognito setup required
+
+ front-end/package-lock.json | 61 +++++++++++++++++++++++++++++++++++++++++++++
+ front-end/package.json      |  3 ++-
+ 2 files changed, 63 insertions(+), 1 deletion(-)
+
+commit d23e40430ce15b2cf549c6b24f26ac4b4cd063f0
+Author: Forest Garvin <fogarvin@wpi.edu>
+Date:   Tue Nov 18 13:41:53 2025 -0500
+
+    Update soft_enge_group_project.test.ts
+
+ test/soft_enge_group_project.test.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit b13c759a0a54b91676dfe2860f7b6c5e2bc903fa
+Merge: 720a509 27636e2
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Tue Nov 18 13:37:35 2025 -0500
+
+    Merge branch 'main' of https://github.com/Rkaid0/SoftEngeGroupProject
+
+commit 720a50953c14d2ad15cef8dc84c8c0a4ebd5571b
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Tue Nov 18 13:34:19 2025 -0500
+
+    test
+    
+    testing things
+
+ front-end/src/app/page.tsx | 2 +-
+ front-end/src/app/test.txt | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+commit 27636e2de38c8f16ee735e122fb2101deebe9de7
+Author: katiamata15-hue <andremataassis@gmail.com>
+Date:   Tue Nov 18 13:33:04 2025 -0500
+
+    testing #2
+
+ front-end/src/app/page.module.css | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 8358a3e71103e2fef2b6287cc2ace0b2b69e25c1
+Author: katiamata15-hue <andremataassis@gmail.com>
+Date:   Tue Nov 18 13:31:52 2025 -0500
+
+    testing
+
+ front-end/src/app/page.module.css | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit c191bcaaaf09994d261bb081666f843052ec287b
+Author: RyanPKirk <ryanpatrickkirk@gmail.com>
+Date:   Tue Nov 18 13:29:29 2025 -0500
+
+    fgjhjh
+    
+    gfghjh
+
+ front-end/src/app/page.tsx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 6f64621614ee8d57c57ac3d098645f3874212708
+Author: katiamata15-hue <katia.mata15@gmail.com>
+Date:   Tue Nov 18 13:13:47 2025 -0500
+
+    added front end folder
+
+ front-end/.gitignore              |   41 +
+ front-end/README.md               |   36 +
+ front-end/eslint.config.mjs       |   18 +
+ front-end/next.config.ts          |    7 +
+ front-end/package-lock.json       | 5939 +++++++++++++++++++++++++++++++++++++
+ front-end/package.json            |   24 +
+ front-end/public/file.svg         |    1 +
+ front-end/public/globe.svg        |    1 +
+ front-end/public/next.svg         |    1 +
+ front-end/public/vercel.svg       |    1 +
+ front-end/public/window.svg       |    1 +
+ front-end/src/app/favicon.ico     |  Bin 0 -> 25931 bytes
+ front-end/src/app/globals.css     |   42 +
+ front-end/src/app/layout.tsx      |   32 +
+ front-end/src/app/page.module.css |  141 +
+ front-end/src/app/page.tsx        |   66 +
+ front-end/tsconfig.json           |   34 +
+ 17 files changed, 6385 insertions(+)
+
+commit e83c17abcd9e729141d075ad3e1f6107f1b8b7b8
+Author: Artyom Yesayan <yesart8@gmail.com>
+Date:   Mon Nov 17 16:20:26 2025 -0500
+
+    Created CDK project
+
+ .gitignore                            |    8 +
+ .npmignore                            |    6 +
+ README.md                             |   14 +
+ README.txt                            |    1 -
+ bin/soft_enge_group_project.ts        |   20 +
+ cdk.json                              |  101 +
+ group_project/.gitignore              |   41 -
+ group_project/README.md               |   36 -
+ group_project/eslint.config.mjs       |   18 -
+ group_project/next.config.ts          |    7 -
+ group_project/package-lock.json       | 5939 ---------------------------------
+ group_project/package.json            |   24 -
+ group_project/public/file.svg         |    1 -
+ group_project/public/globe.svg        |    1 -
+ group_project/public/next.svg         |    1 -
+ group_project/public/vercel.svg       |    1 -
+ group_project/public/window.svg       |    1 -
+ group_project/src/app/favicon.ico     |  Bin 25931 -> 0 bytes
+ group_project/src/app/globals.css     |   42 -
+ group_project/src/app/layout.tsx      |   32 -
+ group_project/src/app/page.module.css |  141 -
+ group_project/src/app/page.tsx        |   66 -
+ group_project/tsconfig.json           |   34 -
+ jest.config.js                        |    8 +
+ lib/soft_enge_group_project-stack.ts  |   16 +
+ package-lock.json                     | 4430 ++++++++++++++++++++++++
+ package.json                          |   26 +
+ test/soft_enge_group_project.test.ts  |   17 +
+ tsconfig.json                         |   32 +
+ 29 files changed, 4678 insertions(+), 6386 deletions(-)
+
+commit eecee1cfe75c04557b9ddcd2fcf15becbce59066
+Author: Artyom Yesayan <yesart8@gmail.com>
+Date:   Thu Nov 6 21:37:36 2025 -0500
+
+    initialized node project
+
+ group_project/.gitignore              |   41 +
+ group_project/README.md               |   36 +
+ group_project/eslint.config.mjs       |   18 +
+ group_project/next.config.ts          |    7 +
+ group_project/package-lock.json       | 5939 +++++++++++++++++++++++++++++++++
+ group_project/package.json            |   24 +
+ group_project/public/file.svg         |    1 +
+ group_project/public/globe.svg        |    1 +
+ group_project/public/next.svg         |    1 +
+ group_project/public/vercel.svg       |    1 +
+ group_project/public/window.svg       |    1 +
+ group_project/src/app/favicon.ico     |  Bin 0 -> 25931 bytes
+ group_project/src/app/globals.css     |   42 +
+ group_project/src/app/layout.tsx      |   32 +
+ group_project/src/app/page.module.css |  141 +
+ group_project/src/app/page.tsx        |   66 +
+ group_project/tsconfig.json           |   34 +
+ 17 files changed, 6385 insertions(+)
+
+commit 0cbc8d651245ab7ebd5a06e802b8d09cc1486156
+Author: Artyom Yesayan <yesart8@gmail.com>
+Date:   Wed Nov 5 14:04:16 2025 -0500
+
+    first
+
+ README.txt | 1 +
+ 1 file changed, 1 insertion(+)
