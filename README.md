@@ -1,3 +1,5 @@
+website URL: http://soft-enge-static-website-bucket.s3-website-us-east-1.amazonaws.com
+
 Admin Login 
 username: johnsshops3733@gmail.com
 password: Admin1234
