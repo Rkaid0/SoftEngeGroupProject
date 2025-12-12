@@ -36,18 +36,41 @@ export default function adminDashboard() {
 
   const fetchChains = async () => {
     try {
-      const res = await fetch(
-        "https://jwbdksbzpg.execute-api.us-east-1.amazonaws.com/prod/getStoreChains",
-        {
-          headers: {"Authorization": `Bearer ${localStorage.getItem("id_token")}`}
+      const [chainRes, profitRes] = await Promise.all([
+        fetch(
+          "https://jwbdksbzpg.execute-api.us-east-1.amazonaws.com/prod/getStoreChains",
+          {
+            headers: { "Authorization": `Bearer ${localStorage.getItem("id_token")}` }
+          }
+        ),
+        fetch(
+          "https://jwbdksbzpg.execute-api.us-east-1.amazonaws.com/prod/getProfitByChain",
+          {
+            headers: { "Authorization": `Bearer ${localStorage.getItem("id_token")}` }
+          }
+        )
+      ]);
+
+      const chainData = await chainRes.json();
+      const profitData = await profitRes.json();
+
+      // Attach profit to chains
+      const chainsWithProfit = chainData.map((c: any) => {
+        let total = 0;
+        if (Array.isArray(profitData)) {
+          const match = profitData.find((p: any) => p.chainID === c.idstoreChain);
+          total = match ? Number(match.total) : 0; // convert to number
         }
-      )
-      const data = await res.json()
-      setChains(data)
+        return { ...c, totalProfit: total };
+      });
+
+      setChains(chainsWithProfit);
+
     } catch (err) {
-      console.error("Error loading store chains:", err)
+      console.error("Error loading store chains:", err);
     }
-  }
+  };
+
   const deleteChain = async () => {
     if (!deleteName.trim()) {
       alert("Please enter a store chain name.");
@@ -137,6 +160,9 @@ export default function adminDashboard() {
           {chains.map((chain) => (
             <li key={chain.idstoreChain}>
               <strong>{chain.name}</strong> — {chain.url}
+              <span style={{ marginLeft: "10px", color: "green" }}>
+                Total Profit: ${chain.totalProfit.toFixed(2)}
+              </span>
               <ul>
                 {chain.stores.length === 0 && <li>No stores</li>}
                 {chain.stores.map((s: any) => (
