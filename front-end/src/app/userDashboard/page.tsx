@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { requireAuth, S3_URL, LOGOUT, detectLocal } from "@/utils/auth";
 import { useRouter } from "next/navigation";
 import AnalyzeReceipt from "../analyzeReceipt/AnalyzeReceipt"
-import crypto from 'crypto';
 
 export default function UserDashboard() {
   const [email, setEmail] = useState<string | null>(null);
@@ -403,6 +402,7 @@ export default function UserDashboard() {
       <button onClick={() => router.push("/reviewHistory")}>Review History</button>
       <button onClick={() => router.push("/userStoreGUI")}>Stores</button>
       <button onClick={() => router.push("/userShoppingList")}>Shopping List</button>
+      <button onClick={() => router.push("/reportOptions")}>Shopping List Options</button>
       <button onClick={LOGOUT}>Log Out</button>
 
       <hr />
