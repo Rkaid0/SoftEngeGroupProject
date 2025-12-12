@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { requireAuth, S3_URL, LOGOUT, detectLocal } from "@/utils/auth";
 import { useRouter } from "next/navigation";
 import AnalyzeReceipt from "../analyzeReceipt/AnalyzeReceipt"
+import crypto from 'crypto';
 
 export default function UserDashboard() {
   const [email, setEmail] = useState<string | null>(null);
@@ -30,6 +31,20 @@ export default function UserDashboard() {
   const [editPrice, setEditPrice] = useState<number | "">("");
   const [editQuantity, setEditQuantity] = useState<number | "">("");
   const [editCategory, setEditCategory] = useState("");
+  
+  const today = new Date();
+  const getWeekDates = (): string[] => {
+    // Calculate the date of the first day of the week (Sunday)
+    const startOfWeek = new Date(today);
+    startOfWeek.setDate(today.getDate() - 7);
+    const endOfWeek = new Date(today);
+
+    const weekDates: string[] = [];
+    weekDates.push(startOfWeek.toISOString().split('T')[0].replaceAll("-", "/"));
+    weekDates.push(endOfWeek.toISOString().split('T')[0].replaceAll("-", "/"));
+
+    return weekDates;
+  };
 
   const [currentItems, setCurrentItems] = useState<
     { id: number; name: string; price: number; quantity: number; category: string }[]
@@ -43,6 +58,11 @@ export default function UserDashboard() {
 
   const [itemCategory, setItemCategory] = useState<string>("");  // user’s selected OR new input
   const [isNewCategory, setIsNewCategory] = useState(false);
+  const [isNewStoreChain, setIsNewStoreChain] = useState(false);
+  const [newStoreChainName, setNewStoreChainName] = useState("");
+  const [newStoreChainURL, setNewStoreChainURL] = useState("");
+  const [isNewStore, setIsNewStore] = useState(false);
+  const [newStoreAddress, setNewStoreAddress] = useState("");
 
   const [apiKey, setApiKey] = useState<string>("");
   const [apiKeyIsSet, setApiKeyIsSet] = useState<boolean>(false);
@@ -65,10 +85,11 @@ export default function UserDashboard() {
 
   const handleReceiptParsed = (receipt: any) => {
     const newItems = receipt.items.map((item: any) => ({
-      id: crypto.randomUUID(),
+      id: generateNumericId(),
       name: item.name,
       price: item.unit_price,
-      category: item.category
+      category: item.category,
+      quantity: item.quantity
     }));
 
     setCurrentItems((prev) => [...prev, ...newItems]);
@@ -80,15 +101,21 @@ export default function UserDashboard() {
       }
     }
 
-    const correspoindingChain = storeChains.find((chain) => chain.name === receipt.merchant_name);
-    if (!correspoindingChain) {console.error("Chain not found"); return;}
+    const correspondingChain = storeChains.find((chain) => chain.name === receipt.merchant_name);
+    if (!correspondingChain) {
+      setIsNewStoreChain(true);
+      setNewStoreChainName(receipt.merchant_name);
+    }
+    else setSelectedStoreChainID(correspondingChain.idstoreChain);
 
-    setSelectedStoreChainID(correspoindingChain.idstoreChain);
-
-    const correspoindingStore = correspoindingChain.stores.find((store) => store.storeAddress === receipt.merchant_address);
-    if (!correspoindingStore) {console.error("Store not found"); return;}
-
-    setSelectedStoreID(correspoindingStore.idStores);
+    const correspondingStore = correspondingChain 
+      ? correspondingChain.stores.find((store) => store.storeAddress === receipt.merchant_address)
+      : null;
+    if (correspondingStore == null) {
+      setIsNewStore(true);
+      setNewStoreAddress(receipt.merchant_address);
+    }
+    else setSelectedStoreID(correspondingStore.idStores);
   }
   
   const fetchCategories = async () => {
@@ -112,8 +139,7 @@ export default function UserDashboard() {
     fetchCategories();
   }, []);
 
-  useEffect(() => {
-    const fetchChains = async () => {
+  const fetchChains = async () => {
       try {
         const res = await fetch(
           "https://jwbdksbzpg.execute-api.us-east-1.amazonaws.com/prod/getStoreChains",
@@ -129,20 +155,65 @@ export default function UserDashboard() {
       }
     };
 
+  useEffect(() => {
     fetchChains();
   }, []);
 
-  const fetchReceipts = async (userID : any) => {
-      try {
+  const createStoreChain = async() => {
+    try { const res = await fetch(
+            "https://jwbdksbzpg.execute-api.us-east-1.amazonaws.com/prod/createStoreChain",{
+              method: "POST", 
+              headers: {"Content-Type": "application/json", "Authorization": `Bearer ${localStorage.getItem("id_token")}` }, 
+              body: JSON.stringify({
+                  name: newStoreChainName,
+                  url: newStoreChainURL
+              })
+            } 
+        )
+        const data = await res.json();
+        return(data.storeChainID)
+    }
+    catch (err) {console.error("Error creating store chain:", err)}
+  }
+
+  const createStore = async (storeChainID : number) => {  
+    try {
+        if (!storeChainID) {
+          alert("Store Chain creation error.");
+          return;
+        }
         const res = await fetch(
-          "https://jwbdksbzpg.execute-api.us-east-1.amazonaws.com/prod/getReceipts",
+          "https://jwbdksbzpg.execute-api.us-east-1.amazonaws.com/prod/createStore",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${localStorage.getItem("id_token")}`
+            },
+            body: JSON.stringify({
+              storeAddress: newStoreAddress,
+              storeChainID: storeChainID
+            })
+          }
+        );
+        const data = await res.json();
+        return data.storeID;
+      } catch (err) {
+        console.error("Error creating store:", err)
+      }
+    }
+
+  const fetchReceipts = async (userID : any) => {
+    try {
+        const res = await fetch(
+          "https://jwbdksbzpg.execute-api.us-east-1.amazonaws.com/prod/getReceiptsTimeFrame",
           {
             method: "POST",
             headers: {
               Authorization: `Bearer ${localStorage.getItem("id_token")}`,
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ userID }),
+            body: JSON.stringify({ userID, startDate : getWeekDates()[0], endDate : getWeekDates()[1]}),
           }
         );
 
@@ -169,9 +240,20 @@ export default function UserDashboard() {
 
   // CREATE RECEIPT + ADD ITEMS
   const handleCreateReceipt = async () => {
-    if (!selectedStoreID || !date || currentItems.length === 0) {
+    if (!selectedStoreID && isNewStore === false || !date || currentItems.length === 0) {
       alert("Store, date, and at least one item are required.");
       return;
+    }
+
+    let storeChainID = Number(selectedStoreChainID);
+    let storeID = selectedStoreID;
+
+    if (isNewStoreChain) {
+      storeChainID = await createStoreChain();
+    }
+
+    if (isNewStore) {
+      storeID = await createStore(storeChainID);
     }
 
     try {
@@ -184,7 +266,7 @@ export default function UserDashboard() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            storeID: selectedStoreID,
+            storeID: storeID,
             date: date,
             userID: localStorage.getItem("user_id"),
           }),
@@ -224,6 +306,11 @@ export default function UserDashboard() {
       fetchCategories();
 
       setSelectedStoreChainID("");
+      setIsNewStore(false);
+      setIsNewStoreChain(false);
+      setNewStoreAddress("");
+      setNewStoreChainName("");
+      setNewStoreChainURL("");
       setSelectedStoreID("");
       setDate("");
       setCurrentItems([]);
@@ -254,12 +341,18 @@ export default function UserDashboard() {
     fetchReceipts(localStorage.getItem("user_id"));
   }
 
+  let itemCounter = 0;
+
+  function generateNumericId() {
+    return Date.now() * 1000 + (itemCounter++ % 1000);
+  }
+
   // LOCAL ITEMS
   const handleAddItem = () => {
     if (!itemName.trim() || itemPrice === "" || !itemCategory.trim()) return;
 
     const newItem = {
-      id: Date.now(),
+      id: generateNumericId(),
       name: itemName,
       price: Number(itemPrice),
       quantity: Number(itemQuantity),
@@ -304,7 +397,7 @@ export default function UserDashboard() {
   return (
     <div>
       <h1>Dashboard</h1>
-      {email && <p>Signed in as: <strong>{email}</strong></p>}
+      {email && <p>Welcome, <strong>{email}</strong> </p>}
 
       <button onClick={() => router.push("/reviewActivity")}>Review Activity</button>
       <button onClick={() => router.push("/reviewHistory")}>Review History</button>
@@ -316,41 +409,89 @@ export default function UserDashboard() {
 
       <h2>Create Receipt</h2>
 
-      {/* Store Chain Dropdown */}
+      {/* STORE CHAIN DROPDOWN */}
       <select
-        value={selectedStoreChainID}
+        value={isNewStoreChain ? "new" : selectedStoreChainID}
         onChange={(e) => {
-          setSelectedStoreChainID(Number(e.target.value));
-          setSelectedStoreID("");
+          if (e.target.value === "new") {
+            setIsNewStoreChain(true);
+            setSelectedStoreChainID("");
+            setSelectedStoreID("");
+          } else {
+            setIsNewStoreChain(false);
+            setSelectedStoreChainID(Number(e.target.value));
+            setSelectedStoreID("");
+          }
         }}
       >
         <option value="">Select Store Chain</option>
+
         {storeChains.map((chain) => (
           <option key={chain.idstoreChain} value={chain.idstoreChain}>
             {chain.name}
           </option>
         ))}
+
+        <option value="new">+ Create new store chain…</option>
       </select>
 
-      {/* Store Dropdown */}
-      <select
-        value={selectedStoreID}
-        onChange={(e) => setSelectedStoreID(Number(e.target.value))}
-        disabled={
-          !selectedStoreChainID ||
-          !storeChains.find((c) => c.idstoreChain === selectedStoreChainID)?.stores?.length
-        }
-      >
-        <option value="">Select Store</option>
-        {selectedStoreChainID &&
-          storeChains
-            .find((c) => c.idstoreChain === selectedStoreChainID)
-            ?.stores.map((store) => (
-              <option key={store.idStores} value={store.idStores}>
-                {store.storeAddress}
-              </option>
-            ))}
-      </select>
+      {/* New Store Chain Input */}
+      {isNewStoreChain && (
+        <input
+          type="text"
+          placeholder="New store chain name"
+          value={newStoreChainName}
+          onChange={(e) => setNewStoreChainName(e.target.value)}
+        />
+      )}
+      {isNewStoreChain && (
+        <input
+          type="text"
+          placeholder="New store chain URL"
+          value={newStoreChainURL}
+          onChange={(e) => setNewStoreChainURL(e.target.value)}
+        />
+      )}
+
+      {/* STORE DROPDOWN */}
+        <select
+          value={isNewStore ? "new" : selectedStoreID}
+          onChange={(e) => {
+            if (e.target.value === "new") {
+              setIsNewStore(true);
+              setSelectedStoreID("");
+            } else {
+              setIsNewStore(false);
+              setSelectedStoreID(Number(e.target.value));
+            }
+          }}
+          disabled={!selectedStoreChainID && !isNewStoreChain}
+        >
+          <option value="">Select Store</option>
+
+          {!isNewStoreChain &&
+            selectedStoreChainID &&
+            storeChains
+              .find((c) => c.idstoreChain === selectedStoreChainID)
+              ?.stores.map((store) => (
+                <option key={store.idStores} value={store.idStores}>
+                  {store.storeAddress}
+                </option>
+              ))}
+
+          <option value="new">+ Create new store…</option>
+        </select>
+
+        {/* New Store Input */}
+        {isNewStore && (
+          <input
+            type="text"
+            placeholder="New store address"
+            value={newStoreAddress}
+            onChange={(e) => setNewStoreAddress(e.target.value)}
+          />
+        )}
+
 
       {/* Date */}
       <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
@@ -432,16 +573,28 @@ export default function UserDashboard() {
         >
           {editingItemId === item.id ? (
             <>
-              <input value={editName} onChange={(e) => setEditName(e.target.value)} />
+              <input value={editName} placeholder="Item Name" onChange={(e) => setEditName(e.target.value)} />
               <input
                 type="number"
                 value={editPrice}
+                placeholder="Item Price"
                 onChange={(e) =>
                   setEditPrice(e.target.value === "" ? "" : Number(e.target.value))
                 }
               />
               <input
+                type="number"
+                min="1"
+                placeholder="Item Quantity"
+                style={{ width: '100px' }}
+                value={editQuantity}
+                onChange={(e) =>
+                  setEditQuantity(e.target.value === "" ? "" : Number(e.target.value))
+                }
+              />
+              <input
                 value={editCategory}
+                placeholder="Item Category"
                 onChange={(e) => setEditCategory(e.target.value)}
               />
               <button onClick={handleSaveItem}>Save</button>
@@ -463,20 +616,19 @@ export default function UserDashboard() {
           )}
         </div>
       ))}
-
       <button onClick={handleCreateReceipt}>Submit Receipt</button>
+      <hr />
       {apiKeyIsSet ? <AnalyzeReceipt apiKey = { apiKey } handler = { handleReceiptParsed }/> : (
-        <>
+        <><h2>Analyze Receipt With AI</h2>
           <input placeholder="Enter API key" onChange={(e) => setApiKey(e.target.value)}/>
           <button onClick={() => {localStorage.setItem("API_KEY", apiKey); setApiKey(apiKey); setApiKeyIsSet(true)}}>Submit Key</button>
         </>
       )}
-
       {/* ---------------------------
           EXISTING RECEIPTS UI
          --------------------------- */}
       <hr />
-      <h2>Existing Receipts</h2>
+      <h2>This Week's Receipts</h2> <p> <strong>{getWeekDates()[0]} - {getWeekDates()[1]}</strong> </p>
 
       {existingReceipts.length === 0 && <p>No receipts found.</p>}
 

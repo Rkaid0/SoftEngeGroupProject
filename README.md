@@ -6,9 +6,9 @@ Shopper --------------------------------
 • Register Shopper ✓
 • Login Shopper ✓
 • Show Account Dashboard ✓
-• Review History
-• Review Activity
-• Search Recent Purchases
+• Review History ✓
+• Review Activity ✓
+• Search Recent Purchases ✓
 
 Receipt Use Cases for Shopper ----------
 • Create Receipt ✓
@@ -16,14 +16,14 @@ Receipt Use Cases for Shopper ----------
 • Remove Item from Receipt ✓
 • Edit Item on Receipt ✓
 • Submit Receipt ✓
-• Analyze Receipt Image (AI)
+• Analyze Receipt Image (AI) ✓
 • Delete Receipt ✓
 
 Shopping List Use Cases for Shopper ----
 • Create Shopping List ✓
 • Add Item To Shopping List ✓
 • Remove Item From Shopping List ✓
-• Report Options For Shopping List
+• Report Options For Shopping List ✓
 
 Store Use Cases for Shopper ------------
 • List Store Chains ✓

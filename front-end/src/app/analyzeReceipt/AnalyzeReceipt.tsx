@@ -1,3 +1,4 @@
+'use client'
 import OpenAI from "openai";
 import React, { useState } from "react";
 
@@ -89,6 +90,8 @@ export default function AnalyzeReceipt({ apiKey, handler }: {apiKey: string; han
       const jsonText = response.output_text;
       const parsed = JSON.parse(jsonText);
 
+      console.log(JSON.stringify(parsed.receipt))
+
       setParsedReceipt(parsed.receipt);
 
       handler(parsed.receipt);
@@ -103,25 +106,11 @@ export default function AnalyzeReceipt({ apiKey, handler }: {apiKey: string; han
 
   return (
     <div>
-        <br/>
         <h2>Upload store receipt</h2>
 
         <input type="file" accept="image/*" onChange={handleUploadReceipt} />
 
         {isLoading ? <p>Loading...</p> : <></>}
-
-        <h3>Parsed receipt JSON</h3>
-        <pre
-            style={{
-                background: "#111",
-                color: "#0f0",
-                padding: 12,
-                borderRadius: 8,
-                overflowX: "auto",
-            }}
-            >
-            {JSON.stringify(parsedReceipt, null, 2)}
-        </pre>
     </div>
   );
 };
