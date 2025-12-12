@@ -35,4 +35,4 @@ Administrator Use Cases ----------------
 • Show Admin Dashboard ✓
 • Remove Store Chain ✓
 • Remove Store ✓
-• Show Profit for Each Store
+• Show Profit for Each Store ✓
