@@ -1,38 +1,5 @@
-Use Cases:
+Admin Login 
+username: johnsshops3733@gmail.com
+password: Admin1234
 
-Copy/paste checkmark: ✓
-
-Shopper --------------------------------
-• Register Shopper ✓
-• Login Shopper ✓
-• Show Account Dashboard ✓
-• Review History ✓
-• Review Activity ✓
-• Search Recent Purchases ✓
-
-Receipt Use Cases for Shopper ----------
-• Create Receipt ✓
-• Add Item to Receipt ✓
-• Remove Item from Receipt ✓
-• Edit Item on Receipt ✓
-• Submit Receipt ✓
-• Analyze Receipt Image (AI) ✓
-• Delete Receipt ✓
-
-Shopping List Use Cases for Shopper ----
-• Create Shopping List ✓
-• Add Item To Shopping List ✓
-• Remove Item From Shopping List ✓
-• Report Options For Shopping List ✓
-
-Store Use Cases for Shopper ------------
-• List Store Chains ✓
-• Add Chain ✓
-• Add Store To Chain ✓
-
-Administrator Use Cases ----------------
-• Login Administrator ✓
-• Show Admin Dashboard ✓
-• Remove Store Chain ✓
-• Remove Store ✓
-• Show Profit for Each Store ✓
+If recipets/store-chains/store/shopping-lists dont appear, or if it says failed to create something even though everything is correct, log out then log back in as your id_token most liekly expired
