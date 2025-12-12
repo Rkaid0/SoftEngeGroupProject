@@ -23,7 +23,7 @@ Shopping List Use Cases for Shopper ----
 • Create Shopping List ✓
 • Add Item To Shopping List ✓
 • Remove Item From Shopping List ✓
-• Report Options For Shopping List
+• Report Options For Shopping List ✓
 
 Store Use Cases for Shopper ------------
 • List Store Chains ✓
