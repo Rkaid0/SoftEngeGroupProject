@@ -233,7 +233,7 @@ export default function UserShoppingList() {
       <h1>Shopping Lists</h1>
 
       {email && <p>Signed in as: <strong>{email}</strong></p>}
-      <button onClick={() => router.push("/userDashboard")}>Dashboard</button>
+      <button onClick={() => router.push("/userDashboard")}>Back to Dashboard</button>
 
       <hr />
 

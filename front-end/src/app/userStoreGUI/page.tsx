@@ -88,7 +88,7 @@ export default function UserStoreGUI() {
     <div>
       <h1>Stores</h1>
       {email && <p>Signed in as: <strong>{email}</strong></p>}
-      <button onClick={() => router.push("/userDashboard")}>Dashboard</button>
+      <button onClick={() => router.push("/userDashboard")}>Back to Dashboard</button>
       <h2>Create Store Chain</h2>
       <input type="text" value = {chainName} onChange = {e => setChainName(e.target.value) } placeholder = "Chain Name" />
       <input type="text" value = {chainURL} onChange = {e => setChainURL(e.target.value) } placeholder = "Chain URL" />

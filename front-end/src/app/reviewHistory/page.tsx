@@ -17,6 +17,30 @@ export default function ReviewHistory() {
         return;}
   }, []);
 
+  const highlightMatch = (text: string, query: string) => {
+    if (!query) return text;
+
+    const regex = new RegExp(`(${query})`, "ig");
+    const parts = text.split(regex);
+
+    return parts.map((part, index) =>
+      part.toLowerCase() === query.toLowerCase() ? (
+        <mark
+          key={index}
+          style={{
+            backgroundColor: "#ffe58a",
+            padding: "0 2px",
+            borderRadius: "2px",
+          }}
+        >
+          {part}
+        </mark>
+      ) : (
+        part
+      )
+    );
+  };
+
   const fetchReceipts = async (userID : any) => {
       try {
         const res = await fetch(
@@ -133,7 +157,7 @@ export default function ReviewHistory() {
             }}
           >
             <h3>
-              Receipt from {receipt.storeAddress}
+              Receipt from {receipt.storeChainName} at {receipt.storeAddress}
               <span style={{ marginLeft: "10px", fontSize: "14px", color: "#666" }}>
                 (Store ID: {receipt.storeID})
               </span>
@@ -166,7 +190,7 @@ export default function ReviewHistory() {
                     }}
                   >
                     <p>
-                      <strong>{item.name}</strong> — ${Number(item.price).toFixed(2)}
+                      <strong>{highlightMatch(item.name, searchTerm)}</strong> — ${Number(item.price).toFixed(2)}
                     </p>
                     <p>
                       Category: {item.categoryName} (ID {item.categoryID})
